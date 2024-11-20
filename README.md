@@ -48,6 +48,9 @@ export REDIS_PORT=6379
 export NODE_ENV=production
 export SERVICE_BUS_QUEUE_NAME=****
 export SERVICE_BUS_CONNECTION_STRING=****
+export AAD_CLIENT_ID=****
+export AAD_CLIENT_SECRET=****
+export AAD_TENANT=****
 ```
 
 Build the image
@@ -185,3 +188,6 @@ The build of the webapp requires an environment variable GA_ID if google analyti
 | 	SERVICE_BUS_CONNECTION_STRING	 | 	Service bus connection string	 | 	Y	 |		 |
 | 	SERVICE_BUS_QUEUE_NAME	 | 	Service bus queue name	 | 	Y	 |		 |
 |   GA_ID   |   Google tag manager ID   |   N   |   |
+|   AAD_CLIENT_ID   |   Azure active directory client ID   |   Y   |   |
+|   AAD_CLIENT_SECRET   |   Azure active directory client secret   |   Y   |   |
+|   AAD_TENANT   |   Azure active directory tenant   |   Y   |   |

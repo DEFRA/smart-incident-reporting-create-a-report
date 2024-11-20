@@ -81,4 +81,5 @@ Array.prototype.forEach.call(jsElements, function (element) {
 })
 
 // Initialise analytics tracking and associated cookies
-analytics()
+// analytics()
+window.sir.utils.setupGoogleTagManager()
