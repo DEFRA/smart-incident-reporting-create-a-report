@@ -1,0 +1,7 @@
+process.env.OS_KEY = 'testKey'
+process.env.OS_SECRET = 'testSecret'
+process.env.SERVICE_BUS_CONNECTION_STRING = 'testConnectionString'
+process.env.SERVICE_BUS_QUEUE_NAME = 'testQueueName'
+process.env.AAD_CLIENT_ID = 'test'
+process.env.AAD_CLIENT_SECRET = 'test'
+process.env.AAD_TENANT = 'test'

@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{# Buttons, navigation and error summary #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    <div class="button-container">
+      <button type="submit" class="govuk-button govuk-button--secondary govuk-!-margin-right-5" data-module="govuk-button" formaction="cancelreport">
+        Cancel report
+      </button>
+      
+      <button type="submit" class="govuk-button" data-module="govuk-button" formaction="checkreport">
+        Check report
+      </button>
+    </div>
+
+    <form method="post">
+      <button type="submit" class="govuk-body pretendlink{% if isDescription %}-currentpage{% endif %} govuk-!-margin-right-3" formaction="description">
+        Incident description
+      </button>
+      <button type="submit" class="govuk-body pretendlink{% if isReporter %}-currentpage{% endif %} govuk-!-margin-right-3" formaction="reporter">
+        Reporter
+      </button>
+      <button type="submit" class="govuk-body pretendlink{% if isLocation %}-currentpage{% endif %} govuk-!-margin-right-3" formaction="location">
+        Location of incident
+      </button>
+      <button type="submit" class="govuk-body pretendlink{% if isDate %}-currentpage{% endif %} govuk-!-margin-right-3" formaction="date">
+        Date observed
+      </button>
+    </form>
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+  </div>
+</div>
+
+  {% if errorSummary %}
+      {{ govukErrorSummary(errorSummary) }}
+  {% endif %}
+
+  <form method="post" novalidate="novalidate">
+    {% block formContent %}
+    {% endblock %}
+  </form>
+{% endblock %}

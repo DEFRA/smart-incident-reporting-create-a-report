@@ -1,0 +1,126 @@
+.govuk-main-wrapper {
+  padding-top: 16px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: govuk-spacing(0);
+}
+
+.type-container {
+  display: flex;
+  justify-content: space-between;
+  padding: govuk-spacing(0);
+}
+
+// question-list
+.question-list--top {
+  border-bottom: 1px solid #b1b4b6;
+  height: 0;
+  padding-bottom: govuk-spacing(4);
+}
+
+.question-list--row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #b1b4b6;
+  padding-top: govuk-spacing(3);
+  padding-bottom: govuk-spacing(3);
+  position: relative;
+
+  span {
+    vertical-align: top;
+  }
+
+  .question>p {
+    display: inline-block;
+    min-width: 420px;
+    max-width: 420px;
+    margin-right: govuk-spacing(7);
+    margin-bottom: 0;
+  }
+
+  .answer>p {
+    display: inline-block;
+    max-width: 380px;
+    margin-bottom: 0;
+  }
+
+  .actions>p {
+    display: inline-block;
+    margin-bottom: 0;
+  }
+}
+
+.question-list--row:active,
+.question-list--row:hover {
+  background-color: #f3f2f1;
+}
+
+.question-list--row a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.govuk-summary-card__title {
+  font-size: 1.5rem;
+}
+
+.govuk-panel__title {
+  font-size: 36px;
+}
+
+.pretendlink {
+  border: 0;
+  background: none !important;
+  padding: 2px 0px 2px;
+  margin-top: 0;
+  box-shadow: none;
+  color: #1d70b8;
+  text-decoration: underline;
+  // text-decoration-thickness: max(1px, .0625rem);
+  text-underline-offset: 0.1578em;
+  text-decoration-color: #1d70b8;
+  cursor: pointer;
+
+  &:hover {
+    color: #003078;
+    text-decoration: underline;
+    // text-decoration-thickness: max(3px, .1875rem, .12em);
+    text-decoration-skip: none;
+    text-decoration-skip-ink: none;
+    text-decoration-color: #003078;
+  }
+
+  &:focus {
+    text-decoration: none;
+    background: #ffdd00 !important;
+    background-color: #ffdd00;
+    box-shadow: 0 0px #ffdd00, 0 4px #0b0c0c;
+  }
+
+  &:active {
+    color: #0b0c0c;
+    top: 0px !important;
+  }
+}
+
+.pretendlink-currentpage {
+  border: 0;
+  background: none !important;
+  padding: 2px 0px 2px;
+  margin-top: 0;
+  box-shadow: none;
+  color: #0b0c0c;
+  text-decoration: none;
+}
