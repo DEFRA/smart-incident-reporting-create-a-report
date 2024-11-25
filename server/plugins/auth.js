@@ -13,6 +13,8 @@ const auth = {
       clientId: config.aadClientId,
       clientSecret: config.aadClientSecret,
       password: config.authCookiePassword,
+      isSecure: config.cookieIsSecure,
+      forceHttps: config.cookieIsSecure,
       config: {
         tenant: config.aadTenant
       }
