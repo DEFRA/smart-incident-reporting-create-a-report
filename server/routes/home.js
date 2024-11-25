@@ -1,24 +1,28 @@
+import { Boom } from '@hapi/boom'
 import constants from '../utils/constants.js'
 
 const handlers = {
   get: async (request, h) => {
-    // request.yar.reset()
-    // request.cookieAuth.clear()
-    return h.view(constants.views.HOME)
+    if (!request.auth.isAuthenticated) {
+      return Boom.unauthorized(`Authentication failed due to: ${request.auth.error.message}`)
+    }
+    request.cookieAuth.set({
+      profile: request.auth.credentials.profile
+    })
+    return h.redirect(constants.routes.DESCRIPTION)
   }
 }
 
 export default [
   {
-    method: 'GET',
+    method: ['GET'],
     path: '/',
     handler: handlers.get,
     options: {
-      auth: false
-      // auth: {
-      //   mode: 'try',
-      //   strategy: 'azure-auth'
-      // }
+      auth: {
+        mode: 'try',
+        strategy: 'azure-auth'
+      }
     }
   }
 ]

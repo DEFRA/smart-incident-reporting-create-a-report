@@ -22,16 +22,10 @@ export default [
   {
     method: 'GET',
     path: constants.routes.DESCRIPTION,
-    handler: handlers.get,
-    options: {
-      auth: false
-    }
+    handler: handlers.get
   }, {
     method: 'POST',
     path: constants.routes.DESCRIPTION,
-    handler: handlers.post,
-    options: {
-      auth: false
-    }
+    handler: handlers.post
   }
 ]

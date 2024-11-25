@@ -182,6 +182,7 @@ The build of the webapp requires an environment variable GA_ID if google analyti
 | 	REDIS_PASSWORD	 | 	Redis password	 | 	Y	 |		 |
 | 	REDIS_TLS	 | 	Redis tls eg true or false	 | 	N	 |	FALSE	 |
 | 	SESSION_COOKIE_PASSWORD	 | 	Cookie password min 32 characters	 | 	N	 |	the-password-must-be-at-least-32-characters-long	 |
+| 	AUTH_COOKIE_PASSWORD	 | 	Cookie password min 32 characters	 | 	N	 |	the-password-must-be-at-least-32-characters-long	 |
 | 	COOKIE_IS_SECURE	 | 	Cookie secure boolean	 | 	N	 |	FALSE	 |
 | 	OS_SECRET	 | 	OS API secret	 | 	Y	 |		 |
 | 	OS_KEY	 | 	OS API key	 | 	Y	 |		 |

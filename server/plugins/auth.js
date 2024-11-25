@@ -23,8 +23,10 @@ const auth = {
         path: '/',
         password: config.authCookiePassword,
         isSecure: config.cookieIsSecure,
-        isSameSite: 'Lax'
+        isSameSite: 'Lax',
+        ttl: 24 * 60 * 60 * 1000
       },
+      keepAlive: true,
       redirectTo: '/'
     })
     server.auth.default('session-auth')
