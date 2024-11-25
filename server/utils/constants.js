@@ -10,6 +10,7 @@ const ERROR = 'error'
 const PUBLIC = 'public'
 const HOME = 'home'
 const SERVICE_UNAVAILABLE = 'service-unavailable'
+const SIGNOUT = 'signout'
 
 const DESCRIPTION = 'description'
 const REPORTER = 'reporter'
@@ -21,6 +22,7 @@ const views = {
   PUBLIC,
   HOME,
   SERVICE_UNAVAILABLE,
+  SIGNOUT,
   DESCRIPTION,
   REPORTER,
   LOCATION,

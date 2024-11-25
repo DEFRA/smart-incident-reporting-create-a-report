@@ -30,7 +30,7 @@
         <a href="/" class="govuk-header__link govuk-header__service-name">
           {{ serviceName }}
         </a>
-        <p style="color: white; cursor: pointer"><a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>
+        <p style="color: white;">{{auth.credentials.profile.displayName}}  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>
       </div>
     </div>
   </header>
