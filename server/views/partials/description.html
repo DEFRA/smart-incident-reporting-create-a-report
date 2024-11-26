@@ -1,0 +1,134 @@
+{% from "dist/govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "dist/govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "dist/govuk/components/input/macro.njk" import govukInput %}
+{% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set emailReportHtml %}
+  {{ govukDateInput({
+    id: "emailReportDate",
+    fieldset: {
+      legend: {
+        text: "Date of email",
+        classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
+      }
+    },
+    items: [
+      {
+        name: "emailReportDateDay",
+        id: "emailReportDateDay",
+        label: "Day",
+        value: '',
+        classes: "govuk-input--width-2"
+      },
+      {
+        name: "emailReportDateMonth",
+        id: "emailReportDateMonth",
+        label: "Month",
+        value: '',
+        classes: "govuk-input--width-2"
+      },
+      {
+        name: "emailReportDateYear",
+        id: "emailReportDateYear",
+        label: "Year",
+        value: '',
+        classes: "govuk-input--width-4"
+      }
+    ]    
+  }) }}
+
+  {{ govukInput({
+    id: "emailReportTime",
+    name: "emailReportTime",
+    classes: "govuk-input--width-5",
+    value: '',
+    autocomplete: "off",
+    label: {
+      text: "Time of email",
+      classes: "govuk-fieldset__legend--s"
+    },
+    hint: {
+      text: "For example, 09:30 or 18:45."
+    }
+  }) }}
+
+{% endset -%}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-two-thirds">
+
+    <div class="govuk-form-group">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l govuk-!-margin-bottom-4 govuk-!-margin-top-7" for="create-description">
+          Incident description
+        </label>
+      </h1>
+      <p class="govuk-body">
+        <a href="https://defra.sharepoint.com/teams/Team3360/SitePages/ICS-Knowledge-Base.aspx" class="govuk-link--no-visited-state" target="_new">
+        Open the knowledge base</a>.
+      </p>
+        <textarea class="govuk-textarea" id="create-description" name="create-description" rows="12">{{data['create-description']}}</textarea>
+      </textarea>
+    </div>
+
+    {{ govukCheckboxes({
+      classes: "govuk-checkboxes--small",
+      name: "notified",
+      id: "notifed",
+      values: '',
+      items: [
+        {
+          value: "email",
+          text: "Reported by email",
+          conditional: {
+            html: emailReportHtml
+          }
+        }
+      ]
+    }) }}
+  
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+    <div class="govuk-!-padding-bottom-9"></div>
+    <div class="govuk-!-padding-bottom-9"></div>
+    <div class="govuk-!-padding-bottom-4"></div>
+  
+    {{ govukRadios({
+      classes: "govuk-radios--small",
+      name: "incidentType",
+      id: "incidentType",
+      fieldset: {
+        legend: {
+          text: "Incident type",
+          classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-2"
+        }
+      },
+      value: '', 
+      errorMessage: '',
+      items: [
+        {
+          value: "Water pollution",
+          text: "Water pollution, including sewage"
+        },
+        {
+          value: "Odour",
+          text: "Odour (unpleasant smell)"
+        },
+        {
+          value: "Blockage in a watercourse",
+          text: "Blockage in a watercourse"
+        }
+      ]
+    }) }}
+  
+
+    <button class="govuk-body pretendlink">
+      Show all incident types
+    </button>
+
+  
+    <div class="govuk-!-padding-bottom-5"></div>
+  </div>
+</div>

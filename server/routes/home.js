@@ -9,7 +9,7 @@ const handlers = {
     request.cookieAuth.set({
       profile: request.auth.credentials.profile
     })
-    return h.redirect(constants.routes.DESCRIPTION)
+    return h.redirect(constants.views.CREATE_A_REPORT)
   }
 }
 

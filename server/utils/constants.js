@@ -12,10 +12,7 @@ const HOME = 'home'
 const SERVICE_UNAVAILABLE = 'service-unavailable'
 const SIGNOUT = 'signout'
 
-const DESCRIPTION = 'description'
-const REPORTER = 'reporter'
-const LOCATION = 'location'
-const DATE = 'date'
+const CREATE_A_REPORT = 'create-a-report'
 
 const views = {
   ERROR,
@@ -23,10 +20,7 @@ const views = {
   HOME,
   SERVICE_UNAVAILABLE,
   SIGNOUT,
-  DESCRIPTION,
-  REPORTER,
-  LOCATION,
-  DATE
+  CREATE_A_REPORT
 }
 
 const routes = {
