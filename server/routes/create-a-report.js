@@ -1,9 +1,9 @@
 import constants from '../utils/constants.js'
-import { questionSets } from '../../node_modules/@defra/smart-incident-reporting/server/utils/question-sets.js'
+// import { questionSets } from '../../node_modules/@defra/smart-incident-reporting/server/utils/question-sets.js'
 
 const handlers = {
   get: async (_request, h) => {
-    console.log(questionSets)
+    // console.log(questionSets)
     return h.view(constants.views.CREATE_A_REPORT, {
       ...getContext()
     })

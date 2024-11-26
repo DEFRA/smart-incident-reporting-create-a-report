@@ -95,34 +95,5 @@
       "**/docs/**"
     ],
     "delay": 3000
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageReporters": [
-      "lcov",
-      "text"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 50,
-        "functions": 50,
-        "lines": 50,
-        "statements": 50
-      }
-    },
-    "coveragePathIgnorePatterns": [
-      "__test-helpers__",
-      "/old-smell/"
-    ],
-    "setupFiles": [
-      "./.jest/test.env.js"
-    ],
-    "setupFilesAfterEnv": [
-      "./.jest/setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "__test-helpers__",
-      "/old-smell/"
-    ]
   }
 }

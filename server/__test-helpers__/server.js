@@ -31,9 +31,11 @@ const submitRequest = async (options, expectedResponseCode) => {
     options.auth = {
       strategy: 'session-auth',
       credentials: {
-        id: 1,
-        fullName: 'John Smith',
-        phone: '012345678910'
+        profile: {
+          id: 1,
+          displayName: 'Smith, John',
+          email: 'test@test.com'
+        }
       }
     }
   }

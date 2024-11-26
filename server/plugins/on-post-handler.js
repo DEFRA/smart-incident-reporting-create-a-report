@@ -6,7 +6,7 @@ const onPostHandler = {
         if (request.response.variety === 'view' && request.method === 'get') {
           request.response.headers['cache-control'] = 'no-cache, no-store, must-revalidate'
 
-          const { context } = request.response.source
+          const context = request.response.source.context || {}
           context.auth = request.auth
 
           // apply auth to context
