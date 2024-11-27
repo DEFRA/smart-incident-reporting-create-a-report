@@ -1,5 +1,266 @@
-<h1 class="govuk-label-wrapper">
-  <label class="govuk-label govuk-label--l govuk-!-margin-bottom-4 govuk-!-margin-top-7" for="create-description">
-    Reporter
-  </label>
-</h1>
+{% from "dist/govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "dist/govuk/components/input/macro.njk" import govukInput %}
+{% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+
+    {% call govukFieldset({
+      legend: {
+        text: 'Reporter',
+        classes: "govuk-fieldset__legend--l govuk-!-padding-top-7 govuk-!-padding-bottom-4",
+        isPageHeading: true
+      }
+    }) %}
+
+    <p class="govuk-body">If the reporter does not want to give these details, leave blank.</p>
+
+    {{ govukInput({
+      id: "create-reporter-first-name",
+      name: "create-reporter-first-name",
+      label: {
+        text: "First name"
+      },
+      classes: "govuk-!-width-full",
+      value: '',
+      autocomplete: "off"
+    }) }}
+
+    {{ govukInput({
+      id: "create-reporter-last-name",
+      name: "create-reporter-last-name",
+      label: {
+        text: "Last name"
+      },
+      classes: "govuk-!-width-full",
+      value: '',
+      autocomplete: "off"
+    }) }}
+
+    {{ govukInput({
+      id: "create-reporter-email",
+      name: "create-reporter-email",
+      label: {
+        text: "Email"
+      },
+      errorMessage: '',
+      classes: "govuk-!-width-full",
+      value: '',
+      autocomplete: "off"
+    }) }}
+
+    {{ govukInput({
+      id: "create-reporter-phone",
+      name: "create-reporter-phone",
+      label: {
+        text: "Phone number"
+      },
+      classes: "govuk-input--width-10",
+      value: '',
+      autocomplete: "off"
+    }) }}
+
+    {% endcall %}
+
+    <div class="govuk-!-padding-bottom-8"></div>
+
+    {{ govukRadios({
+      classes: "govuk-radios--small",
+      name: "create-reporter-photos",
+      fieldset: {
+        legend: {
+          text: "Has photos or videos of problem",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      value: '',
+      errorMessage: '',
+      items: [
+        {
+          value: "Yes",
+          text: "Yes — reporter must give their email"
+        },
+        {
+          value: "No",
+          text: "No"
+        }
+      ]
+    }) }}
+
+  </div>
+  <div class="govuk-grid-column-one-half govuk-!-padding-left-7">
+
+    <div class="govuk-!-padding-bottom-9"></div>
+    <div class="govuk-!-padding-bottom-8"></div>
+
+    <div class="govuk-form-group">
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        <h1 class="govuk-fieldset__heading">
+        External organisation report
+        </h1>
+        </legend>
+
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+          <div class="govuk-checkboxes__item">
+            <input class="govuk-checkboxes__input" id="water-company" name="create-reporter-org-type" type="checkbox" value="water-company">
+            <label class="govuk-label govuk-checkboxes__label" for="water-company">
+              Water company
+            </label>
+          </div>
+
+          <div class="govuk-checkboxes__item">
+            <input class="govuk-checkboxes__input" id="other-org" name="create-reporter-org-type" type="checkbox" value="other-org">
+            <label class="govuk-label govuk-checkboxes__label" for="other-org">
+              Public organisation
+            </label>
+            <div id="signIn-item-hint" class="govuk-hint govuk-checkboxes__hint">
+              For example the fire service or a local authority
+            </div>
+          </div>
+
+        </div>
+      </fieldset>
+    </div>
+
+
+    <div class="govuk-!-padding-bottom-3"></div>
+
+    <div id="waterCompanyRadios" style="display: none;">
+    {{ govukRadios({
+      classes: "govuk-radios--small",
+      name: "create-reporter-watercompanyname",
+      fieldset: {
+        legend: {
+          text: "Water company name",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      id: "create-reporter-watercompanyname",
+      value: '',
+      errorMessage: '',
+      items: [
+       {
+          value: "Southern Water Services Ltd",
+          text: "Southern Water Services Ltd"
+        },
+        {
+          value: "Anglian Water Services Limited",
+          text: "Anglian Water Services Limited"
+        },
+        {
+          value: "United Utilities Water Ltd",
+          text: "United Utilities Water Ltd"
+        },
+        {
+          value: "Severn Trent Water Ltd",
+          text: "Severn Trent Water Ltd"
+        },
+        {
+          value: "Thames Water Utilities Ltd",
+          text: "Thames Water Utilities Ltd"
+        },
+        {
+          value: "Northumbrian Water plc",
+          text: "Northumbrian Water plc"
+        },
+        {
+          value: "South West Water Ltd",
+          text: "South West Water Ltd"
+        },
+        {
+          value: "Wessex Water Service Ltd",
+          text: "Wessex Water Service Ltd"
+        },
+        {
+          value: "Yorkshire Water Services Ltd",
+          text: "Yorkshire Water Services Ltd"
+        },
+        {
+          value: "South East Water Ltd",
+          text: "South East Water Ltd"
+        },
+        {
+          value: "Dwr Cymru (Welsh Water)",
+          text: "Dwr Cymru (Welsh Water)"
+        },
+        {
+          value: "Bristol Water plc",
+          text: "Bristol Water plc"
+        },
+        {
+          value: "Albion Water Ltd",
+          text: "Albion Water Ltd"
+        },
+        {
+          value: "Veolia Water South East",
+          text: "Veolia Water South East"
+        },
+        {
+          value: "Veolia Water Central Ltd",
+          text: "Veolia Water Central Ltd"
+        },
+        {
+          value: "Portsmouth Water plc",
+          text: "Portsmouth Water plc"
+        },
+        {
+          value: "Affinity Water Limited",
+          text: "Affinity Water Limited"
+        },
+        {
+          value: "Cambridge Water Company plc",
+          text: "Cambridge Water Company plc"
+        },
+        {
+          value: "Essex & Suffolk Water plc",
+          text: "Essex & Suffolk Water plc"
+        },
+        {
+          value: "Sutton and East Surrey Water plc",
+          text: "Sutton and East Surrey Water plc"
+        },
+        {
+          value: "Veolia Water East Ltd",
+          text: "Veolia Water East Ltd"
+        },
+        {
+          value: "Dee Valley Water",
+          text: "Dee Valley Water"
+        },
+        {
+          value: "Hartlepool Water plc",
+          text: "Hartlepool Water plc"
+        },
+        {
+          value: "Northumbrian Water plc",
+          text: "Northumbrian Water plc"
+        },
+        {
+          value: "Sembcorp Bournemouth Water",
+          text: "Sembcorp Bournemouth Water"
+        },
+        {
+          value: "South Staffordshire Water plc",
+          text: "South Staffordshire Water plc"
+        }
+      ]
+    }) }}
+    </div>
+
+    <div id="organisationInput" style="display: none;">
+      {{ govukInput({
+        id: "create-reporter-org-name",
+        name: "create-reporter-org-name",
+        value: '',
+        errorMessage: '',
+        label: {
+          text: "Organisation name",
+          classes: "govuk-fieldset__legend--s"
+        }
+      }) }}
+    </div>
+
+    </div>
+</div>

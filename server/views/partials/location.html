@@ -1,5 +1,37 @@
-<h1 class="govuk-label-wrapper">
-  <label class="govuk-label govuk-label--l govuk-!-margin-bottom-4 govuk-!-margin-top-7" for="create-description">
-    Location of incident
-  </label>
-</h1>
+{% from "dist/govuk/components/input/macro.njk" import govukInput %}
+{% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4 govuk-!-margin-top-7">Location of incident</h1>
+
+      {{ govukInput({
+        name: "create-location-gridref",
+        id: "create-location-gridref",
+        label: {
+          text: "National grid reference"
+        },
+        classes: "govuk-input--width-10",
+        value: '',
+        errorMessage: '',
+        autocomplete: "off"
+      }) }}
+
+    <div class="govuk-!-padding-bottom-4"></div>
+
+      {{ govukTextarea({
+        name: "create-location-description",
+        id: "create-location-description",
+        rows: "6",
+        label: {
+          text: "Location description (optional)"
+        },
+        hint: {
+          html: "Include things like the name of the watercourse and nearest town or landmarks. You can also include things like <a href='http://www.what3words.com' target='_new'>what3words</a> or map references."
+        },
+        value: ''
+      }) }}
+  
+  </div>
+</div>
