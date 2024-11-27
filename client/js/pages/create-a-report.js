@@ -18,11 +18,11 @@ toggleIncidentTypesButton.addEventListener('click', (e) => {
 })
 checkboxWaterCompany.addEventListener('change', () => {
   if (checkboxWaterCompany.checked) checkboxOtherOrg.checked = false
-  toggleIncidentTypes()
+  toggleWaterAndOrg()
 })
 checkboxOtherOrg.addEventListener('change', () => {
   if (checkboxOtherOrg.checked) checkboxWaterCompany.checked = false
-  toggleIncidentTypes()
+  toggleWaterAndOrg()
 })
 todayDateInput.addEventListener('change', () => {
   toggleDate()
