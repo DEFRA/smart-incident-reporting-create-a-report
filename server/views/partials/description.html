@@ -2,10 +2,12 @@
 {% from "dist/govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+{% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set emailReportHtml %}
   {{ govukDateInput({
-    id: "emailReportDate",
+    id: "descriptionEmailReportDate",
     fieldset: {
       legend: {
         text: "Date of email",
@@ -14,34 +16,34 @@
     },
     items: [
       {
-        name: "emailReportDateDay",
-        id: "emailReportDateDay",
+        name: "descriptionEmailReportDateDay",
+        id: "descriptionEmailReportDateDay",
         label: "Day",
-        value: '',
+        value: descriptionEmailReportDateDay,
         classes: "govuk-input--width-2"
       },
       {
-        name: "emailReportDateMonth",
-        id: "emailReportDateMonth",
+        name: "descriptionEmailReportDateMonth",
+        id: "descriptionEmailReportDateMonth",
         label: "Month",
-        value: '',
+        value: descriptionEmailReportDateMonth,
         classes: "govuk-input--width-2"
       },
       {
-        name: "emailReportDateYear",
-        id: "emailReportDateYear",
+        name: "descriptionEmailReportDateYear",
+        id: "descriptionEmailReportDateYear",
         label: "Year",
-        value: '',
+        value: descriptionEmailReportDateYear,
         classes: "govuk-input--width-4"
       }
     ]    
   }) }}
 
   {{ govukInput({
-    id: "emailReportTime",
-    name: "emailReportTime",
+    id: "descriptionEmailReportTime",
+    name: "descriptionEmailReportTime",
     classes: "govuk-input--width-5",
-    value: '',
+    value: descriptionEmailReportTime,
     autocomplete: "off",
     label: {
       text: "Time of email",
@@ -55,12 +57,16 @@
 {% endset -%}
 
 <div class="govuk-grid-row">
+  {% if errorSummary.description.errorList|length > 0 %}
+    <div class="govuk-grid-column-full">
+      {{ govukErrorSummary(errorSummary.description) }}
+    </div>
+  {% endif %}
 
   <div class="govuk-grid-column-two-thirds">
-
-    <div class="govuk-form-group">
+    <div class="govuk-form-group {% if findErrorMessageById(errorSummary.description, 'descriptionDescription') %}govuk-form-group--error{% endif %}">
       <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l govuk-!-margin-bottom-4 govuk-!-margin-top-7" for="create-description">
+        <label class="govuk-label govuk-label--l govuk-!-margin-bottom-4 govuk-!-margin-top-7" for="descriptionDescription">
           Incident description
         </label>
       </h1>
@@ -68,18 +74,22 @@
         <a href="https://defra.sharepoint.com/teams/Team3360/SitePages/ICS-Knowledge-Base.aspx" class="govuk-link--no-visited-state" target="_new">
         Open the knowledge base</a>.
       </p>
-        <textarea class="govuk-textarea" id="create-description" name="create-description" rows="12">{{data['create-description']}}</textarea>
-      </textarea>
+      {{ govukTextarea({
+        name: "descriptionDescription",
+        id: "descriptionDescription",
+        rows: 12,
+        value: descriptionDescription,
+        errorMessage: findErrorMessageById(errorSummary.description, "descriptionDescription")
+      }) }}
     </div>
-
     {{ govukCheckboxes({
       classes: "govuk-checkboxes--small",
-      name: "notified",
-      id: "notifed",
-      values: '',
+      name: "descriptionReportedByEmail",
+      id: "descriptionReportedByEmail",
       items: [
         {
-          value: "email",
+          value: "true",
+          checked: descriptionReportedByEmail === 'true',
           text: "Reported by email",
           conditional: {
             html: emailReportHtml
@@ -97,8 +107,8 @@
   
     {{ govukRadios({
       classes: "govuk-radios--small",
-      name: "incidentType",
-      id: "incidentType",
+      name: "descriptionIncidentType",
+      id: "descriptionIncidentType",
       fieldset: {
         legend: {
           text: "Incident type",
@@ -109,130 +119,162 @@
       errorMessage: '',
       items: [
       {
+        checked: descriptionIncidentType === 'Water pollution',
         value: "Water pollution",
         text: "Water pollution, including sewage"
       },
       {
+        checked: descriptionIncidentType === 'Odour',
         value: "Odour",
         text: "Odour (unpleasant smell)"
       },
       {
+        checked: descriptionIncidentType === 'Blockage in a watercourse',
         value: "Blockage in a watercourse",
         text: "Blockage in a watercourse"
       }, 
       {
+        checked: descriptionIncidentType === 'Abstraction',
         value: "Abstraction",
         text: "Abstraction/low levels"
       },
       {
+        checked: descriptionIncidentType === 'Alteration to a water course',
         value: "Alteration to a water course",
         text: "Alteration to a water course"
       },
       {
+        checked: descriptionIncidentType === 'Beach pollution',
         value: "Beach pollution",
         text: "Beach pollution"
       },
       {
+        checked: descriptionIncidentType === 'Burning of waste',
         value: "Burning of waste",
         text: "Burning of waste"
       },
       {
+        checked: descriptionIncidentType === 'Damage to nature',
         value: "Damage to nature",
         text: "Damage to nature"
       },
       {
+        checked: descriptionIncidentType === 'Dust',
         value: "Dust",
         text: "Dust"
       },
       {
+        checked: descriptionIncidentType === 'Fire',
         value: "Fire",
         text: "Fire"
       },
       {
+        checked: descriptionIncidentType === 'Fish disease',
         value: "Fish disease",
         text: "Fish disease"
       },
       {
+        checked: descriptionIncidentType === 'Fish kill',
         value: "Fish kill",
         text: "Fish kill"
       },
       {
+        checked: descriptionIncidentType === 'Flies',
         value: "Flies",
         text: "Flies"
       },
       {
+        checked: descriptionIncidentType === 'Flooding - external report',
         value: "Flooding - external report",
         text: "Flooding - external report"
       },
       {
+        checked: descriptionIncidentType === 'Flooding - internal report',
         value: "Flooding - internal report",
         text: "Flooding - internal report"
       },
       {
+        checked: descriptionIncidentType === 'Flytipping',
         value: "Flytipping",
         text: "Flytipping"
       },
       {
+        checked: descriptionIncidentType === 'Healthy concern',
         value: "Healthy concern",
         text: "Healthy concern"
       },
       {
+        checked: descriptionIncidentType === 'Illegal fishing',
         value: "Illegal fishing",
         text: "Illegal fishing"
       },
       {
+        checked: descriptionIncidentType === 'Illegal waste site',
         value: "Illegal waste site",
         text: "Illegal waste site"
       },
       {
+        checked: descriptionIncidentType === 'Invasive species',
         value: "Invasive species",
         text: "Invasive species"
       },
       {
+        checked: descriptionIncidentType === 'Land contamination',
         value: "Land contamination",
         text: "Land contamination"
       },
       {
+        checked: descriptionIncidentType === 'Litter',
         value: "Litter",
         text: "Litter"
       },
       {
+        checked: descriptionIncidentType === 'Mud',
         value: "Mud",
         text: "Mud"
       },
       {
+        checked: descriptionIncidentType === 'Navigation incident',
         value: "Navigation incident",
         text: "Navigation incident"
       },
       {
+        checked: descriptionIncidentType === 'Noise',
         value: "Noise",
         text: "Noise"
       },
       {
+        checked: descriptionIncidentType === 'Oil and chemical spills',
         value: "Oil and chemical spills",
         text: "Oil and chemical spills"
       },
       {
+        checked: descriptionIncidentType === 'Radioactive and nuclear',
         value: "Radioactive and nuclear",
         text: "Radioactive and nuclear"
       },
       {
+        checked: descriptionIncidentType === 'Reservoir incident',
         value: "Reservoir incident",
         text: "Reservoir incident"
       },
       {
+        checked: descriptionIncidentType === 'Road traffic collision',
         value: "Road traffic collision",
         text: "Road traffic collision"
       },
       {
+        checked: descriptionIncidentType === 'Suspected permit breach',
         value: "Suspected permit breach",
         text: "Suspected permit breach"
       },
       {
+        checked: descriptionIncidentType === 'Vermin',
         value: "Vermin",
         text: "Vermin"
       },
       {
+        checked: descriptionIncidentType === 'Waste carrier',
         value: "Waste carrier",
         text: "Waste carrier"
       },
@@ -240,6 +282,7 @@
         divider: "or"
       },
       {
+        checked: descriptionIncidentType === 'Other',
         value: "Other",
         text: "Other"
       }

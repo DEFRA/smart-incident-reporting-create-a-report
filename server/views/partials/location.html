@@ -1,19 +1,25 @@
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <div class="govuk-grid-row">
+  {% if errorSummary.location.errorList|length %}
+    <div class="govuk-grid-column-full">
+      {{ govukErrorSummary(errorSummary.location) }}
+    </div>
+  {% endif %}
   <div class="govuk-grid-column-two-thirds">
 
     <h1 class="govuk-heading-l govuk-!-margin-bottom-4 govuk-!-margin-top-7">Location of incident</h1>
 
       {{ govukInput({
-        name: "create-location-gridref",
-        id: "create-location-gridref",
+        name: "locationGridRef",
+        id: "locationGridRef",
         label: {
           text: "National grid reference"
         },
         classes: "govuk-input--width-10",
-        value: '',
+        value: locationGridRef,
         errorMessage: '',
         autocomplete: "off"
       }) }}
@@ -21,8 +27,8 @@
     <div class="govuk-!-padding-bottom-4"></div>
 
       {{ govukTextarea({
-        name: "create-location-description",
-        id: "create-location-description",
+        name: "locationDescription",
+        id: "locationDescription",
         rows: "6",
         label: {
           text: "Location description (optional)"
@@ -30,7 +36,7 @@
         hint: {
           html: "Include things like the name of the watercourse and nearest town or landmarks. You can also include things like <a href='http://www.what3words.com' target='_new'>what3words</a> or map references."
         },
-        value: ''
+        value: locationDescription
       }) }}
   
   </div>

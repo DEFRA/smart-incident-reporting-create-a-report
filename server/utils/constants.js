@@ -13,6 +13,7 @@ const SERVICE_UNAVAILABLE = 'service-unavailable'
 const SIGNOUT = 'signout'
 
 const CREATE_A_REPORT = 'create-a-report'
+const CHECK_AND_SUBMIT = 'check-and-submit'
 
 const views = {
   ERROR,
@@ -20,7 +21,8 @@ const views = {
   HOME,
   SERVICE_UNAVAILABLE,
   SIGNOUT,
-  CREATE_A_REPORT
+  CREATE_A_REPORT,
+  CHECK_AND_SUBMIT
 }
 
 const routes = {

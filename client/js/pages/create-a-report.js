@@ -1,15 +1,18 @@
 const toggleIncidentTypesButton = document.querySelector('#toggle-incident-types')
-const incidentInputs = document.querySelectorAll('input[id^="incidentType"]')
+const incidentInputs = document.querySelectorAll('input[id^="descriptionIncidentType"]')
 const divider = document.querySelector('.govuk-radios__divider')
-const checkboxWaterCompany = document.getElementById('water-company')
-const checkboxOtherOrg = document.getElementById('other-org')
+const checkboxWaterCompany = document.getElementById('water')
+const checkboxOtherOrg = document.getElementById('other')
 const waterCompanyRadios = document.getElementById('waterCompanyRadios')
 const organisationInput = document.getElementById('organisationInput')
 const timeInput = document.getElementById('timeInput')
 const otherDateTimeInput = document.getElementById('otherDateTimeInput')
-const todayDateInput = document.getElementById('create-date-observed-choice')
-const yesterdayDateInput = document.getElementById('create-date-observed-choice-2')
-const otherDateInput = document.getElementById('create-date-observed-choice-3')
+const todayDateInput = document.getElementById('dateObserved')
+const yesterdayDateInput = document.getElementById('dateObserved-2')
+const otherDateInput = document.getElementById('dateObserved-3')
+const errorSummaries = document.getElementsByClassName('govuk-error-summary')
+const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
+const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
 
 // Events
 toggleIncidentTypesButton.addEventListener('click', (e) => {
@@ -72,7 +75,20 @@ const toggleDate = () => {
   }
 }
 
+const showFirstErrorTab = () => {
+  if (errorSummaries.length > 0) {
+    const firstError = errorSummaries[0]
+    for (let i = 0; i < tabPanels.length; i++) {
+      if (tabPanels[i] === firstError.parentNode.parentNode.parentNode) {
+        tabListItems[i].children[0].click()
+        break
+      }
+    }
+  }
+}
+
 window.addEventListener('load', () => {
+  showFirstErrorTab()
   toggleIncidentTypes()
   toggleWaterAndOrg()
   toggleDate()

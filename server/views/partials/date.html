@@ -2,8 +2,14 @@
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
 {% from "dist/govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <div class="govuk-grid-row">
+  {% if errorSummary.date.errorList|length %}
+    <div class="govuk-grid-column-full">
+      {{ govukErrorSummary(errorSummary.date) }}
+    </div>
+  {% endif %}
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l govuk-!-padding-top-7">Date observed</h1>
   </div>
@@ -14,21 +20,23 @@
     <!-- to do change into govuk fieldset and radios nunjucks-->
     {{ govukRadios({
       classes: "govuk-radios--small",
-      name: "create-date-observed-choice",
-      id: "create-date-observed-choice",
-      value: '',
+      name: "dateObserved",
+      id: "dateObserved",
       errorMessage: '',
       items: [
        {
-          value: "create-date-observed-choice-todaytime",
+          checked: dateObserved === 'today',
+          value: "today",
           text: "Today"
         },
         {
-          value: "create-date-observed-choice-yesterdaytime",
+          checked: dateObserved === 'yesterday',
+          value: "yesterday",
           text: "Yesterday"
         },
         {
-          value: "create-date-observed-choice-otherdate",
+          checked: dateObserved === 'before',
+          value: "before",
           text: "Before then"
         }
       ]
@@ -39,10 +47,10 @@
     <div id="timeInput" style="display: none;">
       <div class="govuk-!-padding-top-3"></div>
       {{ govukInput({
-        id: "create-date-observed-time",
-        name: "create-date-observed-time",
+        id: "dateTime",
+        name: "dateTime",
         classes: "govuk-input--width-5",
-        value: '',
+        value: dateTime,
         errorMessage: '',
         label: {
           text: "Time (approximate)"
@@ -56,7 +64,7 @@
 
     <div id="otherDateTimeInput" style="display: none;">
       {{ govukDateInput({
-        id: "create-date-observed-otherdate",
+        id: "dateOther",
         fieldset: {
           legend: {
             text: "Date",
@@ -66,34 +74,34 @@
         errorMessage: '',
         items: [
           {
-            name: "create-date-observed-otherdate-day",
-            id: "create-date-observed-otherdate-day",
+            name: "dateOtherDay",
+            id: "dateOtherDay",
             label: "Day",
-            value: '',
+            value: dateOtherDay,
             classes: "govuk-input--width-2"
           },
           {
-            name: "create-date-observed-otherdate-month",
-            id: "create-date-observed-otherdate-month",
+            name: "dateOtherMonth",
+            id: "dateOtherMonth",
             label: "Month",
-            value: '',
+            value: dateOtherMonth,
             classes: "govuk-input--width-2"
           },
           {
-            name: "create-date-observed-otherdate-year",
-            id: "create-date-observed-otherdate-year",
+            name: "dateOtherYear",
+            id: "dateOtherYear",
             label: "Year",
-            value: '',
+            value: dateOtherYear,
             classes: "govuk-input--width-4"
           }
         ]    
       }) }}
 
       {{ govukInput({
-        id: "create-date-observed-otherdate-time",
-        name: "create-date-observed-otherdate-time",
+        id: "dateOtherTime",
+        name: "dateOtherTime",
         classes: "govuk-input--width-5",
-        value: '',
+        value: dateOtherTime,
         autocomplete: "off",
         label: {
           text: "Time",

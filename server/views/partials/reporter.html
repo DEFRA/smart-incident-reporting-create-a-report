@@ -1,8 +1,15 @@
 {% from "dist/govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <div class="govuk-grid-row">
+  {% if errorSummary.reporter.errorList|length %}
+    <div class="govuk-grid-column-full">
+      {{ govukErrorSummary(errorSummary.reporter) }}
+    </div>
+  {% endif %}
   <div class="govuk-grid-column-one-half">
 
     {% call govukFieldset({
@@ -16,47 +23,47 @@
     <p class="govuk-body">If the reporter does not want to give these details, leave blank.</p>
 
     {{ govukInput({
-      id: "create-reporter-first-name",
-      name: "create-reporter-first-name",
+      id: "reporterFirstName",
+      name: "reporterFirstName",
       label: {
         text: "First name"
       },
       classes: "govuk-!-width-full",
-      value: '',
+      value: reporterFirstName,
       autocomplete: "off"
     }) }}
 
     {{ govukInput({
-      id: "create-reporter-last-name",
-      name: "create-reporter-last-name",
+      id: "reporterLastName",
+      name: "reporterLastName",
       label: {
         text: "Last name"
       },
       classes: "govuk-!-width-full",
-      value: '',
+      value: reporterLastName,
       autocomplete: "off"
     }) }}
 
     {{ govukInput({
-      id: "create-reporter-email",
-      name: "create-reporter-email",
+      id: "reporterEmail",
+      name: "reporterEmail",
       label: {
         text: "Email"
       },
       errorMessage: '',
       classes: "govuk-!-width-full",
-      value: '',
+      value: reporterEmail,
       autocomplete: "off"
     }) }}
 
     {{ govukInput({
-      id: "create-reporter-phone",
-      name: "create-reporter-phone",
+      id: "reporterPhone",
+      name: "reporterPhone",
       label: {
         text: "Phone number"
       },
       classes: "govuk-input--width-10",
-      value: '',
+      value: reporterPhone,
       autocomplete: "off"
     }) }}
 
@@ -66,7 +73,7 @@
 
     {{ govukRadios({
       classes: "govuk-radios--small",
-      name: "create-reporter-photos",
+      name: "reporterPhotos",
       fieldset: {
         legend: {
           text: "Has photos or videos of problem",
@@ -77,10 +84,12 @@
       errorMessage: '',
       items: [
         {
+          checked: reporterPhotos === 'Yes',
           value: "Yes",
           text: "Yes — reporter must give their email"
         },
         {
+          checked: reporterPhotos === 'No',
           value: "No",
           text: "No"
         }
@@ -96,23 +105,23 @@
     <div class="govuk-form-group">
       <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-        <h1 class="govuk-fieldset__heading">
-        External organisation report
-        </h1>
+          <h1 class="govuk-fieldset__heading">
+            External organisation report
+          </h1>
         </legend>
 
         <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
 
           <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="water-company" name="create-reporter-org-type" type="checkbox" value="water-company">
-            <label class="govuk-label govuk-checkboxes__label" for="water-company">
+            <input class="govuk-checkboxes__input" id="water" name="reporterOrgType" type="checkbox" value="water" {%if reporterOrgType === 'water'%}checked{% endif %}>
+            <label class="govuk-label govuk-checkboxes__label" for="water">
               Water company
             </label>
           </div>
 
           <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="other-org" name="create-reporter-org-type" type="checkbox" value="other-org">
-            <label class="govuk-label govuk-checkboxes__label" for="other-org">
+            <input class="govuk-checkboxes__input" id="other" name="reporterOrgType" type="checkbox" value="other" {%if reporterOrgType === 'other'%}checked{% endif %}>
+            <label class="govuk-label govuk-checkboxes__label" for="other">
               Public organisation
             </label>
             <div id="signIn-item-hint" class="govuk-hint govuk-checkboxes__hint">
@@ -130,118 +139,143 @@
     <div id="waterCompanyRadios" style="display: none;">
     {{ govukRadios({
       classes: "govuk-radios--small",
-      name: "create-reporter-watercompanyname",
+      name: "reporterWaterName",
       fieldset: {
         legend: {
           text: "Water company name",
           classes: "govuk-fieldset__legend--s"
         }
       },
-      id: "create-reporter-watercompanyname",
-      value: '',
+      id: "reporterWaterName",
       errorMessage: '',
       items: [
        {
+          checked: reporterWaterName === 'Southern Water Services Ltd',
           value: "Southern Water Services Ltd",
           text: "Southern Water Services Ltd"
         },
         {
+          checked: reporterWaterName === 'Anglian Water Services Limited',
           value: "Anglian Water Services Limited",
           text: "Anglian Water Services Limited"
         },
         {
+          checked: reporterWaterName === 'United Utilities Water Ltd',
           value: "United Utilities Water Ltd",
           text: "United Utilities Water Ltd"
         },
         {
+          checked: reporterWaterName === 'Severn Trent Water Ltd',
           value: "Severn Trent Water Ltd",
           text: "Severn Trent Water Ltd"
         },
         {
+          checked: reporterWaterName === 'Thames Water Utilities Ltd',
           value: "Thames Water Utilities Ltd",
           text: "Thames Water Utilities Ltd"
         },
         {
+          checked: reporterWaterName === 'Northumbrian Water plc',
           value: "Northumbrian Water plc",
           text: "Northumbrian Water plc"
         },
         {
+          checked: reporterWaterName === 'South West Water Ltd',
           value: "South West Water Ltd",
           text: "South West Water Ltd"
         },
         {
+          checked: reporterWaterName === 'Wessex Water Service Ltd',
           value: "Wessex Water Service Ltd",
           text: "Wessex Water Service Ltd"
         },
         {
+          checked: reporterWaterName === 'Yorkshire Water Services Ltd',
           value: "Yorkshire Water Services Ltd",
           text: "Yorkshire Water Services Ltd"
         },
         {
+          checked: reporterWaterName === 'South East Water Ltd',
           value: "South East Water Ltd",
           text: "South East Water Ltd"
         },
         {
+          checked: reporterWaterName === 'Dwr Cymru (Welsh Water)',
           value: "Dwr Cymru (Welsh Water)",
           text: "Dwr Cymru (Welsh Water)"
         },
         {
+          checked: reporterWaterName === 'Bristol Water plc',
           value: "Bristol Water plc",
           text: "Bristol Water plc"
         },
         {
+          checked: reporterWaterName === 'Albion Water Ltd',
           value: "Albion Water Ltd",
           text: "Albion Water Ltd"
         },
         {
+          checked: reporterWaterName === 'Veolia Water South East',
           value: "Veolia Water South East",
           text: "Veolia Water South East"
         },
         {
+          checked: reporterWaterName === 'Veolia Water Central Ltd',
           value: "Veolia Water Central Ltd",
           text: "Veolia Water Central Ltd"
         },
         {
+          checked: reporterWaterName === 'Portsmouth Water plc',
           value: "Portsmouth Water plc",
           text: "Portsmouth Water plc"
         },
         {
+          checked: reporterWaterName === 'Affinity Water Limited',
           value: "Affinity Water Limited",
           text: "Affinity Water Limited"
         },
         {
+          checked: reporterWaterName === 'Cambridge Water Company plc',
           value: "Cambridge Water Company plc",
           text: "Cambridge Water Company plc"
         },
         {
+          checked: reporterWaterName === 'Essex & Suffolk Water plc',
           value: "Essex & Suffolk Water plc",
           text: "Essex & Suffolk Water plc"
         },
         {
+          checked: reporterWaterName === 'Sutton and East Surrey Water plc',
           value: "Sutton and East Surrey Water plc",
           text: "Sutton and East Surrey Water plc"
         },
         {
+          checked: reporterWaterName === 'Veolia Water East Ltd',
           value: "Veolia Water East Ltd",
           text: "Veolia Water East Ltd"
         },
         {
+          checked: reporterWaterName === 'Dee Valley Water',
           value: "Dee Valley Water",
           text: "Dee Valley Water"
         },
         {
+          checked: reporterWaterName === 'Hartlepool Water plc',
           value: "Hartlepool Water plc",
           text: "Hartlepool Water plc"
         },
         {
+          checked: reporterWaterName === 'Northumbrian Water plc',
           value: "Northumbrian Water plc",
           text: "Northumbrian Water plc"
         },
         {
+          checked: reporterWaterName === 'Sembcorp Bournemouth Water',
           value: "Sembcorp Bournemouth Water",
           text: "Sembcorp Bournemouth Water"
         },
         {
+          checked: reporterWaterName === 'South Staffordshire Water plc',
           value: "South Staffordshire Water plc",
           text: "South Staffordshire Water plc"
         }
@@ -251,9 +285,9 @@
 
     <div id="organisationInput" style="display: none;">
       {{ govukInput({
-        id: "create-reporter-org-name",
-        name: "create-reporter-org-name",
-        value: '',
+        id: "reporterOtherName",
+        name: "reporterOtherName",
+        value: reporterOtherName,
         errorMessage: '',
         label: {
           text: "Organisation name",
