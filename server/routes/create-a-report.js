@@ -4,7 +4,7 @@ import { validateReportPayload } from '../utils/helpers.js'
 
 const handlers = {
   get: async (request, h) => {
-    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT) || {}
+    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
     if (errorSummary?.description.errorList.length > 0 ||
       errorSummary?.reporter.errorList.length > 0 ||
