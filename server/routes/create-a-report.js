@@ -1,6 +1,5 @@
 import constants from '../utils/constants.js'
 import { validateReportPayload } from '../utils/helpers.js'
-// import { questionSets } from '../../node_modules/@defra/smart-incident-reporting/server/utils/question-sets.js'
 
 const handlers = {
   get: async (request, h) => {
@@ -21,6 +20,9 @@ const handlers = {
     })
   },
   post: async (request, h) => {
+    // Store data in redis cache
+    request.yar.set(constants.redisKeys.CREATE_A_REPORT, request.payload)
+
     // Validate payload
     const errorSummary = validateReportPayload(request.payload)
 
@@ -36,11 +38,8 @@ const handlers = {
       })
     }
 
-    // Store data in redis cache
-    request.yar.set(constants.redisKeys.CREATE_A_REPORT, request.payload)
-
     // redirect to check answers page
-    return h.redirect(constants.routes.CHECK_AND_SUBMIT)
+    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
   }
 }
 const getContext = session => {

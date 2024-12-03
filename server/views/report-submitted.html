@@ -1,0 +1,30 @@
+{% from "dist/govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "dist/govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends 'form-layout.html' %}
+{% set pageTitle = "Check and submit report" %}
+
+{% block formContent %}
+
+<div class="govuk-!-margin-bottom-5"></div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+
+    {{ govukPanel({
+      titleText: "Report submitted",
+      classes: "govuk-heading-s govuk-!-padding-bottom-3",
+      html: "<p class='govuk-body-l govuk-!-margin-top-7' style='color: white;'>Your report of " + descriptionIncidentType + " has been added to NIRS."
+    }) }}
+
+
+    <div class="govuk-button-group govuk-!-margin-top-5">
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-right-5" data-module="govuk-button" href="create-a-report">
+        Start a new report
+      </a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

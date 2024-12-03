@@ -13,28 +13,28 @@ const handlers = {
     ) {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
-    // if we hit this link we should validate the CREATE_A_REPORT
-    // data and redirect back to create-a-report if anything fails validation
-    return h.view(constants.views.CHECK_AND_SUBMIT, {
-      ...getContext(request.yar)
+    return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
+      ...reportPayload
     })
   },
   post: async (request, h) => {
-    return h.redirect(constants.routes.CHECK_AND_SUBMIT)
+    // Post data to service bus queue
+
+    // set flag to submitted
+    request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
+
+    return h.redirect(constants.routes.REPORT_SUBMITTED)
   }
-}
-const getContext = session => {
-  return session.get(constants.redisKeys.CREATE_A_REPORT)
 }
 
 export default [
   {
     method: 'GET',
-    path: constants.routes.CHECK_AND_SUBMIT,
+    path: constants.routes.CHECK_AND_SUBMIT_REPORT,
     handler: handlers.get
   }, {
     method: 'POST',
-    path: constants.routes.CHECK_AND_SUBMIT,
+    path: constants.routes.CHECK_AND_SUBMIT_REPORT,
     handler: handlers.post
   }
 ]

@@ -1,0 +1,261 @@
+{% from "dist/govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "dist/govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends 'form-layout.html' %}
+{% set pageTitle = "Check and submit report" %}
+
+{% block formContent %}
+
+{{ govukBackLink({
+  text: "Back",
+  href: "#",
+  attributes: {
+      id: "back-link",
+      onclick: "window.history.go(-1); return false;"
+  }
+}) }}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+  
+  <h1 class="govuk-heading-l govuk-!-padding-top-4">{{ pageTitle }}</h1>
+  
+    {% set incidenttypeHtml %}
+    <div>
+      <span class="govuk-caption-m">Incident type</span>
+      <h1 class="govuk-heading-m govuk-!-margin-bottom-0">{{ descriptionIncidentType }}</h1>
+    </div>
+    {% endset %}
+  
+    {% set changeLinkHtml %}
+       <p class="govuk-body govuk-!-margin-bottom-0"><a href="create-a-report#description" class="govuk-link govuk-link--no-visited-state">Change</a></p>
+    {% endset %}
+  
+    {# -------------------- INCIDENT DESCRIPTION -------------------- #}
+    {{ govukSummaryList({
+      card: {
+      classes: "govuk-!-margin-bottom-3",
+        title: {
+          html: incidenttypeHtml
+        },
+        actions: {
+          items: [
+            {
+              href: "description",
+              html: changeLinkHtml,
+              visuallyHiddenText: "reporter details"
+            } 
+          ]
+        }
+      },
+      rows: [
+        {
+          key: {
+            text: "Incident description"
+          },
+          value: {
+            html: descriptionDescription
+          }
+        },
+        {
+          key: {
+            text: "Date and time of email report"
+          },
+          value: {
+            html: (descriptionEmailReportDateDay + " " + monthName(descriptionEmailReportDateMonth) + " " + descriptionEmailReportDateYear + " at " + descriptionEmailReportTime) 
+          }
+        } if (descriptionReportedByEmail)  
+      ]
+    }) }}
+  
+    {# -------------------- REPORTER -------------------- #}
+    {{ govukSummaryList({
+      card: {
+      classes: "govuk-!-margin-bottom-3",
+        title: {
+          text: "Reporter"
+        },
+        actions: {
+          items: [
+            {
+              href: "create-a-report#reporter",
+              html: '<p class="govuk-body govuk-!-margin-bottom-0"><a href="create-a-report#reporter" class="govuk-link govuk-link--no-visited-state">Change</a></p>',
+              visuallyHiddenText: "reporter details"
+            }
+          ]
+        }
+      },
+      rows: [
+        {
+          key: {
+            text: "Water company name"
+          },
+          value: {
+            text: reporterWaterName
+          }
+        } if ((reporterOrgType == "water") and (reporterWaterName)),
+  
+        {
+          key: {
+            text: "Organisation name"
+          },
+          value: {
+            text: reporterOtherName
+          }
+        } if ((reporterOrgType == "other") and (reporterOtherName)),
+   
+        {
+          key: {
+            text: "First name"
+          },
+          value: {
+            text: reporterFirstName
+          }
+        } if reporterFirstName,
+  
+      {
+          key: {
+            text: "Last name"
+          },
+          value: {
+            text: reporterLastName
+          }
+        } if reporterLastName,
+  
+        {
+          key: {
+            text: "Phone number"
+          },
+          value: {
+            text: reporterPhone
+          }
+        } if reporterPhone,
+  
+        {
+          key: {
+            text: "Email address"
+          },
+          value: {
+            text: reporterEmail
+          }
+        } if reporterEmail,
+        
+        {
+          key: {
+            text: "Images or photos"
+          },
+          value: {
+            html: reporterPhotos
+          }
+        }
+      ]
+    }) }}
+  
+    {# -------------------- LOCATION -------------------- #}
+    {{ govukSummaryList({
+      card: {
+      classes: "govuk-!-margin-bottom-6",
+        title: {
+          text: "Location"
+        },
+        actions: {
+          items: [
+            {
+              href: "create-a-report#location",
+              html: '<p class="govuk-body govuk-!-margin-bottom-0"><a href="create-a-report#location" class="govuk-link govuk-link--no-visited-state">Change</a></p>',
+              visuallyHiddenText: "reporter details"
+            }
+          ]
+        }
+      },
+      rows: [
+        {
+          key: {
+            text: "National grid reference"
+          },
+          value: {
+            text: locationGridRef
+          }
+        },
+        {
+          key: {
+            text: "Location description"
+          },
+          value: {
+            text: locationDescription
+          }
+        } if locationDescription
+  
+      ]
+    }) }}
+  
+    {# -------------------- DATE OBSERVED -------------------- #}
+    {{ govukSummaryList({
+      card: {
+      classes: "govuk-!-margin-bottom-6",
+        title: {
+          text: "Date observed"
+        },
+        actions: {
+          items: [
+            {
+              href: 'create-a-report#date',
+              html: '<p class="govuk-body govuk-!-margin-bottom-0"><a href="create-a-report#date" class="govuk-link govuk-link--no-visited-state">Change</a></p>',
+              visuallyHiddenText: "date observed"
+            }
+          ]
+        }
+      },
+      rows: [
+  
+      {
+        key: {
+          text: "Date"
+        },
+        value: {
+          text: "Today"
+        }
+      } if (dateObserved === "today"),
+  
+      {
+        key: {
+          text: "Date"
+        },
+        value: {
+          text: "Yesterday"
+        }
+      } if (dateObserved === "yesterday"),
+  
+      {
+        key: {
+          text: "Date"
+        },
+        value: {
+          html: (dateOtherDay + " " + monthName(dateOtherMonth) + " " + dateOtherYear)
+        }
+      } if (dateObserved === "before"),
+  
+      {
+        key: {
+          text: "Time"
+        },
+        value: {
+          html: dateTime
+        }
+      } if (dateTime)
+  
+      ]
+    }) }}
+  
+    <div class="govuk-button-group">
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Submit report
+      </button>
+      <a class="govuk-button govuk-button--secondary govuk-!-margin-right-5" data-module="govuk-button" href="create-report/cancel">
+        Cancel report
+      </a>
+    </div>
+  
+  </div>
+  </div>
+{% endblock %}
