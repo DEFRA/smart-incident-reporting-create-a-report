@@ -68,6 +68,8 @@ const validateReportPayload = payload => {
       text: 'Enter a national grid reference, like SD661501',
       href: '#locationGridRef'
     })
+  } else {
+    // do nothing (blame sonarcloud)
   }
 
   // Do date validation
