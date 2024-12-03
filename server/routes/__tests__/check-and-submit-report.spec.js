@@ -18,7 +18,7 @@ const sessionData = {
     descriptionIncidentType: 'Water pollution',
     descriptionReportedByEmail: 'true',
     locationDescription: 'Location description',
-    locationGridRef: 'GB12345678GB',
+    locationGridRef: 'SJ 67084 44110',
     reporterEmail: 'test@Test.com'
   }
 }

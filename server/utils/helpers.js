@@ -1,5 +1,8 @@
 import constants from './constants.js'
 
+// OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
+const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
+
 const getErrorSummary = () => {
   return JSON.parse(JSON.stringify(constants.errorSummary))
 }
@@ -55,6 +58,17 @@ const validateReportPayload = payload => {
   // Do reporter validation
 
   // Do location validation
+  if (!payload.locationGridRef) {
+    location.errorList.push({
+      text: 'Enter a national grid reference',
+      href: '#locationGridRef'
+    })
+  } else if (!validateGridReference(payload.locationGridRef)) {
+    location.errorList.push({
+      text: 'Enter a national grid reference, like SD661501',
+      href: '#locationGridRef'
+    })
+  }
 
   // Do date validation
 
@@ -66,8 +80,13 @@ const validateReportPayload = payload => {
   }
 }
 
+const validateGridReference = gridRef => {
+  return gridRefRegex.test(gridRef)
+}
+
 export {
   getErrorSummary,
   validateEmail,
-  validateReportPayload
+  validateReportPayload,
+  validateGridReference
 }
