@@ -74,18 +74,12 @@ const validateReportPayload = payload => {
     let dateString
     let validDate = false
     let isPastDate = false
-    console.log('Data for validDay', validDay)
-    console.log('Data for validMonth', validMonth)
-    console.log('Data for validYear', validYear)
     if (validDay && validMonth && validYear) {
       dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
       validDate = moment(dateString, 'YYYY-MM-DD').isValid()
       const dateToCheck = moment(dateString)
       const today = moment().startOf('day')
       isPastDate = dateToCheck.isSame(today, 'day') || dateToCheck.isBefore(today)
-      console.log('Data for validDate', validDate)
-      console.log('Data for dateString', dateString)
-      console.log('Data for isPastDate', isPastDate)
     }
     if (!day && !month && !year) {
       description.errorList.push({
@@ -158,7 +152,6 @@ const validateReportPayload = payload => {
         href: '#descriptionEmailReportDate'
       })
     } else if (day && month && year && !validDate) {
-      console.log('inside last condition')
       description.errorList.push({
         text: 'The date entered must be a real date',
         href: '#descriptionEmailReportDate'
