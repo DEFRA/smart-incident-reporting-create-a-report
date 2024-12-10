@@ -1,4 +1,5 @@
 import constants from './constants.js'
+import moment from 'moment'
 
 // OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
@@ -53,6 +54,152 @@ const validateReportPayload = payload => {
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
+  }
+
+  if (!payload.descriptionIncidentType) {
+    description.errorList.push({
+      text: 'Select an incident type',
+      href: '#descriptionIncidentType'
+    })
+  }
+
+  if (payload.descriptionReportedByEmail) {
+    // Validation for date of email
+    const day = payload.descriptionEmailReportDateDay
+    const month = payload.descriptionEmailReportDateMonth
+    const year = payload.descriptionEmailReportDateYear
+    const validDay = day > 0 && day <= 31
+    const validMonth = month > 0 && month <= 12
+    const validYear = year > 1900 && year < 3000
+    let dateString
+    let validDate = false
+    let isPastDate = false
+    console.log('Data for validDay', validDay)
+    console.log('Data for validMonth', validMonth)
+    console.log('Data for validYear', validYear)
+    if (validDay && validMonth && validYear) {
+      dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+      validDate = moment(dateString, 'YYYY-MM-DD').isValid()
+      const dateToCheck = moment(dateString)
+      const today = moment().startOf('day')
+      isPastDate = dateToCheck.isSame(today, 'day') || dateToCheck.isBefore(today)
+      console.log('Data for validDate', validDate)
+      console.log('Data for dateString', dateString)
+      console.log('Data for isPastDate', isPastDate)
+    }
+    if (!day && !month && !year) {
+      description.errorList.push({
+        text: 'Enter the date the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
+      description.errorList.push({
+        text: 'Date must be in the past',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!day && month && year) {
+      description.errorList.push({
+        text: 'Enter the day the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (day && !month && year) {
+      description.errorList.push({
+        text: 'Enter the month the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (day && month && !year) {
+      description.errorList.push({
+        text: 'Enter the year the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!day && !month && year) {
+      description.errorList.push({
+        text: 'Enter the day and month the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (day && !month && !year) {
+      description.errorList.push({
+        text: 'Enter the month and year the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!day && month && !year) {
+      description.errorList.push({
+        text: 'Enter the day and year the email was received',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!validDay && validMonth && validYear) {
+      description.errorList.push({
+        text: 'Enter a day from 1 to 31',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (validDay && !validMonth && validYear) {
+      description.errorList.push({
+        text: 'Enter a month using numbers 1 to 12',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (validDay && validMonth && !validYear) {
+      description.errorList.push({
+        text: 'Enter a full year, for example 2024',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!validDay && !validMonth && validYear) {
+      description.errorList.push({
+        text: 'The date entered must be a real date',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (validDay && !validMonth && !validYear) {
+      description.errorList.push({
+        text: 'The date entered must be a real date',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (!validDay && validMonth && !validYear) {
+      description.errorList.push({
+        text: 'The date entered must be a real date',
+        href: '#descriptionEmailReportDate'
+      })
+    } else if (day && month && year && !validDate) {
+      console.log('inside last condition')
+      description.errorList.push({
+        text: 'The date entered must be a real date',
+        href: '#descriptionEmailReportDate'
+      })
+    }
+
+    // Validation for time of email
+    if (!payload.descriptionEmailReportTime) {
+      description.errorList.push({
+        text: 'Enter the time the email was received',
+        href: '#descriptionEmailReportTime'
+      })
+    } else {
+      let validTimeFormat = false
+      const time = payload.descriptionEmailReportTime
+      if (moment(time, 'HH:mm').isValid() && time.length >= 3) {
+        const timeParts = time.split(':')
+        const hours = timeParts[0]?.padStart(2, '0')
+        const minutes = timeParts[1]?.padStart(2, '0')
+        validTimeFormat = timeParts.length === 2 && (hours >= 0 && hours <= 23) && (minutes >= 0 && minutes <= 59)
+      }
+
+      if (!validTimeFormat) {
+        description.errorList.push({
+          text: 'Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59',
+          href: '#descriptionEmailReportTime'
+        })
+      }
+
+      if (validTimeFormat && validDay && validMonth && validYear && validDate) {
+        const dateTimeString = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth.padStart(2, '0')}-${payload.descriptionEmailReportDateDay.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
+        const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
+        const isDateTimeInPast = dateTime.isBefore(moment().subtract(5, 'minutes'))
+        if (validTimeFormat && !isDateTimeInPast) {
+          description.errorList.push({
+            text: 'Time must be in the past',
+            href: '#descriptionEmailReportTime'
+          })
+        }
+      }
+    }
   }
 
   // Do reporter validation
