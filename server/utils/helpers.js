@@ -78,6 +78,11 @@ const validateReportPayload = payload => {
     const validDay = day > zero && day <= maxDays
     const validMonth = month > zero && month <= maxMonths
     const validYear = year > firstValidYear && year < latestYear
+    const validDayOnly = validDay && !validMonth && !validYear
+    const validMonthOnly = !validDay && validMonth && !validYear
+    const validYearOnly = !validDay && !validMonth && validYear
+    const emailErrorId = '#descriptionEmailReportDate'
+    const timeErrorId = '#descriptionEmailReportTime'
     let dateString
     let validDate = false
     let isPastDate = false
@@ -91,70 +96,72 @@ const validateReportPayload = payload => {
     if (!day && !month && !year) {
       description.errorList.push({
         text: 'Enter the date the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
       description.errorList.push({
         text: 'Date must be in the past',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (!day && month && year) {
       description.errorList.push({
         text: 'Enter the day the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (day && !month && year) {
       description.errorList.push({
         text: 'Enter the month the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (day && month && !year) {
       description.errorList.push({
         text: 'Enter the year the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (!day && !month && year) {
       description.errorList.push({
         text: 'Enter the day and month the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (day && !month && !year) {
       description.errorList.push({
         text: 'Enter the month and year the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (!day && month && !year) {
       description.errorList.push({
         text: 'Enter the day and year the email was received',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (!validDay && validMonth && validYear) {
       description.errorList.push({
         text: 'Enter a day from 1 to 31',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (validDay && !validMonth && validYear) {
       description.errorList.push({
         text: 'Enter a month using numbers 1 to 12',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
     } else if (validDay && validMonth && !validYear) {
       description.errorList.push({
         text: 'Enter a full year, for example 2024',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
-    } else if ((!validDay && !validMonth && validYear) || (validDay && !validMonth && !validYear) || (!validDay && validMonth && !validYear) || (day && month && year && !validDate)) {
+    } else if (validDayOnly || validMonthOnly || validYearOnly || (day && month && year && !validDate)) {
       description.errorList.push({
         text: 'The date entered must be a real date',
-        href: '#descriptionEmailReportDate'
+        href: emailErrorId
       })
+    } else {
+      // do nothing (blame sonarcloud)
     }
 
     // Validation for time of email
     if (!payload.descriptionEmailReportTime) {
       description.errorList.push({
         text: 'Enter the time the email was received',
-        href: '#descriptionEmailReportTime'
+        href: timeErrorId
       })
     } else {
       let validTimeFormat = false
@@ -170,7 +177,7 @@ const validateReportPayload = payload => {
       if (!validTimeFormat) {
         description.errorList.push({
           text: 'Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59',
-          href: '#descriptionEmailReportTime'
+          href: timeErrorId
         })
       }
 
@@ -182,7 +189,7 @@ const validateReportPayload = payload => {
         if (!isDateTimeInPast) {
           description.errorList.push({
             text: 'Time must be in the past',
-            href: '#descriptionEmailReportTime'
+            href: timeErrorId
           })
         }
       }
