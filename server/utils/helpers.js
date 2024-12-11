@@ -1,3 +1,4 @@
+import { invalid } from 'joi'
 import constants from './constants.js'
 import moment from 'moment'
 
@@ -93,6 +94,7 @@ const validateReportPayload = payload => {
       const today = moment().startOf('day')
       isPastDate = dateToCheck.isSame(today, 'day') || dateToCheck.isBefore(today)
     }
+    const inValidDate = day && month && year && !validDate
     if (!day && !month && !year) {
       description.errorList.push({
         text: 'Enter the date the email was received',
@@ -148,7 +150,7 @@ const validateReportPayload = payload => {
         text: 'Enter a full year, for example 2024',
         href: emailErrorId
       })
-    } else if (validDayOnly || validMonthOnly || validYearOnly || (day && month && year && !validDate)) {
+    } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
       description.errorList.push({
         text: 'The date entered must be a real date',
         href: emailErrorId
