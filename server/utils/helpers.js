@@ -72,7 +72,6 @@ const validateReportPayload = payload => {
     const maxHours = 23
     const firstValidYear = 1900
     const latestYear = 3000
-    
     const day = payload.descriptionEmailReportDateDay
     const month = payload.descriptionEmailReportDateMonth
     const year = payload.descriptionEmailReportDateYear
