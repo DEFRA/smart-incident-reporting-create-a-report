@@ -65,12 +65,20 @@ const validateReportPayload = payload => {
 
   if (payload.descriptionReportedByEmail) {
     // Validation for date of email
+    const zero = 0
+    const maxMonths = 12
+    const maxDays = 31
+    const maxMinutes = 59
+    const maxHours = 23
+    const firstValidYear = 1900
+    const latestYear = 3000
+    
     const day = payload.descriptionEmailReportDateDay
     const month = payload.descriptionEmailReportDateMonth
     const year = payload.descriptionEmailReportDateYear
-    const validDay = day > 0 && day <= 31
-    const validMonth = month > 0 && month <= 12
-    const validYear = year > 1900 && year < 3000
+    const validDay = day > zero && day <= maxDays
+    const validMonth = month > zero && month <= maxMonths
+    const validYear = year > firstValidYear && year < latestYear
     let dateString
     let validDate = false
     let isPastDate = false
@@ -136,22 +144,7 @@ const validateReportPayload = payload => {
         text: 'Enter a full year, for example 2024',
         href: '#descriptionEmailReportDate'
       })
-    } else if (!validDay && !validMonth && validYear) {
-      description.errorList.push({
-        text: 'The date entered must be a real date',
-        href: '#descriptionEmailReportDate'
-      })
-    } else if (validDay && !validMonth && !validYear) {
-      description.errorList.push({
-        text: 'The date entered must be a real date',
-        href: '#descriptionEmailReportDate'
-      })
-    } else if (!validDay && validMonth && !validYear) {
-      description.errorList.push({
-        text: 'The date entered must be a real date',
-        href: '#descriptionEmailReportDate'
-      })
-    } else if (day && month && year && !validDate) {
+    } else if ((!validDay && !validMonth && validYear) || (validDay && !validMonth && !validYear) || (!validDay && validMonth && !validYear) || (day && month && year && !validDate)) {
       description.errorList.push({
         text: 'The date entered must be a real date',
         href: '#descriptionEmailReportDate'
@@ -166,12 +159,13 @@ const validateReportPayload = payload => {
       })
     } else {
       let validTimeFormat = false
+      const maxTimeLength = 3
       const time = payload.descriptionEmailReportTime
-      if (moment(time, 'HH:mm').isValid() && time.length >= 3) {
+      if (moment(time, 'HH:mm').isValid() && time.length >= maxTimeLength) {
         const timeParts = time.split(':')
         const hours = timeParts[0]?.padStart(2, '0')
         const minutes = timeParts[1]?.padStart(2, '0')
-        validTimeFormat = timeParts.length === 2 && (hours >= 0 && hours <= 23) && (minutes >= 0 && minutes <= 59)
+        validTimeFormat = timeParts.length === 2 && (hours >= zero && hours <= maxHours) && (minutes >= zero && minutes <= maxMinutes)
       }
 
       if (!validTimeFormat) {
@@ -184,8 +178,9 @@ const validateReportPayload = payload => {
       if (validTimeFormat && validDay && validMonth && validYear && validDate) {
         const dateTimeString = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth.padStart(2, '0')}-${payload.descriptionEmailReportDateDay.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
         const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
-        const isDateTimeInPast = dateTime.isBefore(moment().subtract(5, 'minutes'))
-        if (validTimeFormat && !isDateTimeInPast) {
+        const maxAgeMinutes = 5
+        const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
+        if (!isDateTimeInPast) {
           description.errorList.push({
             text: 'Time must be in the past',
             href: '#descriptionEmailReportTime'
