@@ -42,13 +42,28 @@ const validateEmail = email => {
   return !domainIssue
 }
 
-const validateReportPayload = payload => {
-  const description = getErrorSummary()
-  const reporter = getErrorSummary()
-  const location = getErrorSummary()
-  const date = getErrorSummary()
+const description = getErrorSummary()
+const location = getErrorSummary()
+const reporter = getErrorSummary()
+const date = getErrorSummary()
 
-  // Do description validation
+const validateReportPayload = payload => {
+  // Reset error summary values
+  clearErrorList()
+
+  // Tab validations
+  validateDescription(payload)
+  validateLocation(payload)
+
+  return {
+    description,
+    reporter,
+    location,
+    date
+  }
+}
+
+const validateDescription = payload => {
   if (!payload.descriptionDescription) {
     description.errorList.push({
       text: 'Enter an incident description',
@@ -81,8 +96,9 @@ const validateReportPayload = payload => {
     const validDayOnly = validDay && !validMonth && !validYear
     const validMonthOnly = !validDay && validMonth && !validYear
     const validYearOnly = !validDay && !validMonth && validYear
-    const emailErrorId = '#descriptionEmailReportDate'
-    const timeErrorId = '#descriptionEmailReportTime'
+    const validMonthAndYear = !validDay && validMonth && validYear
+    const validDayAndYear = validDay && !validMonth && validYear
+    const validDayAndMonth = validDay && validMonth && !validYear
     let dateString
     let validDate = false
     let isPastDate = false
@@ -95,75 +111,36 @@ const validateReportPayload = payload => {
     }
     const inValidDate = day && month && year && !validDate
     if (!day && !month && !year) {
-      description.errorList.push({
-        text: 'Enter the date the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the date the email was received')
     } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
-      description.errorList.push({
-        text: 'Date must be in the past',
-        href: emailErrorId
-      })
+      dateErrorMsg('Date must be in the past')
     } else if (!day && month && year) {
-      description.errorList.push({
-        text: 'Enter the day the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the day the email was received')
     } else if (day && !month && year) {
-      description.errorList.push({
-        text: 'Enter the month the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the month the email was received')
     } else if (day && month && !year) {
-      description.errorList.push({
-        text: 'Enter the year the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the year the email was received')
     } else if (!day && !month && year) {
-      description.errorList.push({
-        text: 'Enter the day and month the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the day and month the email was received')
     } else if (day && !month && !year) {
-      description.errorList.push({
-        text: 'Enter the month and year the email was received',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the month and year the email was received')
     } else if (!day && month && !year) {
-      description.errorList.push({
-        text: 'Enter the day and year the email was received',
-        href: emailErrorId
-      })
-    } else if (!validDay && validMonth && validYear) {
-      description.errorList.push({
-        text: 'Enter a day from 1 to 31',
-        href: emailErrorId
-      })
-    } else if (validDay && !validMonth && validYear) {
-      description.errorList.push({
-        text: 'Enter a month using numbers 1 to 12',
-        href: emailErrorId
-      })
-    } else if (validDay && validMonth && !validYear) {
-      description.errorList.push({
-        text: 'Enter a full year, for example 2024',
-        href: emailErrorId
-      })
+      dateErrorMsg('Enter the day and year the email was received')
+    } else if (validMonthAndYear) {
+      dateErrorMsg('Enter a day from 1 to 31')
+    } else if (validDayAndYear) {
+      dateErrorMsg('Enter a month using numbers 1 to 12')
+    } else if (validDayAndMonth) {
+      dateErrorMsg('Enter a full year, for example 2024')
     } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
-      description.errorList.push({
-        text: 'The date entered must be a real date',
-        href: emailErrorId
-      })
+      dateErrorMsg('The date entered must be a real date')
     } else {
       // do nothing (blame sonarcloud)
     }
 
     // Validation for time of email
     if (!payload.descriptionEmailReportTime) {
-      description.errorList.push({
-        text: 'Enter the time the email was received',
-        href: timeErrorId
-      })
+      timeErrorMsg('Enter the time the email was received')
     } else {
       let validTimeFormat = false
       const maxTimeLength = 3
@@ -176,10 +153,7 @@ const validateReportPayload = payload => {
       }
 
       if (!validTimeFormat) {
-        description.errorList.push({
-          text: 'Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59',
-          href: timeErrorId
-        })
+        timeErrorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59')
       }
 
       if (validTimeFormat && validDay && validMonth && validYear && validDate) {
@@ -188,17 +162,14 @@ const validateReportPayload = payload => {
         const maxAgeMinutes = 5
         const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
         if (!isDateTimeInPast) {
-          description.errorList.push({
-            text: 'Time must be in the past',
-            href: timeErrorId
-          })
+          timeErrorMsg('Time must be in the past')
         }
       }
     }
   }
+}
 
-  // Do reporter validation
-
+const validateLocation = payload => {
   // Do location validation
   if (!payload.locationGridRef) {
     location.errorList.push({
@@ -213,15 +184,27 @@ const validateReportPayload = payload => {
   } else {
     // do nothing (blame sonarcloud)
   }
+}
 
-  // Do date validation
+const clearErrorList = () => {
+  description.errorList = []
+  reporter.errorList = []
+  location.errorList = []
+  date.errorList = []
+}
 
-  return {
-    description,
-    reporter,
-    location,
-    date
-  }
+const dateErrorMsg = errMsg => {
+  description.errorList.push({
+    text: errMsg,
+    href: '#descriptionEmailReportDate'
+  })
+}
+
+const timeErrorMsg = errMsg => {
+  description.errorList.push({
+    text: errMsg,
+    href: '#descriptionEmailReportTime'
+  })
 }
 
 const validateGridReference = gridRef => {
