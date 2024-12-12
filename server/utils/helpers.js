@@ -140,22 +140,30 @@ const validateDateOfEmail = payload => {
   const inValidDate = day && month && year && !validDate
   if (!day && !month && !year) {
     dateErrorMsg('Enter the date the email was received')
-  } else if (day || month || year) {
-    validateDateEmptyFields(day, month, year)
+  } else if (!day && month && year) {
+    dateErrorMsg('Enter the day the email was received')
+  } else if (day && !month && year) {
+    dateErrorMsg('Enter the month the email was received')
+  } else if (day && month && !year) {
+    dateErrorMsg('Enter the year the email was received')
+  } else if (!day && !month && year) {
+    dateErrorMsg('Enter the day and month the email was received')
+  } else if (day && !month && !year) {
+    dateErrorMsg('Enter the month and year the email was received')
+  } else if (!day && month && !year) {
+    dateErrorMsg('Enter the day and year the email was received')
+  } else if (validMonthAndYear) {
+    dateErrorMsg('Enter a day from 1 to 31')
+  } else if (validDayAndYear) {
+    dateErrorMsg('Enter a month using numbers 1 to 12')
+  } else if (validDayAndMonth) {
+    dateErrorMsg('Enter a full year, for example 2024')
+  } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
+    dateErrorMsg('The date entered must be a real date')
+  } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
+    dateErrorMsg('Date must be in the past')
   } else {
-    if (validMonthAndYear) {
-      dateErrorMsg('Enter a day from 1 to 31')
-    } else if (validDayAndYear) {
-      dateErrorMsg('Enter a month using numbers 1 to 12')
-    } else if (validDayAndMonth) {
-      dateErrorMsg('Enter a full year, for example 2024')
-    } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
-      dateErrorMsg('The date entered must be a real date')
-    } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
-      dateErrorMsg('Date must be in the past')
-    } else {
-      // do nothing (blame sonarcloud)
-    }
+    // do nothing (blame sonarcloud)
   }
 }
 
@@ -207,24 +215,6 @@ const validateTimeOfEmail = payload => {
     } else {
       // do nothing
     }
-  }
-}
-
-const validateDateEmptyFields = (day, month, year) => {
-  if (!day && month && year) {
-    dateErrorMsg('Enter the day the email was received')
-  } else if (day && !month && year) {
-    dateErrorMsg('Enter the month the email was received')
-  } else if (day && month && !year) {
-    dateErrorMsg('Enter the year the email was received')
-  } else if (!day && !month && year) {
-    dateErrorMsg('Enter the day and month the email was received')
-  } else if (day && !month && !year) {
-    dateErrorMsg('Enter the month and year the email was received')
-  } else if (!day && month && !year) {
-    dateErrorMsg('Enter the day and year the email was received')
-  } else {
-    // do nothing
   }
 }
 
