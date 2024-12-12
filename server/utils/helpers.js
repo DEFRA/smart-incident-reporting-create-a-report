@@ -169,8 +169,19 @@ const validateDateOfEmail = payload => {
 
 const validateTimeOfEmail = payload => {
   // Validation for time of email
+  const zero = 0
   const maxMinutes = 59
   const maxHours = 23
+  const maxMonths = 12
+  const maxDays = 31
+  const firstValidYear = 1900
+  const latestYear = 3000
+  const day = payload.descriptionEmailReportDateDay
+  const month = payload.descriptionEmailReportDateMonth
+  const year = payload.descriptionEmailReportDateYear
+  const validDay = day > zero && day <= maxDays
+  const validMonth = month > zero && month <= maxMonths
+  const validYear = year > firstValidYear && year < latestYear
   if (!payload.descriptionEmailReportTime) {
     timeErrorMsg('Enter the time the email was received')
   } else {
@@ -184,11 +195,16 @@ const validateTimeOfEmail = payload => {
       validTimeFormat = timeParts.length === 2 && (hours >= zero && hours <= maxHours) && (minutes >= zero && minutes <= maxMinutes)
     }
 
-    if (!validTimeFormat) {
-      timeErrorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59')
+    let dateString
+    let validDate = false
+    if (validDay && validMonth && validYear) {
+      dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+      validDate = moment(dateString, 'YYYY-MM-DD').isValid()
     }
 
-    if (validTimeFormat && validDay && validMonth && validYear && validDate) {
+    if (!validTimeFormat) {
+      timeErrorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59')
+    } else if (validTimeFormat && validDay && validMonth && validYear && validDate) {
       const dateTimeString = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth.padStart(2, '0')}-${payload.descriptionEmailReportDateDay.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
       const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
       const maxAgeMinutes = 5
