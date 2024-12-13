@@ -18,6 +18,17 @@ const handlers = {
     })
   },
   post: async (request, h) => {
+    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
+
+    const day = reportPayload.descriptionEmailReportDateDay
+    const month = reportPayload.descriptionEmailReportDateMonth
+    const year = reportPayload.descriptionEmailReportDateYear
+    const time = reportPayload.descriptionEmailReportTime
+    const dateTimeString = `${month?.padStart(2, '0')}-${day?.padStart(2, '0')}-${year} ${time}`
+    const datetimeEmailReported = new Date(dateTimeString).toISOString()
+
+    console.log('Data for reportPayload', reportPayload)
+    console.log('Data for datetimeEmailReported', datetimeEmailReported)
     // Post data to service bus queue
 
     // set flag to submitted
