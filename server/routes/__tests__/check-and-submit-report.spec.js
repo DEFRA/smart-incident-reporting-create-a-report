@@ -24,7 +24,9 @@ const sessionData = {
     reporterEmail: 'test@Test.com',
     reporterFirstName: 'John',
     reporterLastName: 'Smith',
-    reporterPhone: '01234567890'
+    reporterPhone: '01234567890',
+    reporterOrgType: 'water',
+    reporterWaterName: 'Water Services Ltd'
   }
 }
 
@@ -84,10 +86,90 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4102,
               otherDetails: 'Location description'
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'External organisation report',
+              questionResponse: true,
+              answerId: 4001
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'External organisation report',
+              questionResponse: true,
+              answerId: 4003,
+              otherDetails: 'Water Services Ltd'
             })
           ])
         })
       }))
+    })
+    it('Edge cases for payload data', async () => {
+      sessionData['create-a-report'].descriptionReportedByEmail = ''
+      sessionData['create-a-report'].reporterOrgType = 'other'
+      sessionData['create-a-report'].reporterOtherName = 'Other Organisation Name'
+      sessionData['create-a-report'].locationDescription = ''
+      const options = {
+        url
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          reporterName: sessionData['create-a-report'].reporterFirstName + ' ' + sessionData['create-a-report'].reporterLastName,
+          reporterPhoneNumber: sessionData['create-a-report'].reporterPhone,
+          reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
+          otherDetails: sessionData['create-a-report'].descriptionDescription,
+          questionSetId: 0,
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3800,
+              questionAsked: 'Reported by email?',
+              questionResponse: true,
+              answerId: 3802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Has photos or videos of problem',
+              questionResponse: true,
+              answerId: 3902
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'External organisation report',
+              questionResponse: true,
+              answerId: 4002
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'External organisation report',
+              questionResponse: true,
+              answerId: 4003,
+              otherDetails: 'Other Organisation Name'
+            })
+          ])
+        })
+      }))
+    })
+    it('Should fail payload validation if invalid payload with 500 server error', async () => {
+      const options = {
+        url
+      }
+
+      await submitPostRequest(options, 500)
     })
   })
 })

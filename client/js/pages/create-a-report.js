@@ -20,11 +20,15 @@ toggleIncidentTypesButton.addEventListener('click', (e) => {
   toggleIncidentTypes()
 })
 checkboxWaterCompany.addEventListener('change', () => {
-  if (checkboxWaterCompany.checked) checkboxOtherOrg.checked = false
+  if (checkboxWaterCompany.checked) {
+    checkboxOtherOrg.checked = false
+  }
   toggleWaterAndOrg()
 })
 checkboxOtherOrg.addEventListener('change', () => {
-  if (checkboxOtherOrg.checked) checkboxWaterCompany.checked = false
+  if (checkboxOtherOrg.checked) {
+    checkboxWaterCompany.checked = false
+  }
   toggleWaterAndOrg()
 })
 todayDateInput.addEventListener('change', () => {
@@ -59,6 +63,8 @@ const toggleWaterAndOrg = () => {
   } else if ((!checkboxWaterCompany.checked) && (!checkboxOtherOrg.checked)) {
     waterCompanyRadios.style.display = 'none'
     organisationInput.style.display = 'none'
+  } else {
+    // do nothing
   }
 }
 
@@ -72,6 +78,8 @@ const toggleDate = () => {
   } else if (otherDateInput.checked) {
     timeInput.style.display = 'none'
     otherDateTimeInput.style.display = 'block'
+  } else {
+    // do nothing
   }
 }
 

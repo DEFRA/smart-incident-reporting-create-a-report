@@ -51,7 +51,7 @@ const buildPayload = (session) => {
   const payload = {
     reportingAnEnvironmentalProblem: {
       sessionGuid: session.id,
-      reporterName: reportPayload.reporterFirstName + ' ' + reportPayload.reporterLastName,
+      reporterName: `${reportPayload.reporterFirstName} ${reportPayload.reporterLastName}`,
       reporterEmailAddress: reportPayload.reporterEmail,
       reporterPhoneNumber: reportPayload.reporterPhone,
       reportType: Number(reportPayload.descriptionIncidentType),
