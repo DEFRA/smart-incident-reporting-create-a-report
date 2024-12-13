@@ -19,7 +19,13 @@ const payload = {
   descriptionReportedByEmail: 'true',
   locationDescription: 'Location description',
   locationGridRef: 'SJ 67084 44110',
-  reporterEmail: 'test@Test.com'
+  reporterEmail: 'test@Test.com',
+  reporterFirstName: 'John',
+  reporterLastName: 'Smith',
+  reporterPhone: '01234567890',
+  reporterOrgType: 'water',
+  reporterWaterName: 'Water Services Ltd',
+  reporterPhotos: 'Yes'
 }
 
 describe(url, () => {
