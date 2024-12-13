@@ -11,10 +11,14 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
 
+    {% set reportSubmittedHtml %}
+      <p class='govuk-body-l govuk-!-margin-top-7' style='color: white;'>Your report of {% for name, item in reportTypes %}{{ item.text if item.value == descriptionIncidentType }}{% endfor %} has been added to NIRS.</p>
+    {% endset %}
+
     {{ govukPanel({
       titleText: "Report submitted",
       classes: "govuk-heading-s govuk-!-padding-bottom-3",
-      html: "<p class='govuk-body-l govuk-!-margin-top-7' style='color: white;'>Your report of " + descriptionIncidentType + " has been added to NIRS."
+      html: reportSubmittedHtml
     }) }}
 
 

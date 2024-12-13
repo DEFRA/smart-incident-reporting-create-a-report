@@ -1,7 +1,7 @@
 module.exports = {
-  // transformIgnorePatterns: [
-  //   'node_modules/@defra/(?!(smart-incident-reporting)/)'
-  // ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@defra/smart-incident-reporting)/)'
+  ],
   collectCoverage: true,
   coverageReporters: [
     'lcov',

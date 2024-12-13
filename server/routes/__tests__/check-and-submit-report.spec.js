@@ -1,5 +1,7 @@
 import { submitGetRequest, submitPostRequest } from '../../__test-helpers__/server.js'
 import constants from '../../utils/constants.js'
+import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
+jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
 const url = constants.routes.CHECK_AND_SUBMIT_REPORT
 const sessionData = {
@@ -15,7 +17,7 @@ const sessionData = {
     descriptionEmailReportDateMonth: '12',
     descriptionEmailReportDateYear: '2024',
     descriptionEmailReportTime: '08:00',
-    descriptionIncidentType: 'Water pollution',
+    descriptionIncidentType: '100',
     descriptionReportedByEmail: 'true',
     locationDescription: 'Location description',
     locationGridRef: 'SJ 67084 44110',

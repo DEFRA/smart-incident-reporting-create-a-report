@@ -23,7 +23,7 @@
     {% set incidenttypeHtml %}
     <div>
       <span class="govuk-caption-m">Incident type</span>
-      <h1 class="govuk-heading-m govuk-!-margin-bottom-0">{{ descriptionIncidentType }}</h1>
+      <h1 class="govuk-heading-m govuk-!-margin-bottom-0">{% for name, item in reportTypes %}{{ item.text if item.value == descriptionIncidentType }}{% endfor %}</h1>
     </div>
     {% endset %}
   

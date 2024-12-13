@@ -87,9 +87,23 @@ const showFirstErrorTab = () => {
   }
 }
 
+const showIncidentTypes = () => {
+  let show = false
+  incidentInputs.forEach(input => {
+    if (input.id.substring(input.id.indexOf('-') + 1) > 3) {
+      if (input.checked) {
+        show = true
+      }
+    }
+  })
+  return show
+}
+
 window.addEventListener('load', () => {
   showFirstErrorTab()
-  toggleIncidentTypes()
+  if (!showIncidentTypes()) {
+    toggleIncidentTypes()
+  }
   toggleWaterAndOrg()
   toggleDate()
 })
