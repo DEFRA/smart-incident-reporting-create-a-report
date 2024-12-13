@@ -13,6 +13,7 @@ const otherDateInput = document.getElementById('dateObserved-3')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
+const three = 3
 
 // Events
 toggleIncidentTypesButton.addEventListener('click', (e) => {
@@ -20,11 +21,15 @@ toggleIncidentTypesButton.addEventListener('click', (e) => {
   toggleIncidentTypes()
 })
 checkboxWaterCompany.addEventListener('change', () => {
-  if (checkboxWaterCompany.checked) checkboxOtherOrg.checked = false
+  if (checkboxWaterCompany.checked) {
+    checkboxOtherOrg.checked = false
+  }
   toggleWaterAndOrg()
 })
 checkboxOtherOrg.addEventListener('change', () => {
-  if (checkboxOtherOrg.checked) checkboxWaterCompany.checked = false
+  if (checkboxOtherOrg.checked) {
+    checkboxWaterCompany.checked = false
+  }
   toggleWaterAndOrg()
 })
 todayDateInput.addEventListener('change', () => {
@@ -59,6 +64,8 @@ const toggleWaterAndOrg = () => {
   } else if ((!checkboxWaterCompany.checked) && (!checkboxOtherOrg.checked)) {
     waterCompanyRadios.style.display = 'none'
     organisationInput.style.display = 'none'
+  } else {
+    // do nothing
   }
 }
 
@@ -72,6 +79,8 @@ const toggleDate = () => {
   } else if (otherDateInput.checked) {
     timeInput.style.display = 'none'
     otherDateTimeInput.style.display = 'block'
+  } else {
+    // do nothing
   }
 }
 
@@ -87,9 +96,21 @@ const showFirstErrorTab = () => {
   }
 }
 
+const showIncidentTypes = () => {
+  let show = false
+  incidentInputs.forEach(input => {
+    if (parseInt(input.id.substring(input.id.indexOf('-') + 1)) > three && input.checked) {
+      show = true
+    }
+  })
+  return show
+}
+
 window.addEventListener('load', () => {
   showFirstErrorTab()
-  toggleIncidentTypes()
+  if (!showIncidentTypes()) {
+    toggleIncidentTypes()
+  }
   toggleWaterAndOrg()
   toggleDate()
 })

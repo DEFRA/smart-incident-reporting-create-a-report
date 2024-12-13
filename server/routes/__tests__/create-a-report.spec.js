@@ -15,11 +15,17 @@ const payload = {
   descriptionEmailReportDateMonth: '12',
   descriptionEmailReportDateYear: '2024',
   descriptionEmailReportTime: '08:00',
-  descriptionIncidentType: 'Water pollution',
+  descriptionIncidentType: '100',
   descriptionReportedByEmail: 'true',
   locationDescription: 'Location description',
   locationGridRef: 'SJ 67084 44110',
-  reporterEmail: 'test@Test.com'
+  reporterEmail: 'test@Test.com',
+  reporterFirstName: 'John',
+  reporterLastName: 'Smith',
+  reporterPhone: '01234567890',
+  reporterOrgType: 'water',
+  reporterWaterName: 'Water Services Ltd',
+  reporterPhotos: 'Yes'
 }
 
 describe(url, () => {

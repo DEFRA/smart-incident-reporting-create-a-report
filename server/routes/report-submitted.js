@@ -1,4 +1,5 @@
 import constants from '../utils/constants.js'
+import { reportTypes } from '../utils/report-types.js'
 
 const handlers = {
   get: async (request, h) => {
@@ -15,7 +16,8 @@ const handlers = {
     request.yar.reset()
 
     return h.view(constants.views.REPORT_SUBMITTED, {
-      ...reportPayload
+      ...reportPayload,
+      reportTypes
     })
   }
 }

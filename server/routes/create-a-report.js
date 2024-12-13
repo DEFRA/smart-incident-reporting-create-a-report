@@ -1,5 +1,6 @@
 import constants from '../utils/constants.js'
 import { validateReportPayload } from '../utils/helpers.js'
+import { reportTypes } from '../utils/report-types.js'
 
 const handlers = {
   get: async (request, h) => {
@@ -12,7 +13,7 @@ const handlers = {
     ) {
       return h.view(constants.views.CREATE_A_REPORT, {
         errorSummary,
-        ...reportPayload
+        ...getContext(request.yar)
       })
     }
     return h.view(constants.views.CREATE_A_REPORT, {
@@ -34,7 +35,8 @@ const handlers = {
     ) {
       return h.view(constants.views.CREATE_A_REPORT, {
         errorSummary,
-        ...request.payload
+        ...request.payload,
+        reportTypes
       })
     }
 
@@ -43,7 +45,10 @@ const handlers = {
   }
 }
 const getContext = session => {
-  return session.get(constants.redisKeys.CREATE_A_REPORT)
+  return {
+    ...session.get(constants.redisKeys.CREATE_A_REPORT),
+    reportTypes
+  }
 }
 
 export default [

@@ -15,11 +15,17 @@ const sessionData = {
     descriptionEmailReportDateMonth: '12',
     descriptionEmailReportDateYear: '2024',
     descriptionEmailReportTime: '08:00',
-    descriptionIncidentType: 'Water pollution',
+    descriptionIncidentType: '100',
     descriptionReportedByEmail: 'true',
     locationDescription: 'Location description',
     locationGridRef: 'SJ 67084 44110',
-    reporterEmail: 'test@Test.com'
+    reporterEmail: 'test@Test.com',
+    reporterFirstName: 'John',
+    reporterLastName: 'Smith',
+    reporterPhone: '01234567890',
+    reporterOrgType: 'water',
+    reporterWaterName: 'Water Services Ltd',
+    reporterPhotos: 'Yes'
   },
   'report-submitted': true
 }
@@ -28,9 +34,8 @@ describe(url, () => {
   describe('GET', () => {
     it(`Should return Report submitted if session present and REPORT_SUBMITTED is true and correct view for ${url}`, async () => {
       const response = await submitGetRequest({ url }, 'Report submitted', 200, sessionData)
-      console.log(response.request.yar._store)
       expect(response.request.yar._store).toEqual({})
-      expect(response.payload).toContain('Your report of Water pollution has been added to NIRS.')
+      expect(response.payload).toContain('Your report of Water pollution, including sewage has been added to NIRS.')
     })
     it(`Should redirect to CHECK_AND_SUBMIT_REPORT if report hasn't been submitted ${url}`, async () => {
       sessionData['report-submitted'] = false
