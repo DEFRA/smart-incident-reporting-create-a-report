@@ -13,6 +13,7 @@ const otherDateInput = document.getElementById('dateObserved-3')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
+const three = 3
 
 // Events
 toggleIncidentTypesButton.addEventListener('click', (e) => {
@@ -98,10 +99,8 @@ const showFirstErrorTab = () => {
 const showIncidentTypes = () => {
   let show = false
   incidentInputs.forEach(input => {
-    if (input.id.substring(input.id.indexOf('-') + 1) > 3) {
-      if (input.checked) {
-        show = true
-      }
+    if (input.id.substring(input.id.indexOf('-') + 1) > three && input.checked) {
+      show = true
     }
   })
   return show
