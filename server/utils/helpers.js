@@ -1,4 +1,5 @@
 import constants from './constants.js'
+import moment from 'moment'
 
 // OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
@@ -41,13 +42,28 @@ const validateEmail = email => {
   return !domainIssue
 }
 
-const validateReportPayload = payload => {
-  const description = getErrorSummary()
-  const reporter = getErrorSummary()
-  const location = getErrorSummary()
-  const date = getErrorSummary()
+const description = getErrorSummary()
+const location = getErrorSummary()
+const reporter = getErrorSummary()
+const date = getErrorSummary()
 
-  // Do description validation
+const validateReportPayload = payload => {
+  // Reset error summary values
+  clearErrorList()
+
+  // Tab validations
+  validateDescription(payload)
+  validateLocation(payload)
+
+  return {
+    description,
+    reporter,
+    location,
+    date
+  }
+}
+
+const validateDescription = payload => {
   if (!payload.descriptionDescription) {
     description.errorList.push({
       text: 'Enter an incident description',
@@ -55,8 +71,20 @@ const validateReportPayload = payload => {
     })
   }
 
-  // Do reporter validation
+  if (!payload.descriptionIncidentType) {
+    description.errorList.push({
+      text: 'Select an incident type',
+      href: '#descriptionIncidentType'
+    })
+  }
 
+  if (payload.descriptionReportedByEmail) {
+    validateDateOfEmail(payload)
+    validateTimeOfEmail(payload)
+  }
+}
+
+const validateLocation = payload => {
   // Do location validation
   if (!payload.locationGridRef) {
     location.errorList.push({
@@ -71,15 +99,137 @@ const validateReportPayload = payload => {
   } else {
     // do nothing (blame sonarcloud)
   }
+}
 
-  // Do date validation
+const clearErrorList = () => {
+  description.errorList = []
+  reporter.errorList = []
+  location.errorList = []
+  date.errorList = []
+}
 
-  return {
-    description,
-    reporter,
-    location,
-    date
+const validateDateOfEmail = payload => {
+  // Validation for date of email
+  const zero = 0
+  const maxMonths = 12
+  const maxDays = 31
+  const firstValidYear = 1900
+  const latestYear = 3000
+  const day = payload.descriptionEmailReportDateDay
+  const month = payload.descriptionEmailReportDateMonth
+  const year = payload.descriptionEmailReportDateYear
+  const validDay = day > zero && day <= maxDays
+  const validMonth = month > zero && month <= maxMonths
+  const validYear = year > firstValidYear && year < latestYear
+  const validDayOnly = validDay && !validMonth && !validYear
+  const validMonthOnly = !validDay && validMonth && !validYear
+  const validYearOnly = !validDay && !validMonth && validYear
+  const validMonthAndYear = !validDay && validMonth && validYear
+  const validDayAndYear = validDay && !validMonth && validYear
+  const validDayAndMonth = validDay && validMonth && !validYear
+  let dateString
+  let validDate = false
+  let isPastDate = false
+  if (validDay && validMonth && validYear) {
+    dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+    validDate = moment(dateString, 'YYYY-MM-DD').isValid()
+    const dateToCheck = moment(dateString)
+    const today = moment().startOf('day')
+    isPastDate = dateToCheck.isSame(today, 'day') || dateToCheck.isBefore(today)
   }
+  const inValidDate = day && month && year && !validDate
+  if (!day && !month && !year) {
+    dateErrorMsg('Enter the date the email was received')
+  } else if (!day && month && year) {
+    dateErrorMsg('Enter the day the email was received')
+  } else if (day && !month && year) {
+    dateErrorMsg('Enter the month the email was received')
+  } else if (day && month && !year) {
+    dateErrorMsg('Enter the year the email was received')
+  } else if (!day && !month && year) {
+    dateErrorMsg('Enter the day and month the email was received')
+  } else if (day && !month && !year) {
+    dateErrorMsg('Enter the month and year the email was received')
+  } else if (!day && month && !year) {
+    dateErrorMsg('Enter the day and year the email was received')
+  } else if (validMonthAndYear) {
+    dateErrorMsg('Enter a day from 1 to 31')
+  } else if (validDayAndYear) {
+    dateErrorMsg('Enter a month using numbers 1 to 12')
+  } else if (validDayAndMonth) {
+    dateErrorMsg('Enter a full year, for example 2024')
+  } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
+    dateErrorMsg('The date entered must be a real date')
+  } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
+    dateErrorMsg('Date must be in the past')
+  } else {
+    // do nothing (blame sonarcloud)
+  }
+}
+
+const validateTimeOfEmail = payload => {
+  // Validation for time of email
+  const zero = 0
+  const maxMinutes = 59
+  const maxHours = 23
+  const maxMonths = 12
+  const maxDays = 31
+  const firstValidYear = 1900
+  const latestYear = 3000
+  const day = payload.descriptionEmailReportDateDay
+  const month = payload.descriptionEmailReportDateMonth
+  const year = payload.descriptionEmailReportDateYear
+  const validDay = day > zero && day <= maxDays
+  const validMonth = month > zero && month <= maxMonths
+  const validYear = year > firstValidYear && year < latestYear
+  if (!payload.descriptionEmailReportTime) {
+    timeErrorMsg('Enter the time the email was received')
+  } else {
+    let validTimeFormat = false
+    const maxTimeLength = 3
+    const time = payload.descriptionEmailReportTime
+    if (moment(time, 'HH:mm').isValid() && time.length >= maxTimeLength) {
+      const timeParts = time.split(':')
+      const hours = timeParts[0]?.padStart(2, '0')
+      const minutes = timeParts[1]?.padStart(2, '0')
+      validTimeFormat = timeParts.length === 2 && (hours >= zero && hours <= maxHours) && (minutes >= zero && minutes <= maxMinutes)
+    }
+
+    let dateString
+    let validDate = false
+    if (validDay && validMonth && validYear) {
+      dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+      validDate = moment(dateString, 'YYYY-MM-DD').isValid()
+    }
+
+    if (!validTimeFormat) {
+      timeErrorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59')
+    } else if (validTimeFormat && validDay && validMonth && validYear && validDate) {
+      const dateTimeString = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth.padStart(2, '0')}-${payload.descriptionEmailReportDateDay.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
+      const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
+      const maxAgeMinutes = 5
+      const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
+      if (!isDateTimeInPast) {
+        timeErrorMsg('Time must be in the past')
+      }
+    } else {
+      // do nothing
+    }
+  }
+}
+
+const dateErrorMsg = errMsg => {
+  description.errorList.push({
+    text: errMsg,
+    href: '#descriptionEmailReportDate'
+  })
+}
+
+const timeErrorMsg = errMsg => {
+  description.errorList.push({
+    text: errMsg,
+    href: '#descriptionEmailReportTime'
+  })
 }
 
 const validateGridReference = gridRef => {
