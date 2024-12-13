@@ -57,35 +57,35 @@ describe(url, () => {
           reporterPhoneNumber: sessionData['create-a-report'].reporterPhone,
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
-          questionSetId: 0//,
-          // data: expect.arrayContaining([
-          //   expect.objectContaining({
-          //     questionId: 3800,
-          //     questionAsked: 'Reported by email?',
-          //     questionResponse: true,
-          //     answerId: 3801
-          //   }),
-          //   expect.objectContaining({
-          //     questionId: 3900,
-          //     questionAsked: 'Has photos or videos of problem?',
-          //     questionResponse: true,
-          //     answerId: 3902
-          //   }),
-          //   expect.objectContaining({
-          //     questionId: 4100,
-          //     questionAsked: 'Location of incident',
-          //     questionResponse: true,
-          //     answerId: 4101,
-          //     otherDetails: 'SJ 67084 44110'
-          //   }),
-          //   expect.objectContaining({
-          //     questionId: 4100,
-          //     questionAsked: 'Location of incident',
-          //     questionResponse: true,
-          //     answerId: 4102,
-          //     otherDetails: 'Location description'
-          //   })
-          // ])
+          questionSetId: 0,
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3800,
+              questionAsked: 'Reported by email?',
+              questionResponse: true,
+              answerId: 3801
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Has photos or videos of problem',
+              questionResponse: true,
+              answerId: 3902
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4102,
+              otherDetails: 'Location description'
+            })
+          ])
         })
       }))
     })
