@@ -99,7 +99,7 @@ const showFirstErrorTab = () => {
 const showIncidentTypes = () => {
   let show = false
   incidentInputs.forEach(input => {
-    if (input.id.substring(input.id.indexOf('-') + 1) > three && input.checked) {
+    if (parseInt(input.id.substring(input.id.indexOf('-') + 1)) > three && input.checked) {
       show = true
     }
   })
