@@ -21,7 +21,10 @@ const sessionData = {
     descriptionReportedByEmail: 'true',
     locationDescription: 'Location description',
     locationGridRef: 'SJ 67084 44110',
-    reporterEmail: 'test@Test.com'
+    reporterEmail: 'test@Test.com',
+    reporterFirstName: 'John',
+    reporterLastName: 'Smith',
+    reporterPhone: '01234567890'
   }
 }
 
@@ -37,13 +40,54 @@ describe(url, () => {
   })
   describe('POST', () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
-      // TODO mock and test that service bus queue has had the message sent
       const options = {
         url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
       expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          reporterName: sessionData['create-a-report'].reporterFirstName + ' ' + sessionData['create-a-report'].reporterLastName,
+          reporterPhoneNumber: sessionData['create-a-report'].reporterPhone,
+          reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
+          otherDetails: sessionData['create-a-report'].descriptionDescription,
+          questionSetId: 0//,
+          // data: expect.arrayContaining([
+          //   expect.objectContaining({
+          //     questionId: 3800,
+          //     questionAsked: 'Reported by email?',
+          //     questionResponse: true,
+          //     answerId: 3801
+          //   }),
+          //   expect.objectContaining({
+          //     questionId: 3900,
+          //     questionAsked: 'Has photos or videos of problem?',
+          //     questionResponse: true,
+          //     answerId: 3902
+          //   }),
+          //   expect.objectContaining({
+          //     questionId: 4100,
+          //     questionAsked: 'Location of incident',
+          //     questionResponse: true,
+          //     answerId: 4101,
+          //     otherDetails: 'SJ 67084 44110'
+          //   }),
+          //   expect.objectContaining({
+          //     questionId: 4100,
+          //     questionAsked: 'Location of incident',
+          //     questionResponse: true,
+          //     answerId: 4102,
+          //     otherDetails: 'Location description'
+          //   })
+          // ])
+        })
+      }))
     })
   })
 })

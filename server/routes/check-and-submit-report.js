@@ -23,17 +23,6 @@ const handlers = {
     })
   },
   post: async (request, h) => {
-    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
-
-    const day = reportPayload.descriptionEmailReportDateDay
-    const month = reportPayload.descriptionEmailReportDateMonth
-    const year = reportPayload.descriptionEmailReportDateYear
-    const time = reportPayload.descriptionEmailReportTime
-    const dateTimeString = `${month?.padStart(2, '0')}-${day?.padStart(2, '0')}-${year} ${time}`
-    const datetimeEmailReported = new Date(dateTimeString).toISOString()
-
-    console.log('Data for reportPayload', reportPayload)
-    console.log('Data for datetimeEmailReported', datetimeEmailReported)
     // Post data to service bus queue
     const payload = buildPayload(request.yar)
 
@@ -53,6 +42,12 @@ const handlers = {
 
 const buildPayload = (session) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
+  let datetimeEmailReported
+  if (reportPayload.descriptionReportedByEmail) {
+    const dateTimeString = `${reportPayload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateDay?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateYear} ${reportPayload.descriptionEmailReportTime}`
+    datetimeEmailReported = new Date(dateTimeString).toISOString()
+  }
+
   const payload = {
     reportingAnEnvironmentalProblem: {
       sessionGuid: session.id,
@@ -60,8 +55,8 @@ const buildPayload = (session) => {
       reporterEmailAddress: reportPayload.reporterEmail,
       reporterPhoneNumber: reportPayload.reporterPhone,
       reportType: Number(reportPayload.descriptionIncidentType),
-      datetimeObserved: (new Date()).toISOString(), // reportPayload.dateTimeObserved,
-      datetimeReported: (new Date()).toISOString(), // reportPayload.dateTimeReported,
+      datetimeObserved: reportPayload.dateTimeObserved || (new Date()).toISOString(),
+      datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
       otherDetails: reportPayload.descriptionDescription,
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
       data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions)
