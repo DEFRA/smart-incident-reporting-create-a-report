@@ -4,7 +4,7 @@ import config from '../utils/config.js'
 const handlers = {
   get: async (request, h) => {
     request.cookieAuth.clear()
-    return h.redirect(`https://login.microsoftonline.com/${config.aadTenant}/oauth2/v2.0/logout`)
+    return h.redirect(`https://login.microsoftonline.com/${config.aadTenant}/oauth2/v2.0/logout?post_logout_redirect_uri=${config.serviceUrl}/signed-out`)
   }
 }
 
