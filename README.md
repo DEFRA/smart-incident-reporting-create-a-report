@@ -192,3 +192,4 @@ The build of the webapp requires an environment variable GA_ID if google analyti
 |   AAD_CLIENT_ID   |   Azure active directory client ID   |   Y   |   |
 |   AAD_CLIENT_SECRET   |   Azure active directory client secret   |   Y   |   |
 |   AAD_TENANT   |   Azure active directory tenant   |   Y   |   |
+|   SERVICE_URL  |   Primary URL used for running service   |   N   | http://localhost:3000  |

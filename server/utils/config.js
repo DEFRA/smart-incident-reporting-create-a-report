@@ -27,7 +27,8 @@ const schema = Joi.object().keys({
   serviceBusQueueName: Joi.string().required(),
   aadClientId: Joi.string().required(),
   aadClientSecret: Joi.string().required(),
-  aadTenant: Joi.string().required()
+  aadTenant: Joi.string().required(),
+  serviceUrl: Joi.string().uri().default('http://localhost:3000')
 })
 
 // Build config
@@ -48,7 +49,8 @@ const config = {
   serviceBusQueueName: process.env.SERVICE_BUS_QUEUE_NAME,
   aadClientId: process.env.AAD_CLIENT_ID,
   aadClientSecret: process.env.AAD_CLIENT_SECRET,
-  aadTenant: process.env.AAD_TENANT
+  aadTenant: process.env.AAD_TENANT,
+  serviceUrl: process.env.SERVICE_URL
 }
 
 // Validate config

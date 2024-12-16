@@ -11,6 +11,7 @@ const PUBLIC = 'public'
 const HOME = 'home'
 const SERVICE_UNAVAILABLE = 'service-unavailable'
 const SIGNOUT = 'signout'
+const SIGNED_OUT = 'signed-out'
 const CREATE_REPORT_CANCEL = 'create-report/cancel'
 
 const CREATE_A_REPORT = 'create-a-report'
@@ -23,6 +24,7 @@ const views = {
   HOME,
   SERVICE_UNAVAILABLE,
   SIGNOUT,
+  SIGNED_OUT,
   CREATE_A_REPORT,
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
