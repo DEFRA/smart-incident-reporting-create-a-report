@@ -208,7 +208,6 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
   } else {
     let validTimeFormat = false
     const maxTimeLength = 3
-    // const time = payload.descriptionEmailReportTime
     if (moment(dateparts.time, 'HH:mm').isValid() && dateparts.time.length >= maxTimeLength) {
       const timeParts = dateparts.time.split(':')
       const hours = timeParts[0]?.padStart(2, '0')
