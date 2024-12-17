@@ -308,5 +308,214 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="12">Test data</textarea>')
     })
+    // Other date validation
+    it('Sad: should fail validation if date observed not selected on date tab', async () => {
+      payload.dateObserved = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateObserved">Select a date</a>')
+    })
+    it('Sad: should fail validation if dateobserved is today on date tab but no time', async () => {
+      payload.dateObserved = 'today'
+      payload.dateTime = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
+    })
+    it('Sad: should fail validation if dateobserved is yesterday on date tab but no time', async () => {
+      payload.dateObserved = 'yesterday'
+      payload.dateTime = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = ''
+      payload.dateOtherMonth = '12'
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a day</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but no year', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '12'
+      payload.dateOtherYear = ''
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a year</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but no month', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = ''
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a month</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but bad day', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '40'
+      payload.dateOtherMonth = '12'
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a day from 1 to 31</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but bad month', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '15'
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a month using numbers 1 to 12</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but bad year', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '12'
+      payload.dateOtherYear = 'sdf'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a full year, for example 2024</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before on date tab but bad date', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '31'
+      payload.dateOtherMonth = '04'
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">The date entered must be a real date</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before but date is in future', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = ''
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '04'
+      payload.dateOtherYear = '2030'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Date must be in the past</a>')
+    })
+    it('Sad: should fail validation if 2 date parts missing', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = '10:00'
+      payload.dateOtherDay = ''
+      payload.dateOtherMonth = ''
+      payload.dateOtherYear = '2024'
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a day and month</a>')
+    })
+    it('Sad: should fail validation if 2 date parts missing', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = '10:00'
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = ''
+      payload.dateOtherYear = ''
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a month and year</a>')
+    })
+    it('Sad: should fail validation if 2 date parts missing', async () => {
+      payload.dateObserved = 'before'
+      payload.dateTime = '10:00'
+      payload.dateOtherDay = ''
+      payload.dateOtherMonth = '12'
+      payload.dateOtherYear = ''
+      payload.dateOtherTime = '09:00'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateOther">Enter a day and year</a>')
+    })
   })
 })

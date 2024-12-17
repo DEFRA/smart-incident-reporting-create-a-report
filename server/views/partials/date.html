@@ -22,7 +22,7 @@
       classes: "govuk-radios--small",
       name: "dateObserved",
       id: "dateObserved",
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.date, "dateObserved"),
       items: [
        {
           checked: dateObserved === 'today',
@@ -51,7 +51,7 @@
         name: "dateTime",
         classes: "govuk-input--width-5",
         value: dateTime,
-        errorMessage: '',
+        errorMessage: findErrorMessageById(errorSummary.date, "dateTime"),
         label: {
           text: "Time (approximate)"
         },
@@ -71,7 +71,7 @@
             classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
           }
         },
-        errorMessage: '',
+        errorMessage: findErrorMessageById(errorSummary.date, "dateOther"),
         items: [
           {
             name: "dateOtherDay",
@@ -102,6 +102,7 @@
         name: "dateOtherTime",
         classes: "govuk-input--width-5",
         value: dateOtherTime,
+        errorMessage: findErrorMessageById(errorSummary.date, "dateOtherTime"),
         autocomplete: "off",
         label: {
           text: "Time",

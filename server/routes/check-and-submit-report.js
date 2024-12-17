@@ -44,8 +44,22 @@ const buildPayload = (session) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
   let datetimeEmailReported
   if (reportPayload.descriptionReportedByEmail) {
-    const dateTimeString = `${reportPayload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateDay?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateYear} ${reportPayload.descriptionEmailReportTime}`
+    const dateTimeString = `${reportPayload.descriptionEmailReportDateYear}-${reportPayload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateDay?.padStart(2, '0')} ${reportPayload.descriptionEmailReportTime}`
     datetimeEmailReported = new Date(dateTimeString).toISOString()
+  }
+  let dateTimeObserved
+  if (reportPayload.dateObserved === 'before') {
+    const dateTimeString = `${reportPayload.dateOtherYear?.padStart(2, '0')}-${reportPayload.dateOtherMonth?.padStart(2, '0')}-${reportPayload.dateOtherDay} ${reportPayload.dateOtherTime}`
+    dateTimeObserved = new Date(dateTimeString).toISOString()
+  } else {
+    const date = new Date(new Date().toDateString())
+    if (reportPayload.dateObserved === 'yesterday') {
+      date.setDate(date.getDate() - 1)
+    }
+    const timeParts = reportPayload.dateTime.split(':')
+    date.setHours(timeParts[0]?.padStart(2, '0'))
+    date.setMinutes(timeParts[1]?.padStart(2, '0'))
+    dateTimeObserved = date.toISOString()
   }
 
   const payload = {
@@ -55,7 +69,7 @@ const buildPayload = (session) => {
       reporterEmailAddress: reportPayload.reporterEmail,
       reporterPhoneNumber: reportPayload.reporterPhone,
       reportType: Number(reportPayload.descriptionIncidentType),
-      datetimeObserved: reportPayload.dateTimeObserved || (new Date()).toISOString(),
+      datetimeObserved: dateTimeObserved,
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
       otherDetails: reportPayload.descriptionDescription,
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
