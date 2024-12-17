@@ -79,8 +79,8 @@ const validateDescriptionTab = (payload, errorSummary) => {
     const month = payload.descriptionEmailReportDateMonth
     const year = payload.descriptionEmailReportDateYear
     const time = payload.descriptionEmailReportTime
-    validateDate(day, month, year, errorSummary, 'the', ' the email was received', '#descriptionEmailReportDate')
-    validateTime(day, month, year, time, errorSummary, 'the', ' the email was received', '#descriptionEmailReportTime')
+    validateDate({ day, month, year }, errorSummary, 'the', ' the email was received', '#descriptionEmailReportDate')
+    validateTime({ day, month, year, time }, errorSummary, 'the', ' the email was received', '#descriptionEmailReportTime')
   }
 }
 
@@ -130,21 +130,21 @@ const validateDateTab = (payload, errorSummary) => {
       time = payload.dateOtherTime
     }
 
-    validateDate(day, month, year, errorSummary, 'a', '', dateHref)
-    validateTime(day, month, year, time, errorSummary, 'a', '', timeHref)
+    validateDate({ day, month, year }, errorSummary, 'a', '', dateHref)
+    validateTime({ day, month, year, time }, errorSummary, 'a', '', timeHref)
   }
 }
 
-const validateDate = (day, month, year, errorSummary, aOrThe, errorMsgPostfix, href) => {
+const validateDate = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) => {
   // Validation for date of email
   const zero = 0
   const maxMonths = 12
   const maxDays = 31
   const firstValidYear = 1900
   const latestYear = 3000
-  const validDay = day > zero && day <= maxDays
-  const validMonth = month > zero && month <= maxMonths
-  const validYear = year > firstValidYear && year < latestYear
+  const validDay = dateparts.day > zero && dateparts.day <= maxDays
+  const validMonth = dateparts.month > zero && dateparts.month <= maxMonths
+  const validYear = dateparts.year > firstValidYear && dateparts.year < latestYear
   const validDayOnly = validDay && !validMonth && !validYear
   const validMonthOnly = !validDay && validMonth && !validYear
   const validYearOnly = !validDay && !validMonth && validYear
@@ -155,26 +155,26 @@ const validateDate = (day, month, year, errorSummary, aOrThe, errorMsgPostfix, h
   let validDate = false
   let isPastDate = false
   if (validDay && validMonth && validYear) {
-    dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+    dateString = `${dateparts.year}-${dateparts.month?.padStart(2, '0')}-${dateparts.day?.padStart(2, '0')}`
     validDate = moment(dateString, 'YYYY-MM-DD').isValid()
     const dateToCheck = moment(dateString)
     const today = moment().startOf('day')
     isPastDate = dateToCheck.isSame(today, 'day') || dateToCheck.isBefore(today)
   }
-  const inValidDate = day && month && year && !validDate
-  if (!day && !month && !year) {
+  const inValidDate = dateparts.day && dateparts.month && dateparts.year && !validDate
+  if (!dateparts.day && !dateparts.month && !dateparts.year) {
     errorMsg(`Enter ${aOrThe} date${errorMsgPostfix}`, errorSummary, href)
-  } else if (!day && month && year) {
+  } else if (!dateparts.day && dateparts.month && dateparts.year) {
     errorMsg(`Enter ${aOrThe} day${errorMsgPostfix}`, errorSummary, href)
-  } else if (day && !month && year) {
+  } else if (dateparts.day && !dateparts.month && dateparts.year) {
     errorMsg(`Enter ${aOrThe} month${errorMsgPostfix}`, errorSummary, href)
-  } else if (day && month && !year) {
+  } else if (dateparts.day && dateparts.month && !dateparts.year) {
     errorMsg(`Enter ${aOrThe} year${errorMsgPostfix}`, errorSummary, href)
-  } else if (!day && !month && year) {
+  } else if (!dateparts.day && !dateparts.month && dateparts.year) {
     errorMsg(`Enter ${aOrThe} day and month${errorMsgPostfix}`, errorSummary, href)
-  } else if (day && !month && !year) {
+  } else if (dateparts.day && !dateparts.month && !dateparts.year) {
     errorMsg(`Enter ${aOrThe} month and year${errorMsgPostfix}`, errorSummary, href)
-  } else if (!day && month && !year) {
+  } else if (!dateparts.day && dateparts.month && !dateparts.year) {
     errorMsg(`Enter ${aOrThe} day and year${errorMsgPostfix}`, errorSummary, href)
   } else if (validMonthAndYear) {
     errorMsg('Enter a day from 1 to 31', errorSummary, href)
@@ -191,7 +191,7 @@ const validateDate = (day, month, year, errorSummary, aOrThe, errorMsgPostfix, h
   }
 }
 
-const validateTime = (day, month, year, time, errorSummary, aOrThe, errorMsgPostfix, href) => {
+const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) => {
   // Validation for time of email
   const zero = 0
   const maxMinutes = 59
@@ -200,17 +200,17 @@ const validateTime = (day, month, year, time, errorSummary, aOrThe, errorMsgPost
   const maxDays = 31
   const firstValidYear = 1900
   const latestYear = 3000
-  const validDay = day > zero && day <= maxDays
-  const validMonth = month > zero && month <= maxMonths
-  const validYear = year > firstValidYear && year < latestYear
-  if (!time) {
+  const validDay = dateparts.day > zero && dateparts.day <= maxDays
+  const validMonth = dateparts.month > zero && dateparts.month <= maxMonths
+  const validYear = dateparts.year > firstValidYear && dateparts.year < latestYear
+  if (!dateparts.time) {
     errorMsg(`Enter ${aOrThe} time${errorMsgPostfix}`, errorSummary, href)
   } else {
     let validTimeFormat = false
     const maxTimeLength = 3
     // const time = payload.descriptionEmailReportTime
-    if (moment(time, 'HH:mm').isValid() && time.length >= maxTimeLength) {
-      const timeParts = time.split(':')
+    if (moment(dateparts.time, 'HH:mm').isValid() && dateparts.time.length >= maxTimeLength) {
+      const timeParts = dateparts.time.split(':')
       const hours = timeParts[0]?.padStart(2, '0')
       const minutes = timeParts[1]?.padStart(2, '0')
       validTimeFormat = timeParts.length === 2 && (hours >= zero && hours <= maxHours) && (minutes >= zero && minutes <= maxMinutes)
@@ -219,14 +219,14 @@ const validateTime = (day, month, year, time, errorSummary, aOrThe, errorMsgPost
     let dateString
     let validDate = false
     if (validDay && validMonth && validYear) {
-      dateString = `${year}-${month?.padStart(2, '0')}-${day?.padStart(2, '0')}`
+      dateString = `${dateparts.year}-${dateparts.month?.padStart(2, '0')}-${dateparts.day?.padStart(2, '0')}`
       validDate = moment(dateString, 'YYYY-MM-DD').isValid()
     }
 
     if (!validTimeFormat) {
       errorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59', errorSummary, href)
     } else if (validTimeFormat && validDay && validMonth && validYear && validDate) {
-      const dateTimeString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${time}`
+      const dateTimeString = `${dateparts.year}-${dateparts.month.padStart(2, '0')}-${dateparts.day.padStart(2, '0')} ${dateparts.time}`
       const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
       const maxAgeMinutes = 5
       const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
