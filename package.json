@@ -72,7 +72,7 @@
     "standard": "^17.1.2"
   },
   "optionalDependencies": {
-    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#a86793adde2ef8eef79a8c33f31b4640f5a2e456"
+    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#develop"
   },
   "standard": {
     "globals": [
