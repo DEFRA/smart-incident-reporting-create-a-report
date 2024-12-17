@@ -52,13 +52,14 @@ const validateEmail = email => {
 const validateReportPayload = payload => {
   const errorSummary = {
     description: getErrorSummary(),
-    location: getErrorSummary(),
     reporter: getErrorSummary(),
+    location: getErrorSummary(),
     date: getErrorSummary()
   }
 
   // Tab validations
   validateDescription(payload, errorSummary)
+  validateReporter(payload, errorSummary)
   validateLocation(payload, errorSummary)
 
   return errorSummary
@@ -82,6 +83,34 @@ const validateDescription = (payload, errorSummary) => {
   if (payload.descriptionReportedByEmail) {
     validateDateOfEmail(payload, errorSummary)
     validateTimeOfEmail(payload, errorSummary)
+  }
+}
+
+const validateReporter = (payload, errorSummary) => {
+  if (!payload.reporterPhotos) {
+    errorSummary.reporter.errorList.push({
+      text: 'Select \'yes\' if the reporter has images or videos',
+      href: '#reporterPhotos'
+    })
+  }
+
+  if (payload.reporterPhotos === 'Yes') {
+    if (!payload.reporterEmail) {
+      errorSummary.reporter.errorList.push({
+        text: 'Enter an email address',
+        href: '#reporterEmail'
+      })
+    } else if (payload.reporterEmail) {
+      const validEmail = validateEmail(payload.reporterEmail)
+      if (!validEmail) {
+        errorSummary.reporter.errorList.push({
+          text: 'Enter an email address in the correct format, like name@example.com',
+          href: '#reporterEmail'
+        })
+      }
+    } else {
+      // do nothing (blame sonarcloud)
+    }
   }
 }
 

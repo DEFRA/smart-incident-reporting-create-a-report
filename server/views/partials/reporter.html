@@ -50,7 +50,7 @@
       label: {
         text: "Email"
       },
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterEmail"),
       classes: "govuk-!-width-full",
       value: reporterEmail,
       autocomplete: "off"
@@ -72,8 +72,9 @@
     <div class="govuk-!-padding-bottom-8"></div>
 
     {{ govukRadios({
-      classes: "govuk-radios--small",
+      id: "reporterPhotos",
       name: "reporterPhotos",
+      classes: "govuk-radios--small",
       fieldset: {
         legend: {
           text: "Has photos or videos of problem",
@@ -81,7 +82,7 @@
         }
       },
       value: '',
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhotos"),
       items: [
         {
           checked: reporterPhotos === 'Yes',
