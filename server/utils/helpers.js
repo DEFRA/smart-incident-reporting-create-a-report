@@ -114,12 +114,8 @@ const validateReporterTab = (payload, errorSummary) => {
     }
   }
 
-  if (payload.reporterPhone && !phoneRegex.test(payload.reporterPhone)) {
-    errorSummary.errorList.push({
-      text: 'Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192',
-      href: '#reporterPhone'
-    })
-  }
+  // Validate phone number
+  validatePhone(payload, errorSummary)
 
   if (payload.reporterOrgType === 'water' && !payload.reporterWaterName) {
     errorSummary.errorList.push({
@@ -295,6 +291,15 @@ const errorMsg = (text, errorSummary, href) => {
     text,
     href
   })
+}
+
+const validatePhone = (payload, errorSummary) => {
+  if (payload.reporterPhone && !phoneRegex.test(payload.reporterPhone)) {
+    errorSummary.errorList.push({
+      text: 'Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192',
+      href: '#reporterPhone'
+    })
+  }
 }
 
 const validateGridReference = gridRef => {
