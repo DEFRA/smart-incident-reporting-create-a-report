@@ -150,6 +150,7 @@ const validateLocationTab = (payload, errorSummary) => {
     })
   } else {
     // do nothing
+  }
 }
 
 const validateDateTab = (payload, errorSummary) => {
