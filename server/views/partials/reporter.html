@@ -50,7 +50,7 @@
       label: {
         text: "Email"
       },
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterEmail"),
       classes: "govuk-!-width-full",
       value: reporterEmail,
       autocomplete: "off"
@@ -62,6 +62,7 @@
       label: {
         text: "Phone number"
       },
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhone"),
       classes: "govuk-input--width-10",
       value: reporterPhone,
       autocomplete: "off"
@@ -72,8 +73,9 @@
     <div class="govuk-!-padding-bottom-8"></div>
 
     {{ govukRadios({
-      classes: "govuk-radios--small",
+      id: "reporterPhotos",
       name: "reporterPhotos",
+      classes: "govuk-radios--small",
       fieldset: {
         legend: {
           text: "Has photos or videos of problem",
@@ -81,7 +83,7 @@
         }
       },
       value: '',
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhotos"),
       items: [
         {
           checked: reporterPhotos === 'Yes',
@@ -147,7 +149,7 @@
         }
       },
       id: "reporterWaterName",
-      errorMessage: '',
+      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterWaterName"),
       items: [
        {
           checked: reporterWaterName === 'Southern Water Services Ltd',
@@ -288,7 +290,7 @@
         id: "reporterOtherName",
         name: "reporterOtherName",
         value: reporterOtherName,
-        errorMessage: '',
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterOtherName"),
         label: {
           text: "Organisation name",
           classes: "govuk-fieldset__legend--s"
