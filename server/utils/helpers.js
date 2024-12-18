@@ -5,6 +5,8 @@ import moment from 'moment'
 // OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
 
+const phoneRegex = /^[\d-+()#]*$/
+
 const getErrorSummary = () => {
   return JSON.parse(JSON.stringify(constants.errorSummary))
 }
@@ -53,6 +55,7 @@ const validateReportPayload = payload => {
 
   // Tab validations
   validateDescriptionTab(payload, errorSummary.description)
+  validateReporterTab(payload, errorSummary.reporter)
   validateLocationTab(payload, errorSummary.location)
   validateDateTab(payload, errorSummary.date)
 
@@ -84,6 +87,55 @@ const validateDescriptionTab = (payload, errorSummary) => {
   }
 }
 
+const validateReporterTab = (payload, errorSummary) => {
+  if (!payload.reporterPhotos) {
+    errorSummary.errorList.push({
+      text: 'Select \'yes\' if the reporter has images or videos',
+      href: '#reporterPhotos'
+    })
+  }
+
+  if (payload.reporterPhotos === 'Yes') {
+    if (!payload.reporterEmail) {
+      errorSummary.errorList.push({
+        text: 'Enter an email address',
+        href: '#reporterEmail'
+      })
+    } else if (payload.reporterEmail) {
+      const validEmail = validateEmail(payload.reporterEmail)
+      if (!validEmail) {
+        errorSummary.errorList.push({
+          text: 'Enter an email address in the correct format, like name@example.com',
+          href: '#reporterEmail'
+        })
+      }
+    } else {
+      // do nothing
+    }
+  }
+
+  if (payload.reporterPhone && !phoneRegex.test(payload.reporterPhone)) {
+    errorSummary.errorList.push({
+      text: 'Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192',
+      href: '#reporterPhone'
+    })
+  }
+
+  if (payload.reporterOrgType === 'water' && !payload.reporterWaterName) {
+    errorSummary.errorList.push({
+      text: 'Select a water company',
+      href: '#reporterWaterName'
+    })
+  } else if (payload.reporterOrgType === 'other' && !payload.reporterOtherName) {
+    errorSummary.errorList.push({
+      text: 'Enter an organisation name',
+      href: '#reporterOtherName'
+    })
+  } else {
+    // do nothing
+  }
+}
+
 const validateLocationTab = (payload, errorSummary) => {
   // Do location validation
   if (!payload.locationGridRef) {
@@ -97,8 +149,7 @@ const validateLocationTab = (payload, errorSummary) => {
       href: '#locationGridRef'
     })
   } else {
-    // do nothing (blame sonarcloud)
-  }
+    // do nothing
 }
 
 const validateDateTab = (payload, errorSummary) => {
@@ -237,6 +288,7 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
     }
   }
 }
+
 const errorMsg = (text, errorSummary, href) => {
   errorSummary.errorList.push({
     text,

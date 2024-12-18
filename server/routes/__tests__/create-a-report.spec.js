@@ -25,6 +25,7 @@ const payload = {
   reporterPhone: '01234567890',
   reporterOrgType: 'water',
   reporterWaterName: 'Water Services Ltd',
+  reporterOtherName: '',
   reporterPhotos: 'Yes'
 }
 
@@ -46,25 +47,16 @@ describe(url, () => {
       const response = await submitPostRequest(options)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
     })
+
+    // Test for Incident description tab
     it('Sad: should fail validation and return error message for missing grid reference', async () => {
       payload.locationGridRef = ''
       const options = {
         url,
         payload
       }
-
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference</a>')
-    })
-    it('Sad: should fail validation and return error message for missing grid reference', async () => {
-      payload.locationGridRef = 'sdfdsgfdgdf'
-      const options = {
-        url,
-        payload
-      }
-
-      const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference, like SD661501</a>')
     })
     it('Sad: should fail validation and return error message for missing incident description', async () => {
       payload.descriptionDescription = ''
@@ -308,8 +300,9 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="12">Test data</textarea>')
     })
+
     // Other date validation
-    it('Sad: should fail validation if date observed not selected on date tab', async () => {
+    it('Sad: should fail validation and return error message if date observed not selected on date tab', async () => {
       payload.dateObserved = ''
       const options = {
         url,
@@ -319,7 +312,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateObserved">Select a date</a>')
     })
-    it('Sad: should fail validation if dateobserved is today on date tab but no time', async () => {
+    it('Sad: should fail validation and return error message if dateobserved is today on date tab but no time', async () => {
       payload.dateObserved = 'today'
       payload.dateTime = ''
       const options = {
@@ -330,7 +323,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
     })
-    it('Sad: should fail validation if dateobserved is yesterday on date tab but no time', async () => {
+    it('Sad: should fail validation and return error message if dateobserved is yesterday on date tab but no time', async () => {
       payload.dateObserved = 'yesterday'
       payload.dateTime = ''
       const options = {
@@ -341,6 +334,107 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
     })
+
+    // Test for Reporter tab
+    it('Sad: should fail validation and return error message if no option is selected for Has photos or videos of problem on reporter tab', async () => {
+      payload.reporterPhotos = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('if the reporter has images or videos</a>')
+    })
+    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
+    })
+    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'testmail'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'testmail@'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'testmail@com'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message for invalid phone number', async () => {
+      payload.reporterPhone = 'test'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterPhone">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192</a>')
+    })
+    it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
+      payload.reporterOrgType = 'water'
+      payload.reporterWaterName = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterWaterName">Select a water company</a>')
+    })
+    it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
+      payload.reporterOrgType = 'other'
+      payload.reporterOtherName = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterOtherName">Enter an organisation name</a>')
+    })
+
+    // Test for Location of incident tab
+    it('Sad: should fail validation and return error message for missing grid reference', async () => {
+      payload.locationGridRef = 'sdfdsgfdgdf'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference, like SD661501</a>')
+    })
+    // Test for Date observed tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
       payload.dateObserved = 'before'
       payload.dateTime = ''
