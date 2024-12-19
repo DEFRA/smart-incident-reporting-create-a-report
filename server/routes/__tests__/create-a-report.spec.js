@@ -390,6 +390,61 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
+    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
+      payload.reporterPhotos = ''
+      payload.reporterEmail = 'testmail'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if no is selected for Has photos or videos of problem with an invalid email', async () => {
+      payload.reporterPhotos = 'No'
+      payload.reporterEmail = 'testmail'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the email length exceeds the maximum of 255 octets', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidismfloccinaucinihilipilificationpneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidismfloccinaucinihilipilification'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if the email account length exceeds the maximum of 64 octets', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism@testmail.com'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
+    it('Sad: should fail validation and return error message if the email address length exceeds the maximum of 255 octets', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'testemail@pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidismfloccinaucinihilipilificationpneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidismfloccinaucinihilipilification.com'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
     it('Sad: should fail validation and return error message for invalid phone number', async () => {
       payload.reporterPhone = 'test'
       const options = {
