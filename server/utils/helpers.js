@@ -287,13 +287,11 @@ const validateReporterEmail = (payload, errorSummary) => {
         text: 'Enter an email address',
         href: emailId
       })
-    } else if (payload.reporterEmail) {
-      if (!validEmail) {
-        errorSummary.errorList.push({
-          text: 'Enter an email address in the correct format, like name@example.com',
-          href: emailId
-        })
-      }
+    } else if (invalidEmail) {
+      errorSummary.errorList.push({
+        text: 'Enter an email address in the correct format, like name@example.com',
+        href: emailId
+      })
     } else {
       // do nothing
     }
