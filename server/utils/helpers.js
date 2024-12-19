@@ -5,7 +5,7 @@ import moment from 'moment'
 // OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
 
-const phoneRegex = /^[\d-+()#]*$/
+const phoneRegex = /^[\s\d-+()#]*$/
 
 const getErrorSummary = () => {
   return JSON.parse(JSON.stringify(constants.errorSummary))
@@ -280,17 +280,18 @@ const errorMsg = (text, errorSummary, href) => {
 const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
+  const emailId = '#reporterEmail'
   if (payload.reporterPhotos === 'Yes') {
     if (!payload.reporterEmail) {
       errorSummary.errorList.push({
         text: 'Enter an email address',
-        href: '#reporterEmail'
+        href: emailId
       })
     } else if (payload.reporterEmail) {
       if (!validEmail) {
         errorSummary.errorList.push({
           text: 'Enter an email address in the correct format, like name@example.com',
-          href: '#reporterEmail'
+          href: emailId
         })
       }
     } else {
@@ -299,7 +300,7 @@ const validateReporterEmail = (payload, errorSummary) => {
   } else if ((!payload.reporterPhotos || payload.reporterPhotos === 'No') && invalidEmail) {
     errorSummary.errorList.push({
       text: 'Enter an email address in the correct format, like name@example.com',
-      href: '#reporterEmail'
+      href: emailId
     })
   } else {
     // Do nothing
