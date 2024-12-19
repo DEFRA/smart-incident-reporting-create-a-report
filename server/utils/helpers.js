@@ -88,9 +88,6 @@ const validateDescriptionTab = (payload, errorSummary) => {
 }
 
 const validateReporterTab = (payload, errorSummary) => {
-  const validEmail = validateEmail(payload.reporterEmail)
-  const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
-
   if (!payload.reporterPhotos) {
     errorSummary.errorList.push({
       text: 'Select \'yes\' if the reporter has images or videos',
@@ -98,30 +95,8 @@ const validateReporterTab = (payload, errorSummary) => {
     })
   }
 
-  if (payload.reporterPhotos === 'Yes') {
-    if (!payload.reporterEmail) {
-      errorSummary.errorList.push({
-        text: 'Enter an email address',
-        href: '#reporterEmail'
-      })
-    } else if (payload.reporterEmail) {
-      if (!validEmail) {
-        errorSummary.errorList.push({
-          text: 'Enter an email address in the correct format, like name@example.com',
-          href: '#reporterEmail'
-        })
-      }
-    } else {
-      // do nothing
-    }
-  } else if ((!payload.reporterPhotos && invalidEmail) || (payload.reporterPhotos === 'No' && invalidEmail)) {
-    errorSummary.errorList.push({
-      text: 'Enter an email address in the correct format, like name@example.com',
-      href: '#reporterEmail'
-    })
-  } else {
-    // Do nothing
-  }
+  // Validate reporter tab email
+  validateReporterEmail(payload, errorSummary)
 
   // Validate phone number
   validatePhone(payload, errorSummary)
@@ -300,6 +275,35 @@ const errorMsg = (text, errorSummary, href) => {
     text,
     href
   })
+}
+
+const validateReporterEmail = (payload, errorSummary) => {
+  const validEmail = validateEmail(payload.reporterEmail)
+  const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
+  if (payload.reporterPhotos === 'Yes') {
+    if (!payload.reporterEmail) {
+      errorSummary.errorList.push({
+        text: 'Enter an email address',
+        href: '#reporterEmail'
+      })
+    } else if (payload.reporterEmail) {
+      if (!validEmail) {
+        errorSummary.errorList.push({
+          text: 'Enter an email address in the correct format, like name@example.com',
+          href: '#reporterEmail'
+        })
+      }
+    } else {
+      // do nothing
+    }
+  } else if ((!payload.reporterPhotos || payload.reporterPhotos === 'No') && invalidEmail) {
+    errorSummary.errorList.push({
+      text: 'Enter an email address in the correct format, like name@example.com',
+      href: '#reporterEmail'
+    })
+  } else {
+    // Do nothing
+  }
 }
 
 const validatePhone = (payload, errorSummary) => {
