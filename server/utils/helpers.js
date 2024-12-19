@@ -89,6 +89,7 @@ const validateDescriptionTab = (payload, errorSummary) => {
 
 const validateReporterTab = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
+  const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
 
   if (!payload.reporterPhotos) {
     errorSummary.errorList.push({
@@ -113,12 +114,7 @@ const validateReporterTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
-  } else if (!payload.reporterPhotos && Boolean(payload.reporterEmail) && !validEmail) {
-    errorSummary.errorList.push({
-      text: 'Enter an email address in the correct format, like name@example.com',
-      href: '#reporterEmail'
-    })
-  } else if (payload.reporterPhotos === 'No' && Boolean(payload.reporterEmail) && !validEmail) {
+  } else if ((!payload.reporterPhotos && invalidEmail) || (payload.reporterPhotos === 'No' && invalidEmail)) {
     errorSummary.errorList.push({
       text: 'Enter an email address in the correct format, like name@example.com',
       href: '#reporterEmail'
