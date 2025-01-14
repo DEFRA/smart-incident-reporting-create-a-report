@@ -33,10 +33,12 @@ const handlers = {
       errorSummary.location.errorList.length > 0 ||
       errorSummary.date.errorList.length > 0
     ) {
+      const dispName = request.auth.credentials.profile.displayName
       return h.view(constants.views.CREATE_A_REPORT, {
         errorSummary,
         ...request.payload,
-        reportTypes
+        reportTypes,
+        dispName
       })
     }
 
