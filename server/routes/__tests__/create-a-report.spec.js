@@ -487,7 +487,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference, like SD661501</a>')
+      expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference, like SD 12345 67890 or SD1234567890</a>')
     })
     // Test for Date observed tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
