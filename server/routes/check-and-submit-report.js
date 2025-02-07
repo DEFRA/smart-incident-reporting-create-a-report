@@ -9,7 +9,6 @@ const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
-    const ngrValue = formatGridReference(reportPayload.locationGridRef)
     if (!reportPayload ||
       errorSummary.description.errorList.length > 0 ||
       errorSummary.reporter.errorList.length > 0 ||
@@ -18,11 +17,11 @@ const handlers = {
     ) {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
-    console.log('Data for reportPayload', reportPayload)
+    const ngrValue = formatGridReference(reportPayload.locationGridRef)
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       ...reportPayload,
-      ngrValue,
-      reportTypes
+      reportTypes,
+      ngrValue
     })
   },
   post: async (request, h) => {
