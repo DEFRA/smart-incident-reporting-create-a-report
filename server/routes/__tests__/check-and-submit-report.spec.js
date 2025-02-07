@@ -45,6 +45,18 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, undefined, 302)
       expect(response.headers.location).toEqual(constants.routes.CREATE_A_REPORT)
     })
+    it(`Happy: Should return 12 character NGR value with the required spaces when locationGridRef has no spaces ${url}`, async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationGridRef = 'SJ6708444110'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('SJ 67084 44110')
+    })
+    it(`Happy: Should return 12 character NGR value with the required spaces when locationGridRef has spaces ${url}`, async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationGridRef = 'SJ 67084 44110'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('SJ 67084 44110')
+    })
   })
   describe('POST', () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
@@ -106,6 +118,42 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4003,
               otherDetails: 'Water Services Ltd'
+            })
+          ])
+        })
+      }))
+    })
+    it('Should post payload with the formatted location grid reference to service bus and set REPORT_SUBMITTED to true', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationGridRef = 'SJ6708444110'
+      const options = {
+        url
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          questionSetId: 0,
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4102,
+              otherDetails: 'Location description'
             })
           ])
         })

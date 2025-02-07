@@ -1,5 +1,5 @@
 import constants from '../utils/constants.js'
-import { validateReportPayload } from '../utils/helpers.js'
+import { validateReportPayload, formatGridReference } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
@@ -17,9 +17,11 @@ const handlers = {
     ) {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
+    const ngrValue = formatGridReference(reportPayload.locationGridRef)
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       ...reportPayload,
-      reportTypes
+      reportTypes,
+      ngrValue
     })
   },
   post: async (request, h) => {
@@ -120,7 +122,7 @@ const buildAnswersData = (reportPayload, questions) => {
     questionAsked: questions.INCIDENT_LOCATION.text,
     questionResponse: true,
     answerId: questions.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
-    otherDetails: reportPayload.locationGridRef
+    otherDetails: formatGridReference(reportPayload.locationGridRef)
   })
   if (reportPayload.locationDescription) {
     data.push({

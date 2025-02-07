@@ -2,8 +2,11 @@ import constants from './constants.js'
 import moment from 'moment'
 // import * as dateHelpers from '@defra/smart-incident-reporting/server/utils/date-helpers.js'
 
-// OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
-const gridRefRegex = /^([STNHOstnho][A-Za-z]\s?)(\d{5}\s?\d{5}|\d{4}\s?\d{4}|\d{3}\s?\d{3}|\d{2}\s?\d{2}|\d{1}\s?\d{1})$/
+// Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
+// Grid ref regex with spaces
+const gridRefRegexWs = /^([STNHOstnho][A-Za-z]\s)(\d{5}\s\d{5})$/
+// Grid ref regex without spaces
+const gridRefRegexWos = /^([STNHOstnho][A-Za-z])(\d{5}\d{5})$/
 
 const phoneRegex = /^[\s\d-+()#]*$/
 
@@ -125,7 +128,7 @@ const validateLocationTab = (payload, errorSummary) => {
     })
   } else if (!validateGridReference(payload.locationGridRef)) {
     errorSummary.errorList.push({
-      text: 'Enter a national grid reference, like SD661501',
+      text: 'Enter a national grid reference, like SD 12345 67890 or SD1234567890',
       href: '#locationGridRef'
     })
   } else {
@@ -315,12 +318,21 @@ const validatePhone = (payload, errorSummary) => {
 }
 
 const validateGridReference = gridRef => {
-  return gridRefRegex.test(gridRef)
+  return gridRefRegexWs.test(gridRef) || gridRefRegexWos.test(gridRef)
+}
+
+const formatGridReference = gridRef => {
+  const formatRegex = /^([STNHOstnho][A-Za-z])(\d{5})(\d{5})$/
+  if (formatRegex.test(gridRef)) {
+    return gridRef.replace(formatRegex, '$1 $2 $3')
+  }
+  return gridRef
 }
 
 export {
   getErrorSummary,
   validateEmail,
   validateReportPayload,
-  validateGridReference
+  validateGridReference,
+  formatGridReference
 }
