@@ -33,6 +33,7 @@
           {{ serviceName }}
         </a>
         {% if auth.credentials %}<p style="color: white;">{{auth.credentials.profile.displayName}}  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>{% endif %}
+        {% if dispName %}<p style="color: white;">{{ dispName }}  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>{% endif %}
       </div>
     </div>
   </header>
