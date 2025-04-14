@@ -53,8 +53,6 @@ const handlers = {
 
     // Post data to service bus queue
     const payload = buildPayload(request.yar)
-    console.log('Data for payload', payload)
-    console.log('Data for payload2', payload.reportingAnEnvironmentalProblem.data)
 
     // test the payload against the schema
     if (!validatePayload(payload)) {
