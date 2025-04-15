@@ -1,4 +1,8 @@
+import fs from 'fs'
 import constants from './constants.js'
+import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
+import dirname from '../../dirname.cjs'
 import moment from 'moment'
 // import * as dateHelpers from '@defra/smart-incident-reporting/server/utils/date-helpers.js'
 
@@ -10,8 +14,21 @@ const gridRefRegexWos = /^([STNHOstnho][A-Za-z])(\d{5}\d{5})$/
 
 const phoneRegex = /^[\s\d-+()#]*$/
 
+const sirpSchema = JSON.parse(fs.readFileSync(`${dirname}/server/schemas/sirp-car-schema.json`))
+
 const getErrorSummary = () => {
   return JSON.parse(JSON.stringify(constants.errorSummary))
+}
+
+const validatePayload = (payload) => {
+  const schema = sirpSchema
+  const ajv = new Ajv({ strict: false })
+  addFormats(ajv)
+  const valid = ajv.validate(schema, payload)
+  if (!valid) {
+    console.error(ajv.errors)
+  }
+  return valid
 }
 
 // Borrowed from https://github.com/DEFRA/biodiversity-net-gain-service/blob/master/packages/webapp/src/utils/helpers.js#L487
@@ -331,6 +348,7 @@ const formatGridReference = gridRef => {
 
 export {
   getErrorSummary,
+  validatePayload,
   validateEmail,
   validateReportPayload,
   validateGridReference,

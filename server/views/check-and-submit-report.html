@@ -17,6 +17,9 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
+    {% if errorSummary %}
+      {{ govukErrorSummary(errorSummary) }}
+    {% endif %}
   
   <h1 class="govuk-heading-l govuk-!-padding-top-4">{{ pageTitle }}</h1>
   
@@ -246,10 +249,67 @@
   
       ]
     }) }}
+
+    {# -------------------- INCIDENT CATEGORY -------------------- #}
+
+    {{ govukRadios({
+      name: "answerId",
+      id: "answerId",
+      fieldset: {
+        legend: {
+          text: "Incident category",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      errorMessage: findErrorMessageById(errorSummary, "answerId"),
+      items: [
+        {
+          value: incidentCategories.major.value,
+          text: incidentCategories.major.text,
+          checked: answerId == incidentCategories.major.value
+        },
+        {
+          value: incidentCategories.significant.value,
+          text: incidentCategories.significant.text,
+          checked: answerId == incidentCategories.significant.value
+        },
+        {
+          value: incidentCategories.minor.value,
+          text: incidentCategories.minor.text,
+          checked: answerId == incidentCategories.minor.value
+        },
+        {
+          value: incidentCategories.noImpact.value,
+          text: incidentCategories.noImpact.text,
+          checked: answerId == incidentCategories.noImpact.value
+        },
+        {
+          divider: "or"
+        },
+        {
+          value: incidentCategories.noCategory.value,
+          text: incidentCategories.noCategory.text,
+          checked: answerId == incidentCategories.noCategory.value
+        }
+      ]
+    }) }}
+
+    {{ govukInput({
+      name: "answerDetails",
+      id: "answerDetails",
+      label: {
+        text: "Reason for categorisation",
+        classes: "govuk-fieldset__legend--m"
+      },
+      value: answerDetails,
+      spellcheck: false,
+      errorMessage: findErrorMessageById(errorSummary, "answerDetails")
+    }) }}
+    
   
     <div class="govuk-button-group">
       <button type="submit" class="govuk-button" data-module="govuk-button">
-        Submit report
+        Send report to NIRS
       </button>
       <a class="govuk-button govuk-button--secondary govuk-!-margin-right-5" data-module="govuk-button" href="create-report/cancel">
         Cancel report
