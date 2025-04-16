@@ -10,100 +10,103 @@
       {{ govukErrorSummary(errorSummary.reporter) }}
     </div>
   {% endif %}
-  <div class="govuk-grid-column-one-half">
-
-    {% call govukFieldset({
-      legend: {
-        text: 'Reporter',
-        classes: "govuk-fieldset__legend--l govuk-!-padding-top-7 govuk-!-padding-bottom-4",
-        isPageHeading: true
-      }
-    }) %}
-
-    <p class="govuk-body">If the reporter does not want to give these details, leave blank.</p>
-
-    {{ govukInput({
-      id: "reporterFirstName",
-      name: "reporterFirstName",
-      label: {
-        text: "First name"
-      },
-      classes: "govuk-!-width-full",
-      value: reporterFirstName,
-      autocomplete: "off"
-    }) }}
-
-    {{ govukInput({
-      id: "reporterLastName",
-      name: "reporterLastName",
-      label: {
-        text: "Last name"
-      },
-      classes: "govuk-!-width-full",
-      value: reporterLastName,
-      autocomplete: "off"
-    }) }}
-
-    {{ govukInput({
-      id: "reporterEmail",
-      name: "reporterEmail",
-      label: {
-        text: "Email"
-      },
-      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterEmail"),
-      classes: "govuk-!-width-full",
-      value: reporterEmail,
-      autocomplete: "off"
-    }) }}
-
-    {{ govukInput({
-      id: "reporterPhone",
-      name: "reporterPhone",
-      label: {
-        text: "Phone number"
-      },
-      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhone"),
-      classes: "govuk-input--width-10",
-      value: reporterPhone,
-      autocomplete: "off"
-    }) }}
-
-    {% endcall %}
-
-    <div class="govuk-!-padding-bottom-8"></div>
-
-    {{ govukRadios({
-      id: "reporterPhotos",
-      name: "reporterPhotos",
-      classes: "govuk-radios--small",
-      fieldset: {
-        legend: {
-          text: "Has photos or videos of problem",
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      value: '',
-      errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhotos"),
-      items: [
-        {
-          checked: reporterPhotos === 'Yes',
-          value: "Yes",
-          text: "Yes — reporter must give their email"
-        },
-        {
-          checked: reporterPhotos === 'No',
-          value: "No",
-          text: "No"
-        }
-      ]
-    }) }}
-
+  
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l govuk-!-padding-top-7">
+      Reporter
+    </h1>
   </div>
+  
+  <div class="govuk-inset-text govuk-!-margin-left-5 govuk-!-margin-right-5">
+    If the reporter wants a reference number they must give an email address. The reference will be emailed to them after the report is sent to NIRS.
+  </div>
+
+  <div class="govuk-grid-column-one-half">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        <h1 class="govuk-fieldset__heading">
+          Reporter details
+        </h1>
+      </legend>
+
+      <p class="govuk-body">If the reporter does not want to give these details, leave blank.</p>
+
+      {{ govukInput({
+        id: "reporterFirstName",
+        name: "reporterFirstName",
+        label: {
+          text: "First name"
+        },
+        classes: "govuk-!-width-full",
+        value: reporterFirstName,
+        autocomplete: "off"
+      }) }}
+
+      {{ govukInput({
+        id: "reporterLastName",
+        name: "reporterLastName",
+        label: {
+          text: "Last name"
+        },
+        classes: "govuk-!-width-full",
+        value: reporterLastName,
+        autocomplete: "off"
+      }) }}
+
+      {{ govukInput({
+        id: "reporterEmail",
+        name: "reporterEmail",
+        label: {
+          text: "Email"
+        },
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterEmail"),
+        classes: "govuk-!-width-full",
+        value: reporterEmail,
+        autocomplete: "off"
+      }) }}
+
+      {{ govukInput({
+        id: "reporterPhone",
+        name: "reporterPhone",
+        label: {
+          text: "Phone number"
+        },
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhone"),
+        classes: "govuk-input--width-10",
+        value: reporterPhone,
+        autocomplete: "off"
+      }) }}
+
+      {{ govukRadios({
+        id: "reporterPhotos",
+        name: "reporterPhotos",
+        classes: "govuk-radios--small",
+        fieldset: {
+          legend: {
+            text: "Has photos or videos of problem",
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        value: '',
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhotos"),
+        items: [
+          {
+            checked: reporterPhotos === 'Yes',
+            value: "Yes",
+            text: "Yes — reporter must give their email"
+          },
+          {
+            checked: reporterPhotos === 'No',
+            value: "No",
+            text: "No"
+          }
+        ]
+      }) }}
+
+    </fieldset>
+  </div>
+
   <div class="govuk-grid-column-one-half govuk-!-padding-left-7">
-
-    <div class="govuk-!-padding-bottom-9"></div>
-    <div class="govuk-!-padding-bottom-8"></div>
-
     <div class="govuk-form-group">
       <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -134,7 +137,6 @@
         </div>
       </fieldset>
     </div>
-
 
     <div class="govuk-!-padding-bottom-3"></div>
 
@@ -297,6 +299,11 @@
         }
       }) }}
     </div>
-
-    </div>
+  </div>
+  <style>
+    .govuk-grid-column-full .govuk-inset-text {
+      border-left: 10px solid #F47738;
+      background-color: rgb(255 229 204 / 60%)
+    }
+  </style>
 </div>
