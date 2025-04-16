@@ -119,7 +119,8 @@ describe(url, () => {
               questionId: 4000,
               questionAsked: 'External organisation report',
               questionResponse: true,
-              answerId: 4001
+              answerId: 4001,
+              otherDetails: 'Water company'
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -229,7 +230,8 @@ describe(url, () => {
               questionId: 4000,
               questionAsked: 'External organisation report',
               questionResponse: true,
-              answerId: 4002
+              answerId: 4002,
+              otherDetails: 'Public organisation'
             }),
             expect.objectContaining({
               questionId: 4000,
