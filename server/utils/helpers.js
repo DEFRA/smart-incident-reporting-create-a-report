@@ -145,7 +145,7 @@ const validateLocationTab = (payload, errorSummary) => {
     })
   } else if (!validateGridReference(payload.locationGridRef)) {
     errorSummary.errorList.push({
-      text: 'Enter a national grid reference, like SD 12345 67890 or SD1234567890',
+      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
       href: '#locationGridRef'
     })
   } else {
