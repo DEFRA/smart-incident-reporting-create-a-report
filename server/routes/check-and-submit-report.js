@@ -154,7 +154,7 @@ const buildAnswersData = (reportPayload, questions) => {
       questionAsked: questions.EXTERNAL_ORGANISATION_REPORT.text,
       questionResponse: true,
       answerId: reportPayload.reporterOrgType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId,
-      otherDetails: reportPayload.reporterOrgType === 'water' ? 'Water company' : 'Public organisation'
+      otherDetails: reportPayload.reporterOrgType === 'water' ? 'Water Company' : 'Public organisation'
     })
     data.push({
       questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
