@@ -1,9 +1,9 @@
 import constants from '../utils/constants.js'
-import { validateReportPayload } from '../utils/helpers.js'
+import { validatePayload, validateReportPayload, formatGridReference, getErrorSummary } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
+import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
-import { validatePayload } from '@defra/smart-incident-reporting/server/utils/helpers.js'
 
 const handlers = {
   get: async (request, h) => {
@@ -17,12 +17,40 @@ const handlers = {
     ) {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
+    const ngrValue = formatGridReference(reportPayload.locationGridRef)
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       ...reportPayload,
-      reportTypes
+      reportTypes,
+      ngrValue,
+      incidentCategories
     })
   },
   post: async (request, h) => {
+    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
+    const ngrValue = formatGridReference(reportPayload.locationGridRef)
+    // get payload
+    let { answerId, answerDetails } = request.payload
+
+    // validate payload for errors
+    const errorSummary = validateIncidentCategory(answerId, answerDetails)
+    if (errorSummary.errorList.length > 0) {
+      const dispName = request.auth.credentials.profile.displayName
+      return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
+        dispName,
+        ...reportPayload,
+        errorSummary,
+        reportTypes,
+        ngrValue,
+        incidentCategories,
+        ...request.payload
+      })
+    }
+
+    // convert answerId to number
+    answerId = Number(answerId)
+
+    request.yar.set(constants.redisKeys.CHECK_AND_SUBMIT_REPORT, { answerId, answerDetails })
+
     // Post data to service bus queue
     const payload = buildPayload(request.yar)
 
@@ -40,8 +68,27 @@ const handlers = {
   }
 }
 
+const validateIncidentCategory = (answerId, answerDetails) => {
+  const errorSummary = getErrorSummary()
+  if (!answerId) {
+    errorSummary.errorList.push({
+      text: 'Select an incident category',
+      href: '#answerId'
+    })
+  }
+
+  if (!answerDetails) {
+    errorSummary.errorList.push({
+      text: 'Enter a reason for the selected categorisation',
+      href: '#answerDetails'
+    })
+  }
+  return errorSummary
+}
+
 const buildPayload = (session) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
+  const { answerId, answerDetails } = session.get(constants.redisKeys.CHECK_AND_SUBMIT_REPORT)
   let datetimeEmailReported
   if (reportPayload.descriptionReportedByEmail) {
     const dateTimeString = `${reportPayload.descriptionEmailReportDateYear}-${reportPayload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateDay?.padStart(2, '0')} ${reportPayload.descriptionEmailReportTime}`
@@ -73,6 +120,8 @@ const buildPayload = (session) => {
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
       otherDetails: reportPayload.descriptionDescription,
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
+      incidentCategory: answerId,
+      reasonForCategorisation: answerDetails,
       data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions)
     }
   }
@@ -104,7 +153,8 @@ const buildAnswersData = (reportPayload, questions) => {
       questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
       questionAsked: questions.EXTERNAL_ORGANISATION_REPORT.text,
       questionResponse: true,
-      answerId: reportPayload.reporterOrgType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId
+      answerId: reportPayload.reporterOrgType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId,
+      otherDetails: reportPayload.reporterOrgType === 'water' ? 'Water Company' : 'Public organisation'
     })
     data.push({
       questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
@@ -120,7 +170,7 @@ const buildAnswersData = (reportPayload, questions) => {
     questionAsked: questions.INCIDENT_LOCATION.text,
     questionResponse: true,
     answerId: questions.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
-    otherDetails: reportPayload.locationGridRef
+    otherDetails: formatGridReference(reportPayload.locationGridRef)
   })
   if (reportPayload.locationDescription) {
     data.push({
