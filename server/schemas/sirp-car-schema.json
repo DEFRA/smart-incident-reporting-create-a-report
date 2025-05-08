@@ -112,6 +112,12 @@
         "otherDetails": {
           "type": "string"
         },
+        "operatorName": {
+          "type": "string"
+        },
+        "operatorEmailAddress": {
+          "type": "string"
+        },
         "data": {
           "type": "array",
           "minItems": 0,

@@ -52,7 +52,7 @@ const handlers = {
     request.yar.set(constants.redisKeys.CHECK_AND_SUBMIT_REPORT, { answerId, answerDetails })
 
     // Post data to service bus queue
-    const payload = buildPayload(request.yar)
+    const payload = buildPayload(request.yar, request.auth.credentials.profile)
 
     // test the payload against the schema
     if (!validatePayload(payload)) {
@@ -86,7 +86,7 @@ const validateIncidentCategory = (answerId, answerDetails) => {
   return errorSummary
 }
 
-const buildPayload = (session) => {
+const buildPayload = (session, operatorDetails) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
   const { answerId, answerDetails } = session.get(constants.redisKeys.CHECK_AND_SUBMIT_REPORT)
   let datetimeEmailReported
@@ -122,6 +122,8 @@ const buildPayload = (session) => {
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
       incidentCategory: answerId,
       reasonForCategorisation: answerDetails,
+      operatorName: operatorDetails.displayName,
+      operatorEmailAddress: operatorDetails.email,
       data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions)
     }
   }
