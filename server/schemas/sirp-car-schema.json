@@ -112,10 +112,10 @@
         "otherDetails": {
           "type": "string"
         },
-        "operatorName": {
+        "loggedByDisplayName": {
           "type": "string"
         },
-        "operatorEmailAddress": {
+        "loggedByUserPrincipalName": {
           "type": "string"
         },
         "data": {

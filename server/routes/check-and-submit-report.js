@@ -122,8 +122,8 @@ const buildPayload = (session, operatorDetails) => {
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
       incidentCategory: answerId,
       reasonForCategorisation: answerDetails,
-      operatorName: operatorDetails.displayName,
-      operatorEmailAddress: operatorDetails.email,
+      loggedByDisplayName: operatorDetails.raw.displayName,
+      loggedByUserPrincipalName: operatorDetails.raw.userPrincipalName,
       data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions)
     }
   }
