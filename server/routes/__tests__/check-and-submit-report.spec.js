@@ -88,6 +88,8 @@ describe(url, () => {
           questionSetId: 0,
           incidentCategory: 2,
           reasonForCategorisation: 'Test reason for categorisation',
+          loggedByDisplayName: 'Smith, John',
+          loggedByUserPrincipalName: 'test@test.com',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 3800,

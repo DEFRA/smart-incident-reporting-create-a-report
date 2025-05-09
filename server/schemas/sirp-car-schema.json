@@ -112,6 +112,12 @@
         "otherDetails": {
           "type": "string"
         },
+        "loggedByDisplayName": {
+          "type": "string"
+        },
+        "loggedByUserPrincipalName": {
+          "type": "string"
+        },
         "data": {
           "type": "array",
           "minItems": 0,
