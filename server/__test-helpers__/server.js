@@ -34,7 +34,11 @@ const submitRequest = async (options, expectedResponseCode) => {
         profile: {
           id: 1,
           displayName: 'Smith, John',
-          email: 'test@test.com'
+          email: 'test@test.com',
+          raw: {
+            displayName: 'Smith, John',
+            userPrincipalName: 'test@test.com'
+          }
         }
       }
     }
