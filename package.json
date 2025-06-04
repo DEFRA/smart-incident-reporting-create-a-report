@@ -38,6 +38,7 @@
   "dependencies": {
     "@azure/identity": "^4.5.0",
     "@azure/service-bus": "^7.9.5",
+    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#feature/SIR-1538-upgrade-node",
     "@hapi/bell": "^13.0.2",
     "@hapi/boom": "^10.0.1",
     "@hapi/catbox-redis": "^7.0.2",
@@ -72,9 +73,6 @@
     "css-loader": "^7.1.2",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
-  },
-  "optionalDependencies": {
-    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#develop"
   },
   "standard": {
     "globals": [
