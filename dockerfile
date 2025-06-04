@@ -9,6 +9,7 @@ WORKDIR /usr/src
 COPY . create-a-report
 WORKDIR /usr/src/create-a-report
 RUN npm ci
+RUN npm run build
 
 EXPOSE $PORT
 
