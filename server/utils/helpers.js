@@ -339,7 +339,7 @@ const validateGridReference = gridRef => {
 }
 
 const formatGridReference = gridRef => {
-  const formatRegex = /^([STNHOstnho][A-Za-z])(\d{5})(\d{5})$/
+  const formatRegex = /^([THJONSthjons][VWXYZQRSTULMNOPFGHJKABCDEvwxyzqrstulmnopfghjkabcde])(\d{5})(\d{5})$/
   if (formatRegex.test(gridRef)) {
     return gridRef.replace(formatRegex, '$1 $2 $3')
   }
