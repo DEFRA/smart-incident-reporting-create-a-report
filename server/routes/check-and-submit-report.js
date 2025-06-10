@@ -6,6 +6,34 @@ import { ngrToEaNo, eaNoToLatLng } from '../utils/ngr-transform.js'
 import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 
+// Incident location question
+const incidentLocationQuestion = {
+  INCIDENT_LOCATION: {
+    questionId: 4100,
+    text: 'Location of incident',
+    answers: {
+      nationalGridReference: {
+        answerId: 4101
+      },
+      locationDescription: {
+        answerId: 4102
+      },
+      easting: {
+        answerId: 4103
+      },
+      northing: {
+        answerId: 4104
+      },
+      lng: {
+        answerId: 4105
+      },
+      lat: {
+        answerId: 4106
+      }
+    }
+  }
+}
+
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
@@ -169,8 +197,8 @@ const buildAnswersData = (reportPayload, questions) => {
   }
   // Location of incident
   const baseIncidentLocationAnswer = {
-    questionId: questions.INCIDENT_LOCATION.questionId,
-    questionAsked: questions.INCIDENT_LOCATION.text,
+    questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,
+    questionAsked: incidentLocationQuestion.INCIDENT_LOCATION.text,
     questionResponse: true
   }
   const gridref = formatGridReference(reportPayload.locationGridRef)
@@ -179,36 +207,36 @@ const buildAnswersData = (reportPayload, questions) => {
   data.push(
     {
       ...baseIncidentLocationAnswer,
-      answerId: questions.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
       otherDetails: gridref
     },
     {
       ...baseIncidentLocationAnswer,
-      answerId: questions.INCIDENT_LOCATION.answers.easting.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
       otherDetails: Math.floor(eaNoCoordinates.ea).toString()
     },
     {
       ...baseIncidentLocationAnswer,
-      answerId: questions.INCIDENT_LOCATION.answers.northing.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
       otherDetails: Math.floor(eaNoCoordinates.no).toString()
     },
     {
       ...baseIncidentLocationAnswer,
-      answerId: questions.INCIDENT_LOCATION.answers.lng.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
       otherDetails: latLngCoordinates.lng.toString()
     },
     {
       ...baseIncidentLocationAnswer,
-      answerId: questions.INCIDENT_LOCATION.answers.lat.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
       otherDetails: latLngCoordinates.lat.toString()
     }
   )
   if (reportPayload.locationDescription) {
     data.push({
-      questionId: questions.INCIDENT_LOCATION.questionId,
-      questionAsked: questions.INCIDENT_LOCATION.text,
+      questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,
+      questionAsked: incidentLocationQuestion.INCIDENT_LOCATION.text,
       questionResponse: true,
-      answerId: questions.INCIDENT_LOCATION.answers.locationDescription.answerId,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.locationDescription.answerId,
       otherDetails: reportPayload.locationDescription
     })
   }
