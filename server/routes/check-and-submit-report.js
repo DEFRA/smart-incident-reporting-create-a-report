@@ -19,16 +19,16 @@ const incidentLocationQuestion = {
         answerId: 4102
       },
       easting: {
-        answerId: 4103
+        answerId: 2702
       },
       northing: {
-        answerId: 4104
+        answerId: 2703
       },
       lng: {
-        answerId: 4105
+        answerId: 2704
       },
       lat: {
-        answerId: 4106
+        answerId: 2705
       }
     }
   }
