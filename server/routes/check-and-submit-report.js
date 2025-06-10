@@ -176,7 +176,6 @@ const buildAnswersData = (reportPayload, questions) => {
   const gridref = formatGridReference(reportPayload.locationGridRef)
   const eaNoCoordinates = ngrToEaNo(gridref)
   const latLngCoordinates = eaNoToLatLng(eaNoCoordinates)
-
   data.push(
     {
       ...baseIncidentLocationAnswer,
