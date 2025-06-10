@@ -114,6 +114,34 @@ describe(url, () => {
               questionId: 4100,
               questionAsked: 'Location of incident',
               questionResponse: true,
+              answerId: 4103,
+              otherDetails: '367084'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4104,
+              otherDetails: '344110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4105,
+              otherDetails: '-2.491836'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4106,
+              otherDetails: '52.993316'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
               answerId: 4102,
               otherDetails: 'Location description'
             }),
@@ -165,6 +193,41 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4101,
               otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4103,
+              otherDetails: '367084'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4104,
+              otherDetails: '344110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4105,
+              otherDetails: '-2.491836'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4106,
+              otherDetails: '52.993316'
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -227,6 +290,41 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4101,
               otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4103,
+              otherDetails: '367084'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4104,
+              otherDetails: '344110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4105,
+              otherDetails: '-2.491836'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4106,
+              otherDetails: '52.993316'
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -295,6 +393,41 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4101,
               otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4101,
+              otherDetails: 'SJ 67084 44110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4103,
+              otherDetails: '367084'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4104,
+              otherDetails: '344110'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4105,
+              otherDetails: '-2.491836'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 4106,
+              otherDetails: '52.993316'
             })
           ])
         })

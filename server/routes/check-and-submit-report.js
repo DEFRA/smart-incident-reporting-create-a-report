@@ -2,6 +2,7 @@ import constants from '../utils/constants.js'
 import { validatePayload, validateReportPayload, formatGridReference, getErrorSummary } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
+import { ngrToEaNo, eaNoToLatLng } from '../utils/ngr-transform.js'
 import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 
@@ -167,13 +168,42 @@ const buildAnswersData = (reportPayload, questions) => {
     })
   }
   // Location of incident
-  data.push({
+  const baseIncidentLocationAnswer = {
     questionId: questions.INCIDENT_LOCATION.questionId,
     questionAsked: questions.INCIDENT_LOCATION.text,
-    questionResponse: true,
-    answerId: questions.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
-    otherDetails: formatGridReference(reportPayload.locationGridRef)
-  })
+    questionResponse: true
+  }
+  const gridref = formatGridReference(reportPayload.locationGridRef)
+  const eaNoCoordinates = ngrToEaNo(gridref)
+  const latLngCoordinates = eaNoToLatLng(eaNoCoordinates)
+
+  data.push(
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: questions.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
+      otherDetails: gridref
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: questions.INCIDENT_LOCATION.answers.easting.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.ea).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: questions.INCIDENT_LOCATION.answers.northing.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.no).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: questions.INCIDENT_LOCATION.answers.lng.answerId,
+      otherDetails: latLngCoordinates.lng.toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: questions.INCIDENT_LOCATION.answers.lat.answerId,
+      otherDetails: latLngCoordinates.lat.toString()
+    }
+  )
   if (reportPayload.locationDescription) {
     data.push({
       questionId: questions.INCIDENT_LOCATION.questionId,
