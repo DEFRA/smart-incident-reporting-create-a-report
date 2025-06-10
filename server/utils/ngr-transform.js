@@ -9,14 +9,15 @@ proj4.nadgrid('OSTN15_NTv2_OSGBtoETRS', oSTN15)
 
 // Return easting + northing from an input grid reference
 const five = 5
+const minRange = 500000
 const ngrToEaNo = (gridref) => {
   gridref = String(gridref).trim()
   const gridLetters = 'VWXYZQRSTULMNOPFGHJKABCDE'
 
   const ref = gridref.toUpperCase().replaceAll(' ', '')
 
-  const majorEasting = gridLetters.indexOf(ref[0]) % five * 500000 - 1000000
-  const majorNorthing = Math.floor(gridLetters.indexOf(ref[0]) / five) * 500000 - 500000
+  const majorEasting = gridLetters.indexOf(ref[0]) % five * minRange - 1000000
+  const majorNorthing = Math.floor(gridLetters.indexOf(ref[0]) / five) * minRange - minRange
 
   const minorEasting = gridLetters.indexOf(ref[1]) % five * 100000
   const minorNorthing = Math.floor(gridLetters.indexOf(ref[1]) / five) * 100000
