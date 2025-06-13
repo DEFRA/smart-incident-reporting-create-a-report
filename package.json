@@ -1,6 +1,6 @@
 {
   "name": "create-a-report",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Digital service for incident reporting by internal ICS team",
   "main": "index.js",
   "type": "module",
