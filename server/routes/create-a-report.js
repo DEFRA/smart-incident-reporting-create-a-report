@@ -21,11 +21,16 @@ const handlers = {
     })
   },
   post: async (request, h) => {
+    // Trim whitespaces for string inputs in payload
+    let payloadData = request.payload
+    Object.keys(payloadData).forEach(k => payloadData[k] = typeof payloadData[k] == 'string' ? payloadData[k].trim() : payloadData[k])
+    console.log("Data for payloadData", payloadData)
+    
     // Store data in redis cache
-    request.yar.set(constants.redisKeys.CREATE_A_REPORT, request.payload)
+    request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
     // Validate payload
-    const errorSummary = validateReportPayload(request.payload)
+    const errorSummary = validateReportPayload(payloadData)
 
     // Return view if errors
     if (errorSummary.description.errorList.length > 0 ||
@@ -36,7 +41,7 @@ const handlers = {
       const dispName = request.auth.credentials.profile.displayName
       return h.view(constants.views.CREATE_A_REPORT, {
         errorSummary,
-        ...request.payload,
+        ...payloadData,
         reportTypes,
         dispName
       })
@@ -47,9 +52,11 @@ const handlers = {
   }
 }
 const getContext = session => {
+  const showMessage = process.env.SHOW_NON_LIVE_MESSAGE
   return {
     ...session.get(constants.redisKeys.CREATE_A_REPORT),
-    reportTypes
+    reportTypes,
+    showMessage
   }
 }
 

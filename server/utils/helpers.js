@@ -35,7 +35,8 @@ const validatePayload = (payload) => {
 const validateEmail = email => {
   const maxLength = 255
   const domainPartMaxLength = 63
-  const tester = /^[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
+  //const tester = /^[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
+  const tester = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/
   // https://en.wikipedia.org/wiki/Email_address  The format of an email address is local-part@domain, where the
   // local part may be up to 64 octets long and the domain may have a maximum of 255 octets.
   if (!email || email.length === 0 || email.length > maxLength) {
@@ -108,6 +109,22 @@ const validateDescriptionTab = (payload, errorSummary) => {
 }
 
 const validateReporterTab = (payload, errorSummary) => {
+  // validate length of first name
+  if (payload.reporterFirstName && payload.reporterFirstName.length > 20) {
+    errorSummary.errorList.push({
+      text: 'First name must be 20 characters or less',
+      href: '#reporterFirstName'
+    })
+  }
+
+  // validate length of last name
+  if (payload.reporterLastName && payload.reporterLastName.length > 40) {
+    errorSummary.errorList.push({
+      text: 'Last name must be 40 characters or less',
+      href: '#reporterLastName'
+    })
+  }
+
   if (!payload.reporterPhotos) {
     errorSummary.errorList.push({
       text: 'Select \'yes\' if the reporter has images or videos',
@@ -126,11 +143,20 @@ const validateReporterTab = (payload, errorSummary) => {
       text: 'Select a water company',
       href: '#reporterWaterName'
     })
-  } else if (payload.reporterOrgType === 'other' && !payload.reporterOtherName) {
-    errorSummary.errorList.push({
-      text: 'Enter an organisation name',
-      href: '#reporterOtherName'
-    })
+  } else if (payload.reporterOrgType === 'other') {
+    if (!payload.reporterOtherName) {
+      errorSummary.errorList.push({
+        text: 'Enter an organisation name',
+        href: '#reporterOtherName'
+      })
+    }
+    if (payload.reporterLastName && payload.reporterOtherName.length > 50) {
+      errorSummary.errorList.push({
+        text: 'Organisation name must be 50 characters or less',
+        href: '#reporterOtherName'
+      })
+    }
+
   } else {
     // do nothing
   }
@@ -184,6 +210,38 @@ const validateDateTab = (payload, errorSummary) => {
 
     validateDate({ day, month, year }, errorSummary, 'a', '', dateHref)
     validateTime({ day, month, year, time }, errorSummary, 'a', '', timeHref)
+  }
+
+  // validate if date/time of incident is before date/time reported by email
+  if (payload.descriptionReportedByEmail === 'true' && payload.dateObserved) {
+    const dateTimeReportedByEmail = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${payload.descriptionEmailReportDateDay?.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
+    console.log('Data for dateTimeReportedByEmail', dateTimeReportedByEmail)
+    let dateTimeOfIncident
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    if (payload.dateObserved === 'today') {
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'yesterday') {
+      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'before') {
+      dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
+      console.log('Data for dateTimeOfIncident', dateTimeOfIncident)
+    } else {
+      // do nothing
+    }
+    const emailDate = moment(dateTimeReportedByEmail, 'YYYY-MM-DD hh:mm')
+    const incidentDate = moment(dateTimeOfIncident, 'YYYY-MM-DD hh:mm')
+
+    if (emailDate.isBefore(incidentDate)) {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      const dateMissMatchError = `The time of incident must be before ${payload.descriptionEmailReportDateDay} ${months[(Number(payload.descriptionEmailReportDateMonth)) - 1]} ${payload.descriptionEmailReportDateYear} ${payload.descriptionEmailReportTime}`
+      errorSummary.errorList.push({
+        text: dateMissMatchError,
+        href: '#dateObserved'
+      })
+    }
   }
 }
 

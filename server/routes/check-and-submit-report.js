@@ -34,6 +34,9 @@ const incidentLocationQuestion = {
   }
 }
 
+// show/hide not a live service message
+const showMessage = process.env.SHOW_NON_LIVE_MESSAGE
+
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
@@ -48,6 +51,7 @@ const handlers = {
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
+      showMessage,
       ...reportPayload,
       reportTypes,
       ngrValue,
@@ -66,6 +70,7 @@ const handlers = {
       const dispName = request.auth.credentials.profile.displayName
       return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
         dispName,
+        showMessage,
         ...reportPayload,
         errorSummary,
         reportTypes,

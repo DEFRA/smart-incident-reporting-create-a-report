@@ -44,13 +44,11 @@
 {% endblock %}
 
 {% block beforeContent %}
-  <!-- {{ govukPhaseBanner({
-    tag: {
-      text: "Beta"
-    },
-    html: 'This is a new service – <a class="govuk-link" href="/feedback">leave feedback</a> to help us to improve it.'
-  }) }} -->
-
+{% if showMessage %}
+<div class="govuk-inset-text non-live-service-banner">
+  This is not a live service. Anything you do here will not affect incident records in NIRS.
+</div>
+{% endif %}
 {% endblock %}
 
 {% block content %}

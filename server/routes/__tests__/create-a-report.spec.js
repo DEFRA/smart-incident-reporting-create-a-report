@@ -302,7 +302,7 @@ describe(url, () => {
     })
 
     // Other date validation
-    it('Sad: should fail validation and return error message if date observed not selected on date tab', async () => {
+    it('Sad: should fail validation and return error message if date of incident not selected on date tab', async () => {
       payload.dateObserved = ''
       const options = {
         url,
@@ -489,7 +489,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
     })
-    // Test for Date observed tab
+    // Test for Date of incident tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
       payload.dateObserved = 'before'
       payload.dateTime = ''

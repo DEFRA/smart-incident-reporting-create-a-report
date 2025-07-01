@@ -192,24 +192,33 @@
       ]
     }) }}
   
-    {# -------------------- DATE OBSERVED -------------------- #}
+    {# -------------------- DATE OF INCIDENT -------------------- #}
     {{ govukSummaryList({
       card: {
       classes: "govuk-!-margin-bottom-6",
         title: {
-          text: "Date observed"
+          text: "Date of incident"
         },
         actions: {
           items: [
             {
               href: 'create-a-report#date',
               html: '<p class="govuk-body govuk-!-margin-bottom-0"><a href="create-a-report#date" class="govuk-link govuk-link--no-visited-state">Change</a></p>',
-              visuallyHiddenText: "date observed"
+              visuallyHiddenText: "date of incident"
             }
           ]
         }
       },
       rows: [
+
+      {
+        key: {
+          text: "Date"
+        },
+        value: {
+          text: "Now"
+        }
+      } if (dateObserved === "now"),
   
       {
         key: {

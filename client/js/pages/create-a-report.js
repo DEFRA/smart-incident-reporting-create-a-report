@@ -3,13 +3,14 @@ const incidentInputs = document.querySelectorAll('input[id^="descriptionIncident
 const divider = document.querySelector('.govuk-radios__divider')
 const checkboxWaterCompany = document.getElementById('water')
 const checkboxOtherOrg = document.getElementById('other')
-const waterCompanyRadios = document.getElementById('waterCompanyRadios')
-const organisationInput = document.getElementById('organisationInput')
+// const waterCompanyRadios = document.getElementById('waterCompanyRadios')
+// const organisationInput = document.getElementById('organisationInput')
 const timeInput = document.getElementById('timeInput')
 const otherDateTimeInput = document.getElementById('otherDateTimeInput')
-const todayDateInput = document.getElementById('dateObserved')
-const yesterdayDateInput = document.getElementById('dateObserved-2')
-const otherDateInput = document.getElementById('dateObserved-3')
+/* const nowDateInput = document.getElementById('dateObserved')
+const todayDateInput = document.getElementById('dateObserved-2')
+const yesterdayDateInput = document.getElementById('dateObserved-3')
+const otherDateInput = document.getElementById('dateObserved-4') */
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
@@ -31,6 +32,9 @@ checkboxOtherOrg.addEventListener('change', () => {
     checkboxWaterCompany.checked = false
   }
   toggleWaterAndOrg()
+})
+nowDateInput.addEventListener('change', () => {
+  toggleDate()
 })
 todayDateInput.addEventListener('change', () => {
   toggleDate()
@@ -69,20 +73,28 @@ const toggleWaterAndOrg = () => {
   }
 }
 
-const toggleDate = () => {
-  if (todayDateInput.checked) {
+/* const toggleDate = () => {
+  console.log("inside toggleDate")
+  if (nowDateInput.checked) {
+    console.log("Now is clicked")
+    timeInput.style.display = 'none'
+    otherDateTimeInput.style.display = 'none'
+  } else if (todayDateInput.checked) {
+    console.log("Today is clicked")
     timeInput.style.display = 'block'
     otherDateTimeInput.style.display = 'none'
   } else if (yesterdayDateInput.checked) {
+    console.log("yesterday is clicked")
     timeInput.style.display = 'block'
     otherDateTimeInput.style.display = 'none'
   } else if (otherDateInput.checked) {
+    console.log("before is clicked")
     timeInput.style.display = 'none'
     otherDateTimeInput.style.display = 'block'
   } else {
     // do nothing
   }
-}
+} */
 
 const showFirstErrorTab = () => {
   if (errorSummaries.length > 0) {

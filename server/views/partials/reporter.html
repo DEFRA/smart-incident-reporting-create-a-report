@@ -32,6 +32,7 @@
       <p class="govuk-body">If the reporter does not want to give these details, leave blank.</p>
 
       {{ govukInput({
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterFirstName"),
         id: "reporterFirstName",
         name: "reporterFirstName",
         label: {
@@ -43,6 +44,7 @@
       }) }}
 
       {{ govukInput({
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterLastName"),
         id: "reporterLastName",
         name: "reporterLastName",
         label: {

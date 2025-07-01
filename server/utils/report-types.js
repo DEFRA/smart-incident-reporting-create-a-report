@@ -63,9 +63,9 @@ const reportTypes = {
     value: 1600,
     text: 'Flytipping'
   },
-  healthyConcern: {
+  healthConcern: {
     value: 1700,
-    text: 'Healthy concern'
+    text: 'Health concern'
   },
   illegalFishing: {
     value: 1800,
