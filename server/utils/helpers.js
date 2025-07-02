@@ -107,8 +107,11 @@ const validateDescriptionTab = (payload, errorSummary) => {
 }
 
 const validateReporterTab = (payload, errorSummary) => {
+  const twenty = 20
+  const forty = 40
+  const fifty = 50
   // validate length of first name
-  if (payload.reporterFirstName && payload.reporterFirstName.length > 20) {
+  if (payload.reporterFirstName && payload.reporterFirstName.length > twenty) {
     errorSummary.errorList.push({
       text: 'First name must be 20 characters or less',
       href: '#reporterFirstName'
@@ -116,7 +119,7 @@ const validateReporterTab = (payload, errorSummary) => {
   }
 
   // validate length of last name
-  if (payload.reporterLastName && payload.reporterLastName.length > 40) {
+  if (payload.reporterLastName && payload.reporterLastName.length > forty) {
     errorSummary.errorList.push({
       text: 'Last name must be 40 characters or less',
       href: '#reporterLastName'
@@ -148,7 +151,7 @@ const validateReporterTab = (payload, errorSummary) => {
         href: '#reporterOtherName'
       })
     }
-    if (payload.reporterLastName && payload.reporterOtherName.length > 50) {
+    if (payload.reporterLastName && payload.reporterOtherName.length > fifty) {
       errorSummary.errorList.push({
         text: 'Organisation name must be 50 characters or less',
         href: '#reporterOtherName'
