@@ -177,16 +177,17 @@ const validateLocationTab = (payload, errorSummary) => {
 }
 
 const validateDateTab = (payload, errorSummary) => {
+  const dateObservedRef = '#dateObserved'
   if (!payload.dateObserved) {
     errorSummary.errorList.push({
       text: 'Select a date',
-      href: '#dateObserved'
+      href: dateObservedRef
     })
   } else {
     let day, month, year, time, dateHref, timeHref
     // Set dates for today and yesterday options
     if (payload.dateObserved !== 'before') {
-      dateHref = '#dateObserved'
+      dateHref = dateObservedRef
       timeHref = '#dateTime'
       const date = new Date()
       if (payload.dateObserved === 'yesterday') {
@@ -226,15 +227,16 @@ const validateDateTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
-    const emailDate = moment(dateTimeReportedByEmail, 'YYYY-MM-DD hh:mm')
-    const incidentDate = moment(dateTimeOfIncident, 'YYYY-MM-DD hh:mm')
+    const dateTimeFormat = 'YYYY-MM-DD hh:mm'
+    const emailDate = moment(dateTimeReportedByEmail, dateTimeFormat)
+    const incidentDate = moment(dateTimeOfIncident, dateTimeFormat)
 
     if (emailDate.isBefore(incidentDate)) {
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       const dateMissMatchError = `The time of incident must be before ${payload.descriptionEmailReportDateDay} ${months[(Number(payload.descriptionEmailReportDateMonth)) - 1]} ${payload.descriptionEmailReportDateYear} ${payload.descriptionEmailReportTime}`
       errorSummary.errorList.push({
         text: dateMissMatchError,
-        href: '#dateObserved'
+        href: dateObservedRef
       })
     }
   }
