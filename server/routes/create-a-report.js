@@ -23,7 +23,7 @@ const handlers = {
   },
   post: async (request, h) => {
     // Trim whitespaces for string inputs in payload
-    let payloadData = request.payload
+    const payloadData = request.payload
     for (const [key, value] of Object.entries(payloadData)) {
       if (typeof value === 'string') {
         payloadData[key] = value.trim()
