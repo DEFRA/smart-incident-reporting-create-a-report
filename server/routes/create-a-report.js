@@ -1,6 +1,7 @@
 import constants from '../utils/constants.js'
 import { validateReportPayload } from '../utils/helpers.js'
 import { reportTypes } from '../utils/report-types.js'
+import moment from 'moment'
 
 const handlers = {
   get: async (request, h) => {
@@ -22,11 +23,24 @@ const handlers = {
   },
   post: async (request, h) => {
     // Trim whitespaces for string inputs in payload
-    const payloadData = request.payload
+    let payloadData = request.payload
     for (const [key, value] of Object.entries(payloadData)) {
       if (typeof value === 'string') {
         payloadData[key] = value.trim()
       }
+    }
+
+    // Set time for date of incident - now
+    if (payloadData.dateObserved === 'now') {
+      const currentTIme = moment().format('HH:mm')
+      payloadData.nowTime = currentTIme
+
+      // clear other payload time/date data
+      payloadData.dateTime = ''
+      payloadData.dateOtherDay = ''
+      payloadData.dateOtherMonth = ''
+      payloadData.dateOtherYear = ''
+      payloadData.dateOtherTime = ''
     }
 
     // Store data in redis cache

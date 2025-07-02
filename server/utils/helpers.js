@@ -171,7 +171,7 @@ const validateDateTab = (payload, errorSummary) => {
       text: 'Select a date',
       href: dateObservedRef
     })
-  } else {
+  } else if (payload.dateObserved !== 'now') {
     let day, month, year, time, dateHref, timeHref
     // Set dates for today and yesterday options
     if (payload.dateObserved !== 'before') {
@@ -196,6 +196,8 @@ const validateDateTab = (payload, errorSummary) => {
 
     validateDate({ day, month, year }, errorSummary, 'a', '', dateHref)
     validateTime({ day, month, year, time }, errorSummary, 'a', '', timeHref)
+  } else {
+    // do nothing
   }
 
   // validate if date/time of incident is before date/time reported by email

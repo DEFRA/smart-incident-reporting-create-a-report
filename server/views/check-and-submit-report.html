@@ -254,7 +254,34 @@
         value: {
           html: dateTime
         }
-      } if (dateTime)
+      } if (dateObserved === 'today'),
+
+      {
+        key: {
+          text: "Time"
+        },
+        value: {
+          html: dateTime
+        }
+      } if (dateObserved === 'yesterday'),
+
+      {
+        key: {
+          text: "Time"
+        },
+        value: {
+          html: dateOtherTime
+        }
+      } if (dateObserved === 'before'),
+
+      {
+        key: {
+          text: "Time"
+        },
+        value: {
+          html: nowTime
+        }
+      } if (dateObserved === 'now')
   
       ]
     }) }}

@@ -129,13 +129,16 @@ const buildPayload = (session, operatorDetails) => {
     datetimeEmailReported = new Date(dateTimeString).toISOString()
   }
   let dateTimeObserved
+  const date = new Date(new Date().toDateString())
   if (reportPayload.dateObserved === 'now') {
-    dateTimeObserved = (new Date()).toISOString()
+    const timeParts = reportPayload.nowTime.split(':')
+    date.setHours(timeParts[0]?.padStart(2, '0'))
+    date.setMinutes(timeParts[1]?.padStart(2, '0'))
+    dateTimeObserved = date.toISOString()
   } else if (reportPayload.dateObserved === 'before') {
     const dateTimeString = `${reportPayload.dateOtherYear?.padStart(2, '0')}-${reportPayload.dateOtherMonth?.padStart(2, '0')}-${reportPayload.dateOtherDay} ${reportPayload.dateOtherTime}`
     dateTimeObserved = new Date(dateTimeString).toISOString()
   } else {
-    const date = new Date(new Date().toDateString())
     if (reportPayload.dateObserved === 'yesterday') {
       date.setDate(date.getDate() - 1)
     }
