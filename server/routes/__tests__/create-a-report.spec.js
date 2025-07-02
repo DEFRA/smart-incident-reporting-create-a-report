@@ -445,6 +445,17 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
+    it('Sad: should fail validation and return error message if the email address has whitespaces', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'this is test@testemail.co.uk'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
     it('Sad: should fail validation and return error message for invalid phone number', async () => {
       payload.reporterPhone = 'test'
       const options = {
@@ -476,6 +487,37 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterOtherName">Enter an organisation name</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the reporter first name exceeds the maximum of 20 characters', async () => {
+      payload.reporterFirstName = 'pneumonoultramicroscopicsilic'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterFirstName">First name must be 20 characters or less</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the reporter last name exceeds the maximum of 40 characters', async () => {
+      payload.reporterLastName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterLastName">Last name must be 40 characters or less</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the organisation name exceeds the maximum of 50 characters', async () => {
+      payload.reporterOrgType = 'other'
+      payload.reporterOtherName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterOtherName">Organisation name must be 50 characters or less</a>')
     })
 
     // Test for Location of incident tab
@@ -665,6 +707,28 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateOther">Enter a day and year</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before date/time reported by email', async () => {
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = '10'
+      payload.descriptionEmailReportDateMonth = '05'
+      payload.descriptionEmailReportDateYear = '2025'
+      payload.descriptionEmailReportTime = '08:00'
+      payload.descriptionReportedByEmail = 'true'
+      payload.dateObserved = 'before'
+      payload.dateTime = '10:00'
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '06'
+      payload.dateOtherYear = '2025'
+      payload.dateOtherTime = '09:30'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
     })
   })
 })

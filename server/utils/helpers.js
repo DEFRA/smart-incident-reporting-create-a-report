@@ -31,11 +31,9 @@ const validatePayload = (payload) => {
   return valid
 }
 
-// Borrowed from https://github.com/DEFRA/biodiversity-net-gain-service/blob/master/packages/webapp/src/utils/helpers.js#L487
 const validateEmail = email => {
   const maxLength = 255
   const domainPartMaxLength = 63
-  //const tester = /^[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
   const tester = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/
   // https://en.wikipedia.org/wiki/Email_address  The format of an email address is local-part@domain, where the
   // local part may be up to 64 octets long and the domain may have a maximum of 255 octets.
@@ -156,7 +154,6 @@ const validateReporterTab = (payload, errorSummary) => {
         href: '#reporterOtherName'
       })
     }
-
   } else {
     // do nothing
   }
@@ -215,19 +212,17 @@ const validateDateTab = (payload, errorSummary) => {
   // validate if date/time of incident is before date/time reported by email
   if (payload.descriptionReportedByEmail === 'true' && payload.dateObserved) {
     const dateTimeReportedByEmail = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${payload.descriptionEmailReportDateDay?.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
-    console.log('Data for dateTimeReportedByEmail', dateTimeReportedByEmail)
     let dateTimeOfIncident
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+    const date = new Date()
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
     if (payload.dateObserved === 'today') {
       dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
     } else if (payload.dateObserved === 'yesterday') {
       dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
     } else if (payload.dateObserved === 'before') {
       dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
-      console.log('Data for dateTimeOfIncident', dateTimeOfIncident)
     } else {
       // do nothing
     }

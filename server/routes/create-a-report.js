@@ -22,10 +22,13 @@ const handlers = {
   },
   post: async (request, h) => {
     // Trim whitespaces for string inputs in payload
-    let payloadData = request.payload
-    Object.keys(payloadData).forEach(k => payloadData[k] = typeof payloadData[k] == 'string' ? payloadData[k].trim() : payloadData[k])
-    console.log("Data for payloadData", payloadData)
-    
+    const payloadData = request.payload
+    for (const [key, value] of Object.entries(payloadData)) {
+      if (typeof value === 'string') {
+        payloadData[key] = value.trim()
+      }
+    }
+
     // Store data in redis cache
     request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
