@@ -107,24 +107,9 @@ const validateDescriptionTab = (payload, errorSummary) => {
 }
 
 const validateReporterTab = (payload, errorSummary) => {
-  const twenty = 20
-  const forty = 40
   const fifty = 50
-  // validate length of first name
-  if (payload.reporterFirstName && payload.reporterFirstName.length > twenty) {
-    errorSummary.errorList.push({
-      text: 'First name must be 20 characters or less',
-      href: '#reporterFirstName'
-    })
-  }
-
-  // validate length of last name
-  if (payload.reporterLastName && payload.reporterLastName.length > forty) {
-    errorSummary.errorList.push({
-      text: 'Last name must be 40 characters or less',
-      href: '#reporterLastName'
-    })
-  }
+  // Validate reporter name length
+  validateReporterName(payload, errorSummary)
 
   if (!payload.reporterPhotos) {
     errorSummary.errorList.push({
@@ -214,35 +199,7 @@ const validateDateTab = (payload, errorSummary) => {
   }
 
   // validate if date/time of incident is before date/time reported by email
-  if (payload.descriptionReportedByEmail === 'true' && payload.dateObserved) {
-    const dateTimeReportedByEmail = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${payload.descriptionEmailReportDateDay?.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
-    let dateTimeOfIncident
-    const date = new Date()
-    const day = date.getDate()
-    const month = date.getMonth() + 1
-    const year = date.getFullYear()
-    if (payload.dateObserved === 'today') {
-      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
-    } else if (payload.dateObserved === 'yesterday') {
-      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
-    } else if (payload.dateObserved === 'before') {
-      dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
-    } else {
-      // do nothing
-    }
-    const dateTimeFormat = 'YYYY-MM-DD hh:mm'
-    const emailDate = moment(dateTimeReportedByEmail, dateTimeFormat)
-    const incidentDate = moment(dateTimeOfIncident, dateTimeFormat)
-
-    if (emailDate.isBefore(incidentDate)) {
-      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      const dateMissMatchError = `The time of incident must be before ${payload.descriptionEmailReportDateDay} ${months[(Number(payload.descriptionEmailReportDateMonth)) - 1]} ${payload.descriptionEmailReportDateYear} ${payload.descriptionEmailReportTime}`
-      errorSummary.errorList.push({
-        text: dateMissMatchError,
-        href: dateObservedRef
-      })
-    }
-  }
+  validateDateofIncident(payload, errorSummary)
 }
 
 const validateDate = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) => {
@@ -355,6 +312,26 @@ const errorMsg = (text, errorSummary, href) => {
   })
 }
 
+const validateReporterName = (payload, errorSummary) => {
+  const twenty = 20
+  const forty = 40
+  // validate length of first name
+  if (payload.reporterFirstName && payload.reporterFirstName.length > twenty) {
+    errorSummary.errorList.push({
+      text: 'First name must be 20 characters or less',
+      href: '#reporterFirstName'
+    })
+  }
+
+  // validate length of last name
+  if (payload.reporterLastName && payload.reporterLastName.length > forty) {
+    errorSummary.errorList.push({
+      text: 'Last name must be 40 characters or less',
+      href: '#reporterLastName'
+    })
+  }
+}
+
 const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
@@ -389,6 +366,38 @@ const validatePhone = (payload, errorSummary) => {
       text: 'Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192',
       href: '#reporterPhone'
     })
+  }
+}
+
+const validateDateofIncident = (payload, errorSummary) => {
+  if (payload.descriptionReportedByEmail === 'true' && payload.dateObserved) {
+    const dateTimeReportedByEmail = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${payload.descriptionEmailReportDateDay?.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
+    let dateTimeOfIncident
+    const date = new Date()
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+    if (payload.dateObserved === 'today') {
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'yesterday') {
+      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'before') {
+      dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
+    } else {
+      // do nothing
+    }
+    const dateTimeFormat = 'YYYY-MM-DD hh:mm'
+    const emailDate = moment(dateTimeReportedByEmail, dateTimeFormat)
+    const incidentDate = moment(dateTimeOfIncident, dateTimeFormat)
+
+    if (emailDate.isBefore(incidentDate)) {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      const dateMissMatchError = `The time of incident must be before ${payload.descriptionEmailReportDateDay} ${months[(Number(payload.descriptionEmailReportDateMonth)) - 1]} ${payload.descriptionEmailReportDateYear} ${payload.descriptionEmailReportTime}`
+      errorSummary.errorList.push({
+        text: dateMissMatchError,
+        href: '#dateObserved'
+      })
+    }
   }
 }
 
