@@ -1,4 +1,5 @@
 import constants from '../utils/constants.js'
+import config from '../utils/config.js'
 import { validateReportPayload } from '../utils/helpers.js'
 import { reportTypes } from '../utils/report-types.js'
 import moment from 'moment'
@@ -32,8 +33,8 @@ const handlers = {
 
     // Set time for date of incident - now
     if (payloadData.dateObserved === 'now') {
-      const currentTIme = moment().format('HH:mm')
-      payloadData.nowTime = currentTIme
+      const currentTime = moment().format('HH:mm')
+      payloadData.nowTime = currentTime
 
       // clear other payload time/date data
       payloadData.dateTime = ''
@@ -69,7 +70,7 @@ const handlers = {
   }
 }
 const getContext = session => {
-  const showMessage = process.env.SHOW_NON_LIVE_MESSAGE
+  const showMessage = config.showNonLiveMessage
   return {
     ...session.get(constants.redisKeys.CREATE_A_REPORT),
     reportTypes,

@@ -1,4 +1,5 @@
 import constants from '../utils/constants.js'
+import config from '../utils/config.js'
 import { validatePayload, validateReportPayload, formatGridReference, getErrorSummary } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
@@ -35,7 +36,7 @@ const incidentLocationQuestion = {
 }
 
 // show/hide not a live service message
-const showMessage = process.env.SHOW_NON_LIVE_MESSAGE
+const showMessage = config.showNonLiveMessage
 
 const handlers = {
   get: async (request, h) => {
