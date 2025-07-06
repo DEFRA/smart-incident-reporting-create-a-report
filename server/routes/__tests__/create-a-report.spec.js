@@ -1,5 +1,6 @@
 import { submitGetRequest, submitPostRequest } from '../../__test-helpers__/server.js'
 import constants from '../../utils/constants.js'
+import moment from 'moment'
 
 const url = constants.routes.CREATE_A_REPORT
 
@@ -729,6 +730,87 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
+    })
+    it('Sad: should fail validation if dateobserved is now and before date/time reported by email', async () => {
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = '10'
+      payload.descriptionEmailReportDateMonth = '05'
+      payload.descriptionEmailReportDateYear = '2025'
+      payload.descriptionEmailReportTime = '08:00'
+      payload.descriptionReportedByEmail = 'true'
+      payload.dateObserved = 'now'
+      payload.dateTime = ''
+      payload.dateOtherDay = ''
+      payload.dateOtherMonth = ''
+      payload.dateOtherYear = ''
+      payload.dateOtherTime = ''
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
+    })
+    it('Happy: accepts valid answer now and current time is stored', async () => {
+      const currentTime = moment().format('HH:mm')
+      const options = {
+        url,
+        payload: {
+          dateObserved: 'now',
+          dateOtherDay: '',
+          dateOtherMonth: '',
+          dateOtherTime: '',
+          dateOtherYear: '',
+          dateTime: '',
+          descriptionDescription: 'Incident description',
+          descriptionEmailReportDateDay: '',
+          descriptionEmailReportDateMonth: '',
+          descriptionEmailReportDateYear: '',
+          descriptionEmailReportTime: '',
+          descriptionIncidentType: '100',
+          descriptionReportedByEmail: '',
+          locationDescription: 'Location description',
+          locationGridRef: 'SJ 67084 44110',
+          reporterEmail: 'test@Test.com',
+          reporterFirstName: 'John',
+          reporterLastName: 'Smith',
+          reporterPhone: '01234567890',
+          reporterOrgType: 'water',
+          reporterWaterName: 'Water Services Ltd',
+          reporterOtherName: '',
+          reporterPhotos: 'Yes'
+        }
+      }
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual({
+        dateObserved: 'now',
+        dateOtherDay: '',
+        dateOtherMonth: '',
+        dateOtherTime: '',
+        dateOtherYear: '',
+        dateTime: '',
+        descriptionDescription: 'Incident description',
+        descriptionEmailReportDateDay: '',
+        descriptionEmailReportDateMonth: '',
+        descriptionEmailReportDateYear: '',
+        descriptionEmailReportTime: '',
+        descriptionIncidentType: '100',
+        descriptionReportedByEmail: '',
+        locationDescription: 'Location description',
+        locationGridRef: 'SJ 67084 44110',
+        reporterEmail: 'test@Test.com',
+        reporterFirstName: 'John',
+        reporterLastName: 'Smith',
+        reporterPhone: '01234567890',
+        reporterOrgType: 'water',
+        reporterWaterName: 'Water Services Ltd',
+        reporterOtherName: '',
+        reporterPhotos: 'Yes',
+        nowTime: currentTime
+      })
     })
   })
 })

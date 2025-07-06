@@ -379,7 +379,9 @@ const validateDateofIncident = (payload, errorSummary) => {
     const day = date.getDate()
     const month = date.getMonth() + 1
     const year = date.getFullYear()
-    if (payload.dateObserved === 'today') {
+    if (payload.dateObserved === 'now') {
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.nowTime}`
+    } else if (payload.dateObserved === 'today') {
       dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
     } else if (payload.dateObserved === 'yesterday') {
       dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
