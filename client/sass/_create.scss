@@ -124,3 +124,12 @@
   color: #0b0c0c;
   text-decoration: none;
 }
+
+// styles for not a live service banner
+.govuk-inset-text.non-live-service-banner {
+  border-left: 0;
+  background-color: rgb(191 232 206);
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 0;
+}

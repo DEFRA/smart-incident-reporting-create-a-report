@@ -31,11 +31,10 @@ const validatePayload = (payload) => {
   return valid
 }
 
-// Borrowed from https://github.com/DEFRA/biodiversity-net-gain-service/blob/master/packages/webapp/src/utils/helpers.js#L487
 const validateEmail = email => {
   const maxLength = 255
   const domainPartMaxLength = 63
-  const tester = /^[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/
+  const tester = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/
   // https://en.wikipedia.org/wiki/Email_address  The format of an email address is local-part@domain, where the
   // local part may be up to 64 octets long and the domain may have a maximum of 255 octets.
   if (!email || email.length === 0 || email.length > maxLength) {
@@ -108,6 +107,10 @@ const validateDescriptionTab = (payload, errorSummary) => {
 }
 
 const validateReporterTab = (payload, errorSummary) => {
+  const fifty = 50
+  // Validate reporter name length
+  validateReporterName(payload, errorSummary)
+
   if (!payload.reporterPhotos) {
     errorSummary.errorList.push({
       text: 'Select \'yes\' if the reporter has images or videos',
@@ -126,11 +129,19 @@ const validateReporterTab = (payload, errorSummary) => {
       text: 'Select a water company',
       href: '#reporterWaterName'
     })
-  } else if (payload.reporterOrgType === 'other' && !payload.reporterOtherName) {
-    errorSummary.errorList.push({
-      text: 'Enter an organisation name',
-      href: '#reporterOtherName'
-    })
+  } else if (payload.reporterOrgType === 'other') {
+    if (!payload.reporterOtherName) {
+      errorSummary.errorList.push({
+        text: 'Enter an organisation name',
+        href: '#reporterOtherName'
+      })
+    }
+    if (payload.reporterLastName && payload.reporterOtherName.length > fifty) {
+      errorSummary.errorList.push({
+        text: 'Organisation name must be 50 characters or less',
+        href: '#reporterOtherName'
+      })
+    }
   } else {
     // do nothing
   }
@@ -154,16 +165,17 @@ const validateLocationTab = (payload, errorSummary) => {
 }
 
 const validateDateTab = (payload, errorSummary) => {
+  const dateObservedRef = '#dateObserved'
   if (!payload.dateObserved) {
     errorSummary.errorList.push({
       text: 'Select a date',
-      href: '#dateObserved'
+      href: dateObservedRef
     })
-  } else {
+  } else if (payload.dateObserved !== 'now') {
     let day, month, year, time, dateHref, timeHref
     // Set dates for today and yesterday options
     if (payload.dateObserved !== 'before') {
-      dateHref = '#dateObserved'
+      dateHref = dateObservedRef
       timeHref = '#dateTime'
       const date = new Date()
       if (payload.dateObserved === 'yesterday') {
@@ -184,7 +196,12 @@ const validateDateTab = (payload, errorSummary) => {
 
     validateDate({ day, month, year }, errorSummary, 'a', '', dateHref)
     validateTime({ day, month, year, time }, errorSummary, 'a', '', timeHref)
+  } else {
+    // do nothing
   }
+
+  // validate if date/time of incident is before date/time reported by email
+  validateDateofIncident(payload, errorSummary)
 }
 
 const validateDate = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) => {
@@ -297,6 +314,26 @@ const errorMsg = (text, errorSummary, href) => {
   })
 }
 
+const validateReporterName = (payload, errorSummary) => {
+  const twenty = 20
+  const forty = 40
+  // validate length of first name
+  if (payload.reporterFirstName && payload.reporterFirstName.length > twenty) {
+    errorSummary.errorList.push({
+      text: 'First name must be 20 characters or less',
+      href: '#reporterFirstName'
+    })
+  }
+
+  // validate length of last name
+  if (payload.reporterLastName && payload.reporterLastName.length > forty) {
+    errorSummary.errorList.push({
+      text: 'Last name must be 40 characters or less',
+      href: '#reporterLastName'
+    })
+  }
+}
+
 const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
@@ -331,6 +368,40 @@ const validatePhone = (payload, errorSummary) => {
       text: 'Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192',
       href: '#reporterPhone'
     })
+  }
+}
+
+const validateDateofIncident = (payload, errorSummary) => {
+  if (payload.descriptionReportedByEmail === 'true' && payload.dateObserved) {
+    const dateTimeReportedByEmail = `${payload.descriptionEmailReportDateYear}-${payload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${payload.descriptionEmailReportDateDay?.padStart(2, '0')} ${payload.descriptionEmailReportTime}`
+    let dateTimeOfIncident
+    const date = new Date()
+    const day = date.getDate()
+    const month = date.getMonth() + 1
+    const year = date.getFullYear()
+    if (payload.dateObserved === 'now') {
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.nowTime}`
+    } else if (payload.dateObserved === 'today') {
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'yesterday') {
+      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
+    } else if (payload.dateObserved === 'before') {
+      dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
+    } else {
+      // do nothing
+    }
+    const dateTimeFormat = 'YYYY-MM-DD hh:mm'
+    const emailDate = moment(dateTimeReportedByEmail, dateTimeFormat)
+    const incidentDate = moment(dateTimeOfIncident, dateTimeFormat)
+
+    if (emailDate.isBefore(incidentDate)) {
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      const dateMissMatchError = `The time of incident must be before ${payload.descriptionEmailReportDateDay} ${months[(Number(payload.descriptionEmailReportDateMonth)) - 1]} ${payload.descriptionEmailReportDateYear} ${payload.descriptionEmailReportTime}`
+      errorSummary.errorList.push({
+        text: dateMissMatchError,
+        href: '#dateObserved'
+      })
+    }
   }
 }
 

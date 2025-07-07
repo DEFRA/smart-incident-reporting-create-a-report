@@ -1,5 +1,6 @@
 import { submitGetRequest, submitPostRequest } from '../../__test-helpers__/server.js'
 import constants from '../../utils/constants.js'
+import moment from 'moment'
 
 const url = constants.routes.CREATE_A_REPORT
 
@@ -302,7 +303,7 @@ describe(url, () => {
     })
 
     // Other date validation
-    it('Sad: should fail validation and return error message if date observed not selected on date tab', async () => {
+    it('Sad: should fail validation and return error message if date of incident not selected on date tab', async () => {
       payload.dateObserved = ''
       const options = {
         url,
@@ -445,6 +446,17 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
+    it('Sad: should fail validation and return error message if the email address has whitespaces', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = 'this is test@testemail.co.uk'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+    })
     it('Sad: should fail validation and return error message for invalid phone number', async () => {
       payload.reporterPhone = 'test'
       const options = {
@@ -477,6 +489,37 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterOtherName">Enter an organisation name</a>')
     })
+    it('Sad: should fail validation and return error message if length of the reporter first name exceeds the maximum of 20 characters', async () => {
+      payload.reporterFirstName = 'pneumonoultramicroscopicsilic'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterFirstName">First name must be 20 characters or less</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the reporter last name exceeds the maximum of 40 characters', async () => {
+      payload.reporterLastName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterLastName">Last name must be 40 characters or less</a>')
+    })
+    it('Sad: should fail validation and return error message if length of the organisation name exceeds the maximum of 50 characters', async () => {
+      payload.reporterOrgType = 'other'
+      payload.reporterOtherName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterOtherName">Organisation name must be 50 characters or less</a>')
+    })
 
     // Test for Location of incident tab
     it('Sad: should fail validation and return error message for missing grid reference', async () => {
@@ -489,7 +532,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
     })
-    // Test for Date observed tab
+    // Test for Date of incident tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
       payload.dateObserved = 'before'
       payload.dateTime = ''
@@ -665,6 +708,109 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#dateOther">Enter a day and year</a>')
+    })
+    it('Sad: should fail validation if dateobserved is before date/time reported by email', async () => {
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = '10'
+      payload.descriptionEmailReportDateMonth = '05'
+      payload.descriptionEmailReportDateYear = '2025'
+      payload.descriptionEmailReportTime = '08:00'
+      payload.descriptionReportedByEmail = 'true'
+      payload.dateObserved = 'before'
+      payload.dateTime = '10:00'
+      payload.dateOtherDay = '10'
+      payload.dateOtherMonth = '06'
+      payload.dateOtherYear = '2025'
+      payload.dateOtherTime = '09:30'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
+    })
+    it('Sad: should fail validation if dateobserved is now and before date/time reported by email', async () => {
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = '10'
+      payload.descriptionEmailReportDateMonth = '05'
+      payload.descriptionEmailReportDateYear = '2025'
+      payload.descriptionEmailReportTime = '08:00'
+      payload.descriptionReportedByEmail = 'true'
+      payload.dateObserved = 'now'
+      payload.dateTime = ''
+      payload.dateOtherDay = ''
+      payload.dateOtherMonth = ''
+      payload.dateOtherYear = ''
+      payload.dateOtherTime = ''
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
+    })
+    it('Happy: accepts valid answer now and current time is stored', async () => {
+      const currentTime = moment().format('HH:mm')
+      const options = {
+        url,
+        payload: {
+          dateObserved: 'now',
+          dateOtherDay: '',
+          dateOtherMonth: '',
+          dateOtherTime: '',
+          dateOtherYear: '',
+          dateTime: '',
+          descriptionDescription: 'Incident description',
+          descriptionEmailReportDateDay: '',
+          descriptionEmailReportDateMonth: '',
+          descriptionEmailReportDateYear: '',
+          descriptionEmailReportTime: '',
+          descriptionIncidentType: '100',
+          descriptionReportedByEmail: '',
+          locationDescription: 'Location description',
+          locationGridRef: 'SJ 67084 44110',
+          reporterEmail: 'test@Test.com',
+          reporterFirstName: 'John',
+          reporterLastName: 'Smith',
+          reporterPhone: '01234567890',
+          reporterOrgType: 'water',
+          reporterWaterName: 'Water Services Ltd',
+          reporterOtherName: '',
+          reporterPhotos: 'Yes'
+        }
+      }
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual({
+        dateObserved: 'now',
+        dateOtherDay: '',
+        dateOtherMonth: '',
+        dateOtherTime: '',
+        dateOtherYear: '',
+        dateTime: '',
+        descriptionDescription: 'Incident description',
+        descriptionEmailReportDateDay: '',
+        descriptionEmailReportDateMonth: '',
+        descriptionEmailReportDateYear: '',
+        descriptionEmailReportTime: '',
+        descriptionIncidentType: '100',
+        descriptionReportedByEmail: '',
+        locationDescription: 'Location description',
+        locationGridRef: 'SJ 67084 44110',
+        reporterEmail: 'test@Test.com',
+        reporterFirstName: 'John',
+        reporterLastName: 'Smith',
+        reporterPhone: '01234567890',
+        reporterOrgType: 'water',
+        reporterWaterName: 'Water Services Ltd',
+        reporterOtherName: '',
+        reporterPhotos: 'Yes',
+        nowTime: currentTime
+      })
     })
   })
 })

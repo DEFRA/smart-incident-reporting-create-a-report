@@ -1,4 +1,5 @@
 import constants from '../utils/constants.js'
+import config from '../utils/config.js'
 import { validatePayload, validateReportPayload, formatGridReference, getErrorSummary } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
@@ -34,6 +35,9 @@ const incidentLocationQuestion = {
   }
 }
 
+// show/hide not a live service message
+const showMessage = config.showNonLiveMessage
+
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
@@ -48,6 +52,7 @@ const handlers = {
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
+      showMessage,
       ...reportPayload,
       reportTypes,
       ngrValue,
@@ -66,6 +71,7 @@ const handlers = {
       const dispName = request.auth.credentials.profile.displayName
       return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
         dispName,
+        showMessage,
         ...reportPayload,
         errorSummary,
         reportTypes,
@@ -124,11 +130,16 @@ const buildPayload = (session, operatorDetails) => {
     datetimeEmailReported = new Date(dateTimeString).toISOString()
   }
   let dateTimeObserved
-  if (reportPayload.dateObserved === 'before') {
+  const date = new Date(new Date().toDateString())
+  if (reportPayload.dateObserved === 'now') {
+    const timeParts = reportPayload.nowTime.split(':')
+    date.setHours(timeParts[0]?.padStart(2, '0'))
+    date.setMinutes(timeParts[1]?.padStart(2, '0'))
+    dateTimeObserved = date.toISOString()
+  } else if (reportPayload.dateObserved === 'before') {
     const dateTimeString = `${reportPayload.dateOtherYear?.padStart(2, '0')}-${reportPayload.dateOtherMonth?.padStart(2, '0')}-${reportPayload.dateOtherDay} ${reportPayload.dateOtherTime}`
     dateTimeObserved = new Date(dateTimeString).toISOString()
   } else {
-    const date = new Date(new Date().toDateString())
     if (reportPayload.dateObserved === 'yesterday') {
       date.setDate(date.getDate() - 1)
     }

@@ -11,7 +11,10 @@
     </div>
   {% endif %}
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l govuk-!-padding-top-7">Date observed</h1>
+    <h1 class="govuk-heading-l govuk-!-padding-top-7 govuk-!-margin-bottom-3">Date of incident</h1>
+    <div class="govuk-hint">
+      This is the date and time the reporter saw or experienced the problem.
+    </div>
   </div>
 </div>
 
@@ -24,7 +27,12 @@
       id: "dateObserved",
       errorMessage: findErrorMessageById(errorSummary.date, "dateObserved"),
       items: [
-       {
+        {
+          checked: dateObserved === 'now',
+          value: "now",
+          text: "Now"
+        },
+        {
           checked: dateObserved === 'today',
           value: "today",
           text: "Today"

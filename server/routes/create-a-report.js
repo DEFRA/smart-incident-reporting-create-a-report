@@ -1,6 +1,8 @@
 import constants from '../utils/constants.js'
+import config from '../utils/config.js'
 import { validateReportPayload } from '../utils/helpers.js'
 import { reportTypes } from '../utils/report-types.js'
+import moment from 'moment'
 
 const handlers = {
   get: async (request, h) => {
@@ -21,11 +23,32 @@ const handlers = {
     })
   },
   post: async (request, h) => {
+    // Trim whitespaces for string inputs in payload
+    const payloadData = request.payload
+    for (const [key, value] of Object.entries(payloadData)) {
+      if (typeof value === 'string') {
+        payloadData[key] = value.trim()
+      }
+    }
+
+    // Set time for date of incident - now
+    if (payloadData.dateObserved === 'now') {
+      const currentTime = moment().format('HH:mm')
+      payloadData.nowTime = currentTime
+
+      // clear other payload time/date data
+      payloadData.dateTime = ''
+      payloadData.dateOtherDay = ''
+      payloadData.dateOtherMonth = ''
+      payloadData.dateOtherYear = ''
+      payloadData.dateOtherTime = ''
+    }
+
     // Store data in redis cache
-    request.yar.set(constants.redisKeys.CREATE_A_REPORT, request.payload)
+    request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
     // Validate payload
-    const errorSummary = validateReportPayload(request.payload)
+    const errorSummary = validateReportPayload(payloadData)
 
     // Return view if errors
     if (errorSummary.description.errorList.length > 0 ||
@@ -36,7 +59,7 @@ const handlers = {
       const dispName = request.auth.credentials.profile.displayName
       return h.view(constants.views.CREATE_A_REPORT, {
         errorSummary,
-        ...request.payload,
+        ...payloadData,
         reportTypes,
         dispName
       })
@@ -47,9 +70,11 @@ const handlers = {
   }
 }
 const getContext = session => {
+  const showMessage = config.showNonLiveMessage
   return {
     ...session.get(constants.redisKeys.CREATE_A_REPORT),
-    reportTypes
+    reportTypes,
+    showMessage
   }
 }
 

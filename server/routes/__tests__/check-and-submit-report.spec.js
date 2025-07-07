@@ -1,5 +1,6 @@
 import { submitGetRequest, submitPostRequest } from '../../__test-helpers__/server.js'
 import constants from '../../utils/constants.js'
+import moment from 'moment'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
@@ -552,6 +553,42 @@ describe(url, () => {
       expect(response.payload).toContain('There is a problem')
       expect(response.payload).toContain('Select an incident category')
       expect(response.payload).toContain('Enter a reason for the selected categorisation')
+    })
+    it('Date of incident set to now', async () => {
+      const date = new Date(new Date().toDateString())
+      const currentTime = moment().format('HH:mm')
+      const timeParts = currentTime.split(':')
+      date.setHours(timeParts[0]?.padStart(2, '0'))
+      date.setMinutes(timeParts[1]?.padStart(2, '0'))
+      const dateTimeofIncident = date.toISOString()
+      sessionData['create-a-report'].dateObserved = 'now'
+      sessionData['create-a-report'].dateTime = ''
+      sessionData['create-a-report'].descriptionReportedByEmail = ''
+      sessionData['create-a-report'].descriptionEmailReportDateDay = ''
+      sessionData['create-a-report'].descriptionEmailReportDateMonth = ''
+      sessionData['create-a-report'].descriptionEmailReportDateYear = ''
+      sessionData['create-a-report'].descriptionEmailReportTime = ''
+      sessionData['create-a-report'].nowTime = currentTime
+
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          datetimeObserved: dateTimeofIncident
+        })
+      }))
     })
   })
 })

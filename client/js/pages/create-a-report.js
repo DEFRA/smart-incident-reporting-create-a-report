@@ -7,9 +7,10 @@ const waterCompanyRadios = document.getElementById('waterCompanyRadios')
 const organisationInput = document.getElementById('organisationInput')
 const timeInput = document.getElementById('timeInput')
 const otherDateTimeInput = document.getElementById('otherDateTimeInput')
-const todayDateInput = document.getElementById('dateObserved')
-const yesterdayDateInput = document.getElementById('dateObserved-2')
-const otherDateInput = document.getElementById('dateObserved-3')
+const nowDateInput = document.getElementById('dateObserved')
+const todayDateInput = document.getElementById('dateObserved-2')
+const yesterdayDateInput = document.getElementById('dateObserved-3')
+const otherDateInput = document.getElementById('dateObserved-4')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
@@ -31,6 +32,9 @@ checkboxOtherOrg.addEventListener('change', () => {
     checkboxWaterCompany.checked = false
   }
   toggleWaterAndOrg()
+})
+nowDateInput.addEventListener('change', () => {
+  toggleDate()
 })
 todayDateInput.addEventListener('change', () => {
   toggleDate()
@@ -70,7 +74,10 @@ const toggleWaterAndOrg = () => {
 }
 
 const toggleDate = () => {
-  if (todayDateInput.checked) {
+  if (nowDateInput.checked) {
+    timeInput.style.display = 'none'
+    otherDateTimeInput.style.display = 'none'
+  } else if (todayDateInput.checked) {
     timeInput.style.display = 'block'
     otherDateTimeInput.style.display = 'none'
   } else if (yesterdayDateInput.checked) {
