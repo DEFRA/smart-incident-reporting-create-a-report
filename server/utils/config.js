@@ -29,7 +29,7 @@ const schema = Joi.object().keys({
   aadClientSecret: Joi.string().required(),
   aadTenant: Joi.string().required(),
   serviceUrl: Joi.string().uri().default('http://localhost:3000'),
-  showNonLiveMessage: Joi.bool()
+  showNonLiveMessage: Joi.bool().default(false)
 })
 
 // Build config
