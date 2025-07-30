@@ -38,7 +38,7 @@
         label: {
           text: "First name"
         },
-        classes: "govuk-!-width-full",
+        classes: "govuk-input--width-10",
         value: reporterFirstName,
         autocomplete: "off"
       }) }}
@@ -76,6 +76,20 @@
         errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhone"),
         classes: "govuk-input--width-10",
         value: reporterPhone,
+        autocomplete: "off"
+      }) }}
+
+      {{ govukInput({
+        id: "reporterReference",
+        name: "reporterReference",
+        label: {
+          text: "Reporter's reference (optional)"
+        },
+        hint: {
+          text: "For example, an internal reference number if a water company report."
+        },
+        classes: "govuk-!-width-full",
+        value: reporterReference,
         autocomplete: "off"
       }) }}
 

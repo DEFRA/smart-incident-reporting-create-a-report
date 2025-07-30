@@ -155,6 +155,7 @@ const buildPayload = (session, operatorDetails) => {
       reporterName: `${reportPayload.reporterFirstName} ${reportPayload.reporterLastName}`,
       reporterEmailAddress: reportPayload.reporterEmail,
       reporterPhoneNumber: reportPayload.reporterPhone,
+      reporterReference: reportPayload.reporterReference,
       reportType: Number(reportPayload.descriptionIncidentType),
       datetimeObserved: dateTimeObserved,
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
