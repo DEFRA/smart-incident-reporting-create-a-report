@@ -29,6 +29,9 @@ const handlers = {
       if (typeof value === 'string') {
         payloadData[key] = value.trim()
       }
+      if (key === 'descriptionDescription') {
+        payloadData[key] = value.replace(/\n +/g, '\n')
+      }
     }
 
     // Set time for date of incident - now
