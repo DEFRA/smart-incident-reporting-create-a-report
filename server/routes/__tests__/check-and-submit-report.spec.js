@@ -31,6 +31,7 @@ const sessionData = {
     reporterFirstName: 'John',
     reporterLastName: 'Smith',
     reporterPhone: '01234567890',
+    reporterReference: 'REF1234567890',
     reporterOrgType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes'

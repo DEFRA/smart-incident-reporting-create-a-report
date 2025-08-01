@@ -94,10 +94,13 @@
         "reporterName": {
           "type": "string"
         },
+        "reporterEmailAddress": {
+          "type": "string"
+        },
         "reporterPhoneNumber": {
           "type": "string"
         },
-        "reporterEmailAddress": {
+        "reporterReference": {
           "type": "string"
         },
         "questionSetId": {

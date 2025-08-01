@@ -51,6 +51,12 @@ const handlers = {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
+    // formatting for incident description
+    for (const [key, value] of Object.entries(reportPayload)) {
+      if (key === 'descriptionDescription') {
+        reportPayload[key] = value.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\r\n/g, '<br>')
+      }
+    }
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       showMessage,
       ...reportPayload,
@@ -155,6 +161,7 @@ const buildPayload = (session, operatorDetails) => {
       reporterName: `${reportPayload.reporterFirstName} ${reportPayload.reporterLastName}`,
       reporterEmailAddress: reportPayload.reporterEmail,
       reporterPhoneNumber: reportPayload.reporterPhone,
+      reporterReference: reportPayload.reporterReference,
       reportType: Number(reportPayload.descriptionIncidentType),
       datetimeObserved: dateTimeObserved,
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
