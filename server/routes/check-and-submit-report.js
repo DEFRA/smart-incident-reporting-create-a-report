@@ -51,6 +51,7 @@ const handlers = {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
+    // formatting for incident description
     for (const [key, value] of Object.entries(reportPayload)) {
       if (key === 'descriptionDescription') {
         reportPayload[key] = value.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\r\n/g, '<br>')
