@@ -123,37 +123,42 @@
   </div>
 
   <div class="govuk-grid-column-one-half govuk-!-padding-left-7">
-    <div class="govuk-form-group">
-      <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-          <h1 class="govuk-fieldset__heading">
-            External organisation report
-          </h1>
-        </legend>
-
-        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-
-          <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="water" name="reporterOrgType" type="checkbox" value="water" {%if reporterOrgType === 'water'%}checked{% endif %}>
-            <label class="govuk-label govuk-checkboxes__label" for="water">
-              Water company
-            </label>
-          </div>
-
-          <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="other" name="reporterOrgType" type="checkbox" value="other" {%if reporterOrgType === 'other'%}checked{% endif %}>
-            <label class="govuk-label govuk-checkboxes__label" for="other">
-              Public organisation
-            </label>
-            <div id="signIn-item-hint" class="govuk-hint govuk-checkboxes__hint">
-              For example the fire service or a local authority
-            </div>
-          </div>
-
-        </div>
-      </fieldset>
-    </div>
-
+    {{ govukRadios({
+        id: "reporterType",
+        name: "reporterType",
+        classes: "govuk-radios--small",
+        fieldset: {
+          legend: {
+            text: "Type of reporter",
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        value: '',
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterType"),
+        items: [
+          {
+            id: "public",
+            checked: reporterType === 'public',
+            value: "public",
+            text: "Member of public"
+          },
+          {
+            id: "water",
+            checked: reporterType === 'water',
+            value: "water",
+            text: "Water company"
+          },
+          {
+            id: "other",
+            checked: reporterType === 'other',
+            value: "other",
+            text: "Public organisation",
+            hint: {
+              text: "For example the fire service or a local authority"
+            }
+          }
+        ]
+      }) }}
     <div class="govuk-!-padding-bottom-3"></div>
 
     <div id="waterCompanyRadios" style="display: none;">

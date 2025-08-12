@@ -32,7 +32,7 @@ const sessionData = {
     reporterLastName: 'Smith',
     reporterPhone: '01234567890',
     reporterReference: 'REF1234567890',
-    reporterOrgType: 'water',
+    reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes'
   }
@@ -238,7 +238,7 @@ describe(url, () => {
     it('Edge cases for payload data', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
-      sessionData['create-a-report'].reporterOrgType = 'other'
+      sessionData['create-a-report'].reporterType = 'other'
       sessionData['create-a-report'].reporterOtherName = 'Other Organisation Name'
       sessionData['create-a-report'].locationDescription = ''
       sessionData['create-a-report'].reporterPhotos = 'No'
@@ -335,7 +335,7 @@ describe(url, () => {
     it('Further edge cases for payload data', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
-      sessionData['create-a-report'].reporterOrgType = ''
+      sessionData['create-a-report'].reporterType = ''
       sessionData['create-a-report'].reporterOtherName = ''
       sessionData['create-a-report'].locationDescription = ''
       const options = {

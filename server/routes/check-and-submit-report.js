@@ -196,22 +196,31 @@ const buildAnswersData = (reportPayload, questions) => {
     answerId: reportPayload.reporterPhotos === 'Yes' ? questions.REPORTED_PHOTOS_OR_VIDEOS.answers.yes.answerId : questions.REPORTED_PHOTOS_OR_VIDEOS.answers.no.answerId
   })
 
-  // External Organisation report
-  if (reportPayload.reporterOrgType) {
-    data.push({
+  // Type of reporter
+  if (reportPayload.reporterType) {
+    const baseAnswer = {
       questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
       questionAsked: questions.EXTERNAL_ORGANISATION_REPORT.text,
-      questionResponse: true,
-      answerId: reportPayload.reporterOrgType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId,
-      otherDetails: reportPayload.reporterOrgType === 'water' ? 'Water Company' : 'Public organisation'
-    })
-    data.push({
-      questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
-      questionAsked: questions.EXTERNAL_ORGANISATION_REPORT.text,
-      questionResponse: true,
-      answerId: questions.EXTERNAL_ORGANISATION_REPORT.answers.name.answerId,
-      otherDetails: reportPayload.reporterOrgType === 'water' ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
-    })
+      questionResponse: true
+    }
+    if (reportPayload.reporterType === 'public') {
+      data.push({
+        ...baseAnswer,
+        answerId: questions.EXTERNAL_ORGANISATION_REPORT.answers.public.answerId,
+        otherDetails: 'Member of public'
+      })
+    } else {
+      data.push({
+        ...baseAnswer,
+        answerId: reportPayload.reporterType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId,
+        otherDetails: reportPayload.reporterType === 'water' ? 'Water Company' : 'Public organisation'
+      })
+      data.push({
+        ...baseAnswer,
+        answerId: questions.EXTERNAL_ORGANISATION_REPORT.answers.name.answerId,
+        otherDetails: reportPayload.reporterType === 'water' ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
+      })
+    }
   }
   // Location of incident
   const baseIncidentLocationAnswer = {

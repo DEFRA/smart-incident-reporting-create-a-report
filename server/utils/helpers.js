@@ -124,12 +124,17 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate phone number
   validatePhone(payload, errorSummary)
 
-  if (payload.reporterOrgType === 'water' && !payload.reporterWaterName) {
+  if (!payload.reporterType) {
+    errorSummary.errorList.push({
+      text: 'Select the type of reporter',
+      href: '#reporterType'
+    })
+  } else if (payload.reporterType === 'water' && !payload.reporterWaterName) {
     errorSummary.errorList.push({
       text: 'Select a water company',
       href: '#reporterWaterName'
     })
-  } else if (payload.reporterOrgType === 'other') {
+  } else if (payload.reporterType === 'other') {
     if (!payload.reporterOtherName) {
       errorSummary.errorList.push({
         text: 'Enter an organisation name',

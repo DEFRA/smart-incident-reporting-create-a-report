@@ -23,7 +23,7 @@ const sessionData = {
     reporterFirstName: 'John',
     reporterLastName: 'Smith',
     reporterPhone: '01234567890',
-    reporterOrgType: 'water',
+    reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes'
   },

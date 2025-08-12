@@ -24,7 +24,7 @@ const payload = {
   reporterFirstName: 'John',
   reporterLastName: 'Smith',
   reporterPhone: '01234567890',
-  reporterOrgType: 'water',
+  reporterType: 'water',
   reporterWaterName: 'Water Services Ltd',
   reporterOtherName: '',
   reporterPhotos: 'Yes'
@@ -35,7 +35,7 @@ describe(url, () => {
     it(`Should return success response and correct view for ${url}`, async () => {
       const response = await submitGetRequest({ url })
       // Test for correct auth mock
-      expect(response.payload).toContain('<p style="color: white;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
+      expect(response.payload).toContain('<p style="color: white; margin-top: 20px;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
     })
   })
   describe('POST', () => {
@@ -468,7 +468,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterPhone">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192</a>')
     })
     it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
-      payload.reporterOrgType = 'water'
+      payload.reporterType = 'water'
       payload.reporterWaterName = ''
       const options = {
         url,
@@ -479,7 +479,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterWaterName">Select a water company</a>')
     })
     it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
-      payload.reporterOrgType = 'other'
+      payload.reporterType = 'other'
       payload.reporterOtherName = ''
       const options = {
         url,
@@ -510,7 +510,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterLastName">Last name must be 40 characters or less</a>')
     })
     it('Sad: should fail validation and return error message if length of the organisation name exceeds the maximum of 50 characters', async () => {
-      payload.reporterOrgType = 'other'
+      payload.reporterType = 'other'
       payload.reporterOtherName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
       const options = {
         url,
@@ -777,7 +777,7 @@ describe(url, () => {
           reporterFirstName: 'John',
           reporterLastName: 'Smith',
           reporterPhone: '01234567890',
-          reporterOrgType: 'water',
+          reporterType: 'water',
           reporterWaterName: 'Water Services Ltd',
           reporterOtherName: '',
           reporterPhotos: 'Yes'
@@ -805,7 +805,7 @@ describe(url, () => {
         reporterFirstName: 'John',
         reporterLastName: 'Smith',
         reporterPhone: '01234567890',
-        reporterOrgType: 'water',
+        reporterType: 'water',
         reporterWaterName: 'Water Services Ltd',
         reporterOtherName: '',
         reporterPhotos: 'Yes',
