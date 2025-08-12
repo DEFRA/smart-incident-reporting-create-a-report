@@ -1,8 +1,9 @@
 const toggleIncidentTypesButton = document.querySelector('#toggle-incident-types')
 const incidentInputs = document.querySelectorAll('input[id^="descriptionIncidentType"]')
 const divider = document.querySelector('.govuk-radios__divider')
-const checkboxWaterCompany = document.getElementById('water')
-const checkboxOtherOrg = document.getElementById('other')
+const radioPublic = document.getElementById('public')
+const radioWaterCompany = document.getElementById('water')
+const radioOtherOrg = document.getElementById('other')
 const waterCompanyRadios = document.getElementById('waterCompanyRadios')
 const organisationInput = document.getElementById('organisationInput')
 const timeInput = document.getElementById('timeInput')
@@ -21,15 +22,22 @@ toggleIncidentTypesButton.addEventListener('click', (e) => {
   e.preventDefault()
   toggleIncidentTypes()
 })
-checkboxWaterCompany.addEventListener('change', () => {
-  if (checkboxWaterCompany.checked) {
-    checkboxOtherOrg.checked = false
+radioPublic.addEventListener('change', () => {
+  if (radioPublic.checked) {
+    radioWaterCompany.checked = false
+    radioOtherOrg.checked = false
   }
   toggleWaterAndOrg()
 })
-checkboxOtherOrg.addEventListener('change', () => {
-  if (checkboxOtherOrg.checked) {
-    checkboxWaterCompany.checked = false
+radioWaterCompany.addEventListener('change', () => {
+  if (radioWaterCompany.checked) {
+    radioOtherOrg.checked = false
+  }
+  toggleWaterAndOrg()
+})
+radioOtherOrg.addEventListener('change', () => {
+  if (radioOtherOrg.checked) {
+    radioWaterCompany.checked = false
   }
   toggleWaterAndOrg()
 })
@@ -59,13 +67,16 @@ const toggleIncidentTypes = () => {
 }
 
 const toggleWaterAndOrg = () => {
-  if (checkboxWaterCompany.checked) {
+  if (radioPublic.checked) {
+    waterCompanyRadios.style.display = 'none'
+    organisationInput.style.display = 'none'
+  } else if (radioWaterCompany.checked) {
     waterCompanyRadios.style.display = 'block'
     organisationInput.style.display = 'none'
-  } else if (checkboxOtherOrg.checked) {
+  } else if (radioOtherOrg.checked) {
     waterCompanyRadios.style.display = 'none'
     organisationInput.style.display = 'block'
-  } else if ((!checkboxWaterCompany.checked) && (!checkboxOtherOrg.checked)) {
+  } else if ((!radioWaterCompany.checked) && (!radioOtherOrg.checked)) {
     waterCompanyRadios.style.display = 'none'
     organisationInput.style.display = 'none'
   } else {

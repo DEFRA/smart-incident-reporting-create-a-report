@@ -198,25 +198,25 @@ const buildAnswersData = (reportPayload, questions) => {
 
   // Type of reporter
   if (reportPayload.reporterType) {
-    const baseAnswer = {
+    const baseReporterAnswer = {
       questionId: questions.EXTERNAL_ORGANISATION_REPORT.questionId,
       questionAsked: questions.EXTERNAL_ORGANISATION_REPORT.text,
       questionResponse: true
     }
     if (reportPayload.reporterType === 'public') {
       data.push({
-        ...baseAnswer,
+        ...baseReporterAnswer,
         answerId: questions.EXTERNAL_ORGANISATION_REPORT.answers.public.answerId,
         otherDetails: 'Member of public'
       })
     } else {
       data.push({
-        ...baseAnswer,
+        ...baseReporterAnswer,
         answerId: reportPayload.reporterType === 'water' ? questions.EXTERNAL_ORGANISATION_REPORT.answers.water.answerId : questions.EXTERNAL_ORGANISATION_REPORT.answers.other.answerId,
         otherDetails: reportPayload.reporterType === 'water' ? 'Water Company' : 'Public organisation'
       })
       data.push({
-        ...baseAnswer,
+        ...baseReporterAnswer,
         answerId: questions.EXTERNAL_ORGANISATION_REPORT.answers.name.answerId,
         otherDetails: reportPayload.reporterType === 'water' ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
       })
