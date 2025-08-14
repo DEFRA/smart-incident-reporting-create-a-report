@@ -12,6 +12,8 @@ const gridRefRegexWs = /^([STNHOstnho][A-Za-z]\s)(\d{5}\s\d{5})$/
 // Grid ref regex without spaces
 const gridRefRegexWos = /^([STNHOstnho][A-Za-z])(\d{5}\d{5})$/
 
+const postcodeRegExp = /^([A-Za-z][A-Ha-hJ-Yj-y]?\d[A-Za-z0-9]? ?\d[A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/ // https://stackoverflow.com/a/51885364
+
 const phoneRegex = /^[\s\d-+()#]*$/
 
 const sirpSchema = JSON.parse(fs.readFileSync(`${dirname}/server/schemas/sirp-car-schema.json`))
@@ -154,18 +156,47 @@ const validateReporterTab = (payload, errorSummary) => {
 
 const validateLocationTab = (payload, errorSummary) => {
   // Do location validation
-  if (!payload.locationGridRef) {
+  if (!payload.locationOfIncident) {
     errorSummary.errorList.push({
-      text: 'Enter a national grid reference',
-      href: '#locationGridRef'
+      text: 'Select the location of incident',
+      href: '#locationOfIncident'
     })
-  } else if (!validateGridReference(payload.locationGridRef)) {
-    errorSummary.errorList.push({
-      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
-      href: '#locationGridRef'
-    })
-  } else {
-    // do nothing
+  } else if (payload.locationOfIncident === 'gridReference') {
+    if (!payload.locationGridRef) {
+      errorSummary.errorList.push({
+        text: 'Enter a national grid reference',
+        href: '#locationGridRef'
+      })
+    } else if (!validateGridReference(payload.locationGridRef)) {
+      errorSummary.errorList.push({
+        text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
+        href: '#locationGridRef'
+      })
+    } else {
+      // do nothing
+    }
+  } else if (payload.locationOfIncident === 'address') {
+    if (!payload.buildingDetails) {
+      errorSummary.errorList.push({
+        text: 'Enter a building number or name',
+        href: '#buildingDetails'
+      })
+    }
+
+    if (!payload.postcode) {
+      errorSummary.errorList.push({
+        text: 'Enter an postcode',
+        href: '#postcode'
+      })
+    } else if (!postcodeRegExp.test(payload.postcode)) {
+      errorSummary.errorList.push({
+        text: 'Enter a full postcode, for example W1 8QS',
+        href: '#postcode'
+      })
+    } else {
+      // do nothing
+    }
+
   }
 }
 
