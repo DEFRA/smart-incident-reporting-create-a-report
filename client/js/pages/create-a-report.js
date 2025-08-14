@@ -58,7 +58,7 @@ otherDateInput.addEventListener('change', () => {
 const toggleIncidentTypes = () => {
   const hideIncidents = toggleIncidentTypesButton.innerText.indexOf('Hide') > -1
   incidentInputs.forEach(input => {
-    if (input.id.substring(input.id.indexOf('-') + 1) > 3) {
+    if (input.id.substring(input.id.indexOf('-') + 1) > 5) {
       input.parentElement.style.display = hideIncidents ? 'none' : ''
     }
   })
