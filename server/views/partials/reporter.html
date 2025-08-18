@@ -1,7 +1,7 @@
 {% from "dist/govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
-{% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "dist/govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <div class="govuk-grid-row">
@@ -93,28 +93,21 @@
         autocomplete: "off"
       }) }}
 
-      {{ govukRadios({
+      {{ govukCheckboxes({
         id: "reporterPhotos",
         name: "reporterPhotos",
-        classes: "govuk-radios--small",
+        classes: "govuk-checkboxes--small",
         fieldset: {
           legend: {
-            text: "Has photos or videos of problem",
-            classes: "govuk-fieldset__legend--m"
+            text: "Photos or videos of the problem",
+            classes: "govuk-fieldset__legend--m govuk-!-padding-top-6"
           }
         },
-        value: '',
-        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterPhotos"),
         items: [
           {
             checked: reporterPhotos === 'Yes',
             value: "Yes",
-            text: "Yes — reporter must give their email"
-          },
-          {
-            checked: reporterPhotos === 'No',
-            value: "No",
-            text: "No"
+            text: "Yes - reporter must give their email"
           }
         ]
       }) }}

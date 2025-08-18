@@ -111,13 +111,6 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate reporter name length
   validateReporterName(payload, errorSummary)
 
-  if (!payload.reporterPhotos) {
-    errorSummary.errorList.push({
-      text: 'Select \'yes\' if the reporter has images or videos',
-      href: '#reporterPhotos'
-    })
-  }
-
   // Validate reporter tab email
   validateReporterEmail(payload, errorSummary)
 

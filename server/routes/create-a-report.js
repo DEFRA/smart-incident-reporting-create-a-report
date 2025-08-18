@@ -47,6 +47,11 @@ const handlers = {
       payloadData.dateOtherTime = ''
     }
 
+    // Set default value for photos or videos checkbox
+    if (!payloadData.reporterPhotos) {
+      payloadData.reporterPhotos = 'No'
+    }
+
     // Store data in redis cache
     request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
