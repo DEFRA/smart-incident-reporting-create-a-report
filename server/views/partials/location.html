@@ -3,6 +3,7 @@
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
 {% from "dist/govuk/components/button/macro.njk" import govukButton %}
 {% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "dist/govuk/components/back-link/macro.njk" import govukBackLink %}
 
 <div class="govuk-grid-row">
   {% if errorSummary.location.errorList|length %}
@@ -11,7 +12,8 @@
     </div>
   {% endif %}
 
-  {% set grifReferenceHtml %}
+  {% if showLocationOfIncident === true %}
+    {% set grifReferenceHtml %}
     <div class="govuk-!-width-three-quarters">
     {{ govukInput({
         name: "locationGridRef",
@@ -71,10 +73,15 @@
       value: postcode
     }) }}
 
-    <a class="govuk-button govuk-button--secondary govuk-!-margin-top-6" style="text-decoration: none;" data-module="govuk-button">
+    <!-- <a class="govuk-button govuk-button--secondary govuk-!-margin-top-6" style="text-decoration: none;" data-module="govuk-button" id="find-address">
       Find address
-    </a>
+    </a> -->
+    <button type="submit" name="action" value="find-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
+      Find address
+    </button>
   {% endset -%}
+
+
   <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
     {{ govukRadios({
     classes: "govuk-radios--small",
@@ -109,4 +116,70 @@
     ]
   }) }}
   </div>
+  {% endif %}
+
+{% if showChooseAddress === true %}
+<div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+  <p class="govuk-body">
+    <a class="govuk-link govuk-!-margin-bottom-0" onclick="window.history.go(-1); return false;">back</a>
+  </p>
+   {% if resultsFound === false %}
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+      <h1 class="govuk-fieldset__heading">
+        No address found
+      </h1>
+    </legend>
+    <p class="govuk-body">
+      We could not find an address that matches <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
+    </p>
+    <p class="govuk-body">
+      Check you have entered the correct postcode.
+    </p>
+    {% endif %}
+
+    {% if resultsFound === true %}
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+        <h1 class="govuk-fieldset__heading">
+          Choose an address
+        </h1>
+      </legend>
+      {% if showFullResults === false %}
+      <p class="govuk-body">
+        {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
+      </p>
+      {% endif %}
+      {% if showFullResults === true %}
+      <p class="govuk-body">
+        We could not find an address that matches <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
+      </p>
+      <p class="govuk-body">
+        {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ postcode }}</b>.
+      </p>
+      {% endif %}
+
+      {% if findErrorMessageById(errorSummary, 'answerId-1') %}
+        <p class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> Select an address
+        </p>
+      {% endif %}
+      
+      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        {% for result in resultsData %}
+        {% set counter = ( counter | default(0) ) + 1 %}
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="answerId-{{ counter }}" name="answerId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
+          <label class="govuk-label govuk-radios__label" for="answerId-{{ counter }}">
+            {{ result.address }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <button type="submit" name="action" value="select-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
+      Use this address
+    </button>
+  {% endif %}
+</div>
+{% endif %}
 </div>
