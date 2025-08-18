@@ -28,6 +28,7 @@ const handlers = {
   },
   post: async (request, h) => {
     const { action } = request.payload
+    const showLocationOfIncident = true
     if (action === 'check-report') {
       console.log('check report button is clicked')
       // Trim whitespaces for string inputs in payload
@@ -68,6 +69,7 @@ const handlers = {
       ) {
         const dispName = request.auth.credentials.profile.displayName
         return h.view(constants.views.CREATE_A_REPORT, {
+          showLocationOfIncident,
           errorSummary,
           ...payloadData,
           reportTypes,
