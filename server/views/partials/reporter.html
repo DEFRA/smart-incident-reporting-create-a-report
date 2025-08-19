@@ -126,7 +126,6 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        value: '',
         errorMessage: findErrorMessageById(errorSummary.reporter, "reporterType"),
         items: [
           {
@@ -145,9 +144,9 @@
             id: "other",
             checked: reporterType === 'other',
             value: "other",
-            text: "Public organisation",
+            text: "Company or organisation",
             hint: {
-              text: "For example the fire service or a local authority"
+              text: "For example the Environment Agency (internal reports). fire service or a local authority"
             }
           }
         ]
@@ -307,8 +306,17 @@
         value: reporterOtherName,
         errorMessage: findErrorMessageById(errorSummary.reporter, "reporterOtherName"),
         label: {
-          text: "Organisation name",
-          classes: "govuk-fieldset__legend--s"
+          text: "Organisation name"
+        }
+      }) }}
+
+      {{ govukInput({
+        id: "reporterRole",
+        name: "reporterRole",
+        value: reporterRole,
+        classes: "govuk-input--width-10",
+        label: {
+          text: "Reporter role or job title (optional)"
         }
       }) }}
     </div>
