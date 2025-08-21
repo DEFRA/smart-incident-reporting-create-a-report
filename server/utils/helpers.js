@@ -336,7 +336,7 @@ const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
   const emailId = '#reporterEmail'
-  if (payload.reporterPhotos === 'Yes') {
+  if (payload.reporterPhotos === 'Yes' || payload.reporterWaterName) {
     if (!payload.reporterEmail) {
       errorSummary.errorList.push({
         text: 'Enter an email address',
