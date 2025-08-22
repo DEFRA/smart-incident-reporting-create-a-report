@@ -12,7 +12,7 @@
     </div>
   {% endif %}
 
-  {% if showLocationOfIncident === true %}
+  <div class="{% if hideLocationOfIncident %}hidden{% endif %}">
     {% set grifReferenceHtml %}
     <div class="govuk-!-width-three-quarters">
     {{ govukInput({
@@ -45,6 +45,8 @@
   {% endset -%}
 
   {% set addressHtml %}
+  <div class="{% if hideAddressInput %}hidden{% endif %}">
+
     {{ govukInput({
       errorMessage: findErrorMessageById(errorSummary.location, "buildingDetails"),
       label: {
@@ -79,6 +81,8 @@
     <button type="submit" name="action" value="find-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
       Find address
     </button>
+  </div>
+  <div class="{% if hideSelectedAddress %}hidden{% endif %}">{{ addressLine1 }}<br>{{ townOrCity }}<br>{{ postcode }}</div>
   {% endset -%}
 
 
@@ -116,13 +120,10 @@
     ]
   }) }}
   </div>
-  {% endif %}
+</div>
 
-{% if showChooseAddress === true %}
+<div class="{% if hideChooseAddress %}hidden{% endif %}">
 <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
-  <p class="govuk-body">
-    <a class="govuk-link govuk-!-margin-bottom-0" onclick="window.history.go(-1); return false;">back</a>
-  </p>
    {% if resultsFound === false %}
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
       <h1 class="govuk-fieldset__heading">
@@ -158,7 +159,7 @@
       </p>
       {% endif %}
 
-      {% if findErrorMessageById(errorSummary, 'answerId-1') %}
+      {% if findErrorMessageById(errorSummary.location, 'addressId-1') %}
         <p class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> Select an address
         </p>
@@ -168,8 +169,8 @@
         {% for result in resultsData %}
         {% set counter = ( counter | default(0) ) + 1 %}
         <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="answerId-{{ counter }}" name="answerId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
-          <label class="govuk-label govuk-radios__label" for="answerId-{{ counter }}">
+          <input class="govuk-radios__input" id="addressId-{{ counter }}" name="addressId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
+          <label class="govuk-label govuk-radios__label" for="addressId-{{ counter }}">
             {{ result.address }}
           </label>
         </div>
@@ -181,5 +182,5 @@
     </button>
   {% endif %}
 </div>
-{% endif %}
+</div>
 </div>

@@ -83,6 +83,26 @@ const validateReportPayload = payload => {
   return errorSummary
 }
 
+const validateBuildingDataPayload = payload => {
+  const errorSummary = {
+    location: getErrorSummary()
+  }
+
+  // Tab validations
+  validateBuildingData(payload, errorSummary.location)
+  return errorSummary
+}
+
+const validateAddressSelectionPayload = payload => {
+  const errorSummary = {
+    location: getErrorSummary()
+  }
+
+  // Tab validations
+  validateAddressSelection(payload, errorSummary.location)
+  return errorSummary
+}
+
 const validateDescriptionTab = (payload, errorSummary) => {
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
@@ -196,7 +216,42 @@ const validateLocationTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
+  }
+}
 
+const validateBuildingData = (payload, errorSummary) => {
+  if (payload.locationOfIncident === 'address') {
+    if (!payload.buildingDetails) {
+      errorSummary.errorList.push({
+        text: 'Enter a building number or name',
+        href: '#buildingDetails'
+      })
+    }
+
+    if (!payload.postcode) {
+      errorSummary.errorList.push({
+        text: 'Enter an postcode',
+        href: '#postcode'
+      })
+    } else if (!postcodeRegExp.test(payload.postcode)) {
+      errorSummary.errorList.push({
+        text: 'Enter a full postcode, for example W1 8QS',
+        href: '#postcode'
+      })
+    } else {
+      // do nothing
+    }
+  }
+}
+
+const validateAddressSelection = (payload, errorSummary) => {
+  if (payload.locationOfIncident === 'address') {
+    if (payload.buildingDetails && payload.postcode && !payload.addressId) {
+      errorSummary.errorList.push({
+        text: 'Select an address',
+        href: '#addressId-1'
+      })
+    }
   }
 }
 
@@ -458,6 +513,8 @@ export {
   validatePayload,
   validateEmail,
   validateReportPayload,
+  validateBuildingDataPayload,
+  validateAddressSelectionPayload,
   validateGridReference,
   formatGridReference
 }

@@ -23,7 +23,7 @@ const findAddresses = async (request) => {
 
   // call API only if cachedResult is null or if postcode is new
   if (!cachedResult || !isBuildingDetailsCached || !isPostcodeCached) {
-    request.yar.clear(constants.redisKeys.CONFIRM_ADDRESS)
+    // request.yar.clear(constants.redisKeys.CONFIRM_ADDRESS)
     let payload
     if (isPostcodeCached && !isBuildingDetailsCached) {
       // use the cached postcode data for updated building details
