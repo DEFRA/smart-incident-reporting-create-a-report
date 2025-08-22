@@ -204,7 +204,7 @@ const buildAnswersData = (reportPayload, questions) => {
       questionResponse: true
     }
     if (reportPayload.reporterType === 'public') {
-      const anonymousReporter = reportPayload => (reportPayload.reporterFirstName && reportPayload.reporterLastName && reportPayload.reporterEmail && reportPayload.reporterPhone)
+      const anonymousReporter = reportPayload => (!reportPayload.reporterFirstName && !reportPayload.reporterLastName && !reportPayload.reporterEmail && !reportPayload.reporterPhone)
       if (anonymousReporter) {
         data.push({
           ...baseReporterAnswer,
