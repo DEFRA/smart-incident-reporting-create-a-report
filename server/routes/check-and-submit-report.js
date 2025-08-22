@@ -204,11 +204,20 @@ const buildAnswersData = (reportPayload, questions) => {
       questionResponse: true
     }
     if (reportPayload.reporterType === 'public') {
-      data.push({
-        ...baseReporterAnswer,
-        answerId: questions.TYPE_OF_REPORTER.answers.public.answerId,
-        otherDetails: 'Member of public'
-      })
+      const anonymousReporter = reportPayload => (reportPayload.reporterFirstName && reportPayload.reporterLastName && reportPayload.reporterEmail && reporterPhone)
+      if (anonymousReporter) {
+        data.push({
+          ...baseReporterAnswer,
+          answerId: questions.TYPE_OF_REPORTER.answers.anonymous.answerId,
+          otherDetails: 'Anonymous'
+        })
+      } else {
+        data.push({
+          ...baseReporterAnswer,
+          answerId: questions.TYPE_OF_REPORTER.answers.public.answerId,
+          otherDetails: 'Member of public'
+        })
+      }
     } else {
       data.push({
         ...baseReporterAnswer,
