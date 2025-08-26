@@ -89,7 +89,6 @@ window.addEventListener('load', () => {
   if (!showIncidentTypes()) {
     toggleIncidentTypes()
   }
-  toggleWaterAndOrg()
   toggleDate()
 })
 
