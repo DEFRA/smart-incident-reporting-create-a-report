@@ -133,13 +133,6 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate reporter name length
   validateReporterName(payload, errorSummary)
 
-  if (!payload.reporterPhotos) {
-    errorSummary.errorList.push({
-      text: 'Select \'yes\' if the reporter has images or videos',
-      href: '#reporterPhotos'
-    })
-  }
-
   // Validate reporter tab email
   validateReporterEmail(payload, errorSummary)
 
@@ -437,7 +430,7 @@ const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
   const emailId = '#reporterEmail'
-  if (payload.reporterPhotos === 'Yes') {
+  if (payload.reporterPhotos === 'Yes' || payload.reporterWaterName) {
     if (!payload.reporterEmail) {
       errorSummary.errorList.push({
         text: 'Enter an email address',

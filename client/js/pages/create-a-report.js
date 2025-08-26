@@ -1,11 +1,8 @@
+import accessibleAutocomplete from 'accessible-autocomplete'
+
 const toggleIncidentTypesButton = document.querySelector('#toggle-incident-types')
 const incidentInputs = document.querySelectorAll('input[id^="descriptionIncidentType"]')
 const divider = document.querySelector('.govuk-radios__divider')
-const radioPublic = document.getElementById('public')
-const radioWaterCompany = document.getElementById('water')
-const radioOtherOrg = document.getElementById('other')
-const waterCompanyRadios = document.getElementById('waterCompanyRadios')
-const organisationInput = document.getElementById('organisationInput')
 const timeInput = document.getElementById('timeInput')
 const otherDateTimeInput = document.getElementById('otherDateTimeInput')
 const nowDateInput = document.getElementById('dateObserved')
@@ -35,25 +32,6 @@ const three = 3
 toggleIncidentTypesButton.addEventListener('click', (e) => {
   e.preventDefault()
   toggleIncidentTypes()
-})
-radioPublic.addEventListener('change', () => {
-  if (radioPublic.checked) {
-    radioWaterCompany.checked = false
-    radioOtherOrg.checked = false
-  }
-  toggleWaterAndOrg()
-})
-radioWaterCompany.addEventListener('change', () => {
-  if (radioWaterCompany.checked) {
-    radioOtherOrg.checked = false
-  }
-  toggleWaterAndOrg()
-})
-radioOtherOrg.addEventListener('change', () => {
-  if (radioOtherOrg.checked) {
-    radioWaterCompany.checked = false
-  }
-  toggleWaterAndOrg()
 })
 nowDateInput.addEventListener('change', () => {
   toggleDate()
@@ -121,30 +99,12 @@ findDifferentAddress.addEventListener('click', (e) => {
 const toggleIncidentTypes = () => {
   const hideIncidents = toggleIncidentTypesButton.innerText.indexOf('Hide') > -1
   incidentInputs.forEach(input => {
-    if (input.id.substring(input.id.indexOf('-') + 1) > 3) {
+    if (input.id.substring(input.id.indexOf('-') + 1) > 5) {
       input.parentElement.style.display = hideIncidents ? 'none' : ''
     }
   })
   divider.style.display = hideIncidents ? 'none' : ''
   toggleIncidentTypesButton.innerText = toggleIncidentTypesButton.innerText.replace(hideIncidents ? 'Hide' : 'Show', hideIncidents ? 'Show' : 'Hide')
-}
-
-const toggleWaterAndOrg = () => {
-  if (radioPublic.checked) {
-    waterCompanyRadios.style.display = 'none'
-    organisationInput.style.display = 'none'
-  } else if (radioWaterCompany.checked) {
-    waterCompanyRadios.style.display = 'block'
-    organisationInput.style.display = 'none'
-  } else if (radioOtherOrg.checked) {
-    waterCompanyRadios.style.display = 'none'
-    organisationInput.style.display = 'block'
-  } else if ((!radioWaterCompany.checked) && (!radioOtherOrg.checked)) {
-    waterCompanyRadios.style.display = 'none'
-    organisationInput.style.display = 'none'
-  } else {
-    // do nothing
-  }
 }
 
 const toggleDate = () => {
@@ -194,4 +154,13 @@ window.addEventListener('load', () => {
   }
   toggleWaterAndOrg()
   toggleDate()
+})
+
+let selectEl = document.querySelector('#reporterWaterName')
+accessibleAutocomplete.enhanceSelectElement({
+  selectElement: selectEl,
+  autoselect: false,
+  defaultValue: '',
+  minLength: 2,
+  displayMenu: 'overlay'
 })

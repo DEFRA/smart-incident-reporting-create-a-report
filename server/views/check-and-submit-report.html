@@ -127,6 +127,15 @@
   
         {
           key: {
+            text: "Reporter role or job title"
+          },
+          value: {
+            text: reporterRole
+          }
+        } if ((reporterType == "other") and (reporterRole)),
+
+        {
+          key: {
             text: "Organisation name"
           },
           value: {
@@ -185,8 +194,8 @@
           },
           value: {
             html: reporterPhotos
-          }
-        }
+          } 
+        } if reporterPhotos
       ]
     }) }}
   

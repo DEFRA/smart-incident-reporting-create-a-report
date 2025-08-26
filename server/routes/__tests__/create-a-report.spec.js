@@ -299,7 +299,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="12">Test data</textarea>')
+      expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="20">Test data</textarea>')
     })
 
     // Other date validation

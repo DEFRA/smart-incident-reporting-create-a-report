@@ -50,12 +50,16 @@ const handlers = {
         hideLocationOfIncident = true
         hideChooseAddress = false
       }
-
+      
       if (answer) {
         hideLocationOfIncident = false
         hideChooseAddress = true
         hideSelectedAddress = false
       }
+    // Set default value for photos or videos checkbox
+    if (!payloadData.reporterPhotos) {
+      payloadData.reporterPhotos = 'No'
+    }
 
       if (!payloadData.buildingDetails || !payloadData.postcodeDetails) {
         hideLocationOfIncident = false
