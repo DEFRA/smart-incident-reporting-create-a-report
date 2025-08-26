@@ -128,11 +128,10 @@ window.addEventListener('load', () => {
   if (!showIncidentTypes()) {
     toggleIncidentTypes()
   }
-  toggleWaterAndOrg()
   toggleDate()
 })
 
-let selectEl = document.querySelector('#reporterWaterName')
+const selectEl = document.querySelector('#reporterWaterName')
 accessibleAutocomplete.enhanceSelectElement({
   selectElement: selectEl,
   autoselect: false,
