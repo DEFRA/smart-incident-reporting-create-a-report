@@ -23,7 +23,7 @@ const POSTCODE_DETAILS = 'postcode-details'
 const BUILDING_DATA = 'building-data'
 const CHOOSE_ADDRESS = 'choose-address'
 const SELECTED_ADDRESS = 'selected-address'
-// const CONFIRM_ADDRESS = 'confirm-address'
+const SELECTED_ADDRESS_DATA = 'selected-address-data'
 
 const views = {
   ERROR,
@@ -52,7 +52,8 @@ const redisKeys = {
   POSTCODE_DETAILS,
   BUILDING_DATA,
   CHOOSE_ADDRESS,
-  SELECTED_ADDRESS
+  SELECTED_ADDRESS,
+  SELECTED_ADDRESS_DATA
 }
 
 const statusCodes = {

@@ -7,19 +7,19 @@
 
 <div class="govuk-grid-row">
   {% if errorSummary.location.errorList|length %}
-    <div class="govuk-grid-column-full">
-      {{ govukErrorSummary(errorSummary.location) }}
-    </div>
+  <div class="govuk-grid-column-full">
+    {{ govukErrorSummary(errorSummary.location) }}
+  </div>
   {% endif %}
 
-  <div class="{% if hideLocationOfIncident %}hidden{% endif %}">
+  <div id="location-of-incident" class="{% if hideLocationOfIncident %}hidden{% endif %}">
     {% set grifReferenceHtml %}
     <div class="govuk-!-width-three-quarters">
-    {{ govukInput({
+      {{ govukInput({
         name: "locationGridRef",
         id: "locationGridRef",
         label: {
-          text: "National grid reference"
+        text: "National grid reference"
         },
         classes: "govuk-input--width-10",
         value: locationGridRef,
@@ -27,160 +27,176 @@
         autocomplete: "off"
       }) }}
 
-    <div class="govuk-!-padding-bottom-4"></div>
+      <div class="govuk-!-padding-bottom-4"></div>
 
       {{ govukTextarea({
         name: "locationDescription",
         id: "locationDescription",
         rows: "6",
         label: {
-          text: "Location description (optional)"
+        text: "Location description (optional)"
         },
         hint: {
-          html: "Include things like the name of the watercourse and nearest town or landmarks. You can also include things like <a href='http://www.what3words.com' target='_new'>what3words</a> or map references."
+        html: "Include things like the name of the watercourse and nearest town or landmarks. You can also include things
+        like <a href='http://www.what3words.com' target='_new'>what3words</a> or map references."
         },
         value: locationDescription
       }) }}
     </div>
-  {% endset -%}
+    {% endset -%}
 
-  {% set addressHtml %}
-  <div class="{% if hideAddressInput %}hidden{% endif %}">
+    {% set addressHtml %}
+    <div id="address-input" class="{% if hideAddressInput %}hidden{% endif %}">
 
-    {{ govukInput({
-      errorMessage: findErrorMessageById(errorSummary.location, "buildingDetails"),
-      label: {
+      {{ govukInput({
+        errorMessage: findErrorMessageById(errorSummary.location, "buildingDetails"),
+        label: {
         text: "Building number or name",
         classes: "govuk-label"
-      },
-      hint: {
+        },
+        hint: {
         text: "For example, 15 or Prospect Cottage"
-      },
-      classes: "govuk-!-width-one-half",
-      id: "buildingDetails",
-      name: "buildingDetails",
-      value: buildingDetails
-    }) }}
+        },
+        classes: "govuk-!-width-one-half",
+        id: "buildingDetails",
+        name: "buildingDetails",
+        value: buildingDetails
+      }) }}
 
-    {{ govukInput({
-      errorMessage: findErrorMessageById(errorSummary.location, "postcode"),
-      label: {
+      {{ govukInput({
+        errorMessage: findErrorMessageById(errorSummary.location, "postcodeDetails"),
+        label: {
         text: "Postcode",
         classes: "govuk-label"
-      },
-      classes: "govuk-input--width-10",
-      id: "postcode",
-      name: "postcode",
-      autocomplete: "postal-code",
-      value: postcode
-    }) }}
+        },
+        classes: "govuk-input--width-10",
+        id: "postcodeDetails",
+        name: "postcodeDetails",
+        autocomplete: "postal-code",
+        value: postcodeDetails
+      }) }}
 
-    <!-- <a class="govuk-button govuk-button--secondary govuk-!-margin-top-6" style="text-decoration: none;" data-module="govuk-button" id="find-address">
-      Find address
-    </a> -->
-    <button type="submit" name="action" value="find-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
-      Find address
-    </button>
-  </div>
-  <div class="{% if hideSelectedAddress %}hidden{% endif %}">{{ addressLine1 }}<br>{{ townOrCity }}<br>{{ postcode }}</div>
-  {% endset -%}
+      <button type="submit" name="action" value="find-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
+        Find address
+      </button>
+    </div>
 
+    <div id="selected-address" class="{% if hideSelectedAddress %}hidden{% endif %}">
+      {{ addressLine1 }}<br>{{ townOrCity }}<br>{{ postcode }}
+      {% if addressLine1 %}
+      <p class="govuk-body govuk-!-margin-top-6">
+        <a id="find-different-address" class="govuk-link">Find a different address</a>
+      </p>
+      {% endif %}
+    </div>
+    {% endset -%}
 
-  <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
-    {{ govukRadios({
-    classes: "govuk-radios--small",
-    name: "locationOfIncident",
-    id: "locationOfIncident",
-    fieldset: {
-      legend: {
+    <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+      {{ govukRadios({
+        classes: "govuk-radios--small",
+        name: "locationOfIncident",
+        id: "locationOfIncident",
+        fieldset: {
+        legend: {
         text: "Location of incident",
         classes: "govuk-fieldset__legend--l"
-      }
-    },
-    hint: {
-      text: "This means where the reporter saw or experienced the problem, not the source."
-    },
-    items: [
-      {
+        }
+        },
+        hint: {
+        text: "This means where the reporter saw or experienced the problem, not the source."
+        },
+        items: [
+        {
         value: "gridReference",
         text: "Grid reference",
         checked: locationOfIncident === 'gridReference',
         conditional: {
-          html: grifReferenceHtml
+        html: grifReferenceHtml
         }
-      },
-      {
+        },
+        {
         value: "address",
         text: "Address",
         checked: locationOfIncident === 'address',
         conditional: {
-          html: addressHtml
+        html: addressHtml
         }
-      }
-    ]
-  }) }}
+        }
+        ]
+      }) }}
+    </div>
   </div>
-</div>
 
-<div class="{% if hideChooseAddress %}hidden{% endif %}">
-<div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
-   {% if resultsFound === false %}
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-      <h1 class="govuk-fieldset__heading">
-        No address found
-      </h1>
-    </legend>
-    <p class="govuk-body">
-      We could not find an address that matches <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
-    </p>
-    <p class="govuk-body">
-      Check you have entered the correct postcode.
-    </p>
-    {% endif %}
-
-    {% if resultsFound === true %}
-    <fieldset class="govuk-fieldset">
+  <div id="choose-address" class="{% if hideChooseAddress %}hidden{% endif %}">
+    {% if resultsFound === false %}
+      <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+      <p class="govuk-body">
+        <a id="use-grid-ref" class="govuk-link">Use a grid reference</a>
+      </p>
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
         <h1 class="govuk-fieldset__heading">
-          Choose an address
+          No address found
         </h1>
       </legend>
-      {% if showFullResults === false %}
-      <p class="govuk-body">
-        {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
-      </p>
-      {% endif %}
-      {% if showFullResults === true %}
       <p class="govuk-body">
         We could not find an address that matches <b>{{ buildingDetails }}</b> and <b>{{ postcode }}</b>.
       </p>
       <p class="govuk-body">
-        {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ postcode }}</b>.
+        Check you have entered the correct postcode.
       </p>
+      </div>
       {% endif %}
 
-      {% if findErrorMessageById(errorSummary.location, 'addressId-1') %}
+      {% if resultsFound === true %}
+      <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+      <p class="govuk-body">
+        <a id="use-grid-ref" class="govuk-link">Use a grid reference</a>
+      </p>
+      <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+          <h1 class="govuk-fieldset__heading">
+            Choose an address
+          </h1>
+        </legend>
+        <p class="govuk-body">
+          <a id="change-search" class="govuk-link">Change search</a>
+        </p>
+        {% if showFullResults === false %}
+        <p class="govuk-body">
+          {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ buildingDetails }}</b> and <b>{{ postcodeDetails }}</b>.
+        </p>
+        {% endif %}
+        {% if showFullResults === true %}
+        <p class="govuk-body">
+          We could not find an address that matches <b>{{ buildingDetails }}</b> and <b>{{ postcodeDetails }}</b>.
+        </p>
+        <p class="govuk-body">
+          {{ resultlength }} {% if resultlength === 1 %}address{% else %}addresses{% endif %} found for <b>{{ postcodeDetails }}</b>.
+        </p>
+        {% endif %}
+
+        {% if findErrorMessageById(errorSummary.location, 'addressId-1') %}
         <p class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> Select an address
         </p>
-      {% endif %}
-      
-      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-        {% for result in resultsData %}
-        {% set counter = ( counter | default(0) ) + 1 %}
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="addressId-{{ counter }}" name="addressId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
-          <label class="govuk-label govuk-radios__label" for="addressId-{{ counter }}">
-            {{ result.address }}
-          </label>
+        {% endif %}
+
+        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+          {% for result in resultsData %}
+          {% set counter = ( counter | default(0) ) + 1 %}
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="addressId-{{ counter }}" name="addressId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
+            <label class="govuk-label govuk-radios__label" for="addressId-{{ counter }}">
+              {{ result.address }}
+            </label>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-      </div>
-    </fieldset>
-    <button type="submit" name="action" value="select-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
-      Use this address
-    </button>
-  {% endif %}
-</div>
-</div>
+      </fieldset>
+      <button type="submit" name="action" value="select-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
+        Use this address
+      </button>
+    </div>
+    {% endif %}
+  </div>
 </div>

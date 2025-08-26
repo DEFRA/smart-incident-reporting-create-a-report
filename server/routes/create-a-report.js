@@ -9,45 +9,62 @@ const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
-    const hideLocationOfIncident = false
-    const hideAddressInput = false
-    const hideSelectedAddress = true
     if (errorSummary?.description.errorList.length > 0 ||
       errorSummary?.reporter.errorList.length > 0 ||
       errorSummary?.location.errorList.length > 0 ||
       errorSummary?.date.errorList.length > 0
     ) {
       return h.view(constants.views.CREATE_A_REPORT, {
-        hideLocationOfIncident,
-        hideAddressInput,
-        hideSelectedAddress,
         errorSummary,
         ...getContext(request.yar)
       })
     }
     return h.view(constants.views.CREATE_A_REPORT, {
-      hideLocationOfIncident,
-      hideAddressInput,
-      hideSelectedAddress,
       ...getContext(request.yar)
     })
   },
   post: async (request, h) => {
     const { action } = request.payload
+    const payloadData = request.payload
     if (action === 'check-report') {
-      const hideLocationOfIncident = false
+      console.log('check report button is clicked')
+      let hideLocationOfIncident
       let hideAddressInput
       let hideSelectedAddress
+      let hideChooseAddress
+      hideLocationOfIncident = false
       hideAddressInput = true
       hideSelectedAddress = false
+      const selectedAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
+      let answer
+      if (selectedAddress) {
+        answer = selectedAddress[0].uprn
+      }
       const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
       if (!displayAddress) {
         hideAddressInput = false
         hideSelectedAddress = true
       }
-      console.log('check report button is clicked')
+
+      if (payloadData.buildingDetails && payloadData.postcodeDetails && !payloadData.addressId) {
+        hideLocationOfIncident = true
+        hideChooseAddress = false
+      }
+
+      if (answer) {
+        hideLocationOfIncident = false
+        hideChooseAddress = true
+        hideSelectedAddress = false
+      }
+
+      if (!payloadData.buildingDetails || !payloadData.postcodeDetails) {
+        hideLocationOfIncident = false
+        hideChooseAddress = true
+        hideSelectedAddress = true
+        hideAddressInput = false
+      }
+
       // Trim whitespaces for string inputs in payload
-      const payloadData = request.payload
       for (const [key, value] of Object.entries(payloadData)) {
         if (typeof value === 'string') {
           payloadData[key] = value.trim()
@@ -82,16 +99,20 @@ const handlers = {
         errorSummary.location.errorList.length > 0 ||
         errorSummary.date.errorList.length > 0
       ) {
+        const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
         const dispName = request.auth.credentials.profile.displayName
         return h.view(constants.views.CREATE_A_REPORT, {
           hideLocationOfIncident,
           hideAddressInput,
           hideSelectedAddress,
+          hideChooseAddress,
           errorSummary,
           ...payloadData,
           reportTypes,
           dispName,
-          ...displayAddress
+          ...displayAddress,
+          ...result,
+          answer
         })
       }
 
@@ -99,8 +120,7 @@ const handlers = {
       return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
 
     } else if (action === 'find-address') {
-      const payloadData = request.payload
-
+      console.log('find address button is clicked')
       // Store data in redis cache
       request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
@@ -124,13 +144,10 @@ const handlers = {
 
       const hideLocationOfIncident = true
       const hideChooseAddress = false
-      console.log('find address button is clicked')
-      const { buildingDetails, postcode } = request.payload
-      console.log('Data for buildingDetails', buildingDetails)
-      console.log('Data for postcode', postcode)
+      const { buildingDetails, postcodeDetails } = request.payload
       const result = await findAddresses(request)
       request.yar.set(constants.redisKeys.CHOOSE_ADDRESS, result)
-      request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcode })
+      request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcodeDetails })
       return h.view(constants.views.CREATE_A_REPORT, {
         hideLocationOfIncident,
         hideChooseAddress,
@@ -140,7 +157,6 @@ const handlers = {
       })
     } else if (action === 'select-address') {
       console.log('select address button is clicked')
-      const payloadData = request.payload
 
       // Validate payload
       const errorSummary = validateAddressSelectionPayload(payloadData)
@@ -176,7 +192,10 @@ const handlers = {
       const selectedAddress = result.resultsData.filter(item => Number(item.uprn) === addressId)
       const addressData = selectedAddress[0].address
       request.yar.set(constants.redisKeys.SELECTED_ADDRESS, formatAddress(addressData))
+      request.yar.set(constants.redisKeys.SELECTED_ADDRESS_DATA, selectedAddress)
       const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
+
+      const answer = selectedAddress[0].uprn
       return h.view(constants.views.CREATE_A_REPORT, {
         hideLocationOfIncident,
         hideChooseAddress,
@@ -186,7 +205,8 @@ const handlers = {
         ...result,
         ...payloadData,
         reportTypes,
-        ...displayAddress
+        ...displayAddress,
+        answer
       })
 
     }
@@ -194,34 +214,51 @@ const handlers = {
 }
 const getContext = session => {
   const showMessage = config.showNonLiveMessage
+  const selectedAddress = session.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
+  const address = session.get(constants.redisKeys.SELECTED_ADDRESS)
+  const result = session.get(constants.redisKeys.CHOOSE_ADDRESS)
+
+  let answer
+  if (selectedAddress) {
+    answer = selectedAddress[0].uprn
+  }
+
+  console.log('Data for answer get context', answer)
+
   return {
     ...session.get(constants.redisKeys.CREATE_A_REPORT),
     reportTypes,
-    showMessage
+    showMessage,
+    hideLocationOfIncident: false,
+    hideAddressInput: selectedAddress,
+    hideSelectedAddress: !selectedAddress,
+    hideChooseAddress: true,
+    ...result,
+    ...address,
+    answer
   }
 }
 
 const findAddresses = async (request) => {
   const cachedResult = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
-  const { buildingDetails, postcode } = request.payload
+  const { buildingDetails, postcodeDetails } = request.payload
 
   let isBuildingDetailsCached = false
   let isPostcodeCached = false
   if (cachedResult) {
     isBuildingDetailsCached = cachedResult.buildingDetails === buildingDetails
-    isPostcodeCached = cachedResult.postcode === postcode
+    isPostcodeCached = cachedResult.postcodeDetails === postcodeDetails
   }
 
   // call API only if cachedResult is null or if postcode is new
   if (!cachedResult || !isBuildingDetailsCached || !isPostcodeCached) {
-    // request.yar.clear(constants.redisKeys.CONFIRM_ADDRESS)
     let payload
     if (isPostcodeCached && !isBuildingDetailsCached) {
       // use the cached postcode data for updated building details
       payload = request.yar.get(constants.redisKeys.POSTCODE_DETAILS)
     } else {
       // calling API for fresh search or updated postcode
-      const apiResults = await findByPostcode(postcode)
+      const apiResults = await findByPostcode(postcodeDetails)
       payload = apiResults.payload
       request.yar.set(constants.redisKeys.POSTCODE_DETAILS, payload)
     }
@@ -230,7 +267,7 @@ const findAddresses = async (request) => {
       return {
         resultsFound: false,
         buildingDetails,
-        postcode
+        postcodeDetails
       }
     }
 
@@ -239,7 +276,7 @@ const findAddresses = async (request) => {
       .map(item => {
         return {
           uprn: item.UPRN,
-          postcode: item.POSTCODE,
+          postcodeDetails: item.POSTCODE,
           address: capitaliseAddress(item.ADDRESS),
           x: item.X_COORDINATE,
           y: item.Y_COORDINATE
@@ -249,7 +286,7 @@ const findAddresses = async (request) => {
     return {
       resultsFound: true,
       buildingDetails,
-      postcode,
+      postcodeDetails,
       showFullResults: fullResults,
       resultsData,
       resultlength: resultsData.length

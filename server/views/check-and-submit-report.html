@@ -215,7 +215,7 @@
           value: {
             text: ngrValue
           }
-        },
+        } if (locationOfIncident == "gridReference"),
         {
           key: {
             text: "Location description"
@@ -223,8 +223,15 @@
           value: {
             text: locationDescription
           }
-        } if locationDescription
-  
+        } if (locationOfIncident == "gridReference") and (locationDescription),
+        {
+          key: {
+            text: "Address"
+          },
+          value: {
+            html: selectedAddress
+          }
+        } if (locationOfIncident == "address")
       ]
     }) }}
   
