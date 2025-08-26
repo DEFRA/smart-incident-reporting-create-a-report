@@ -13,10 +13,17 @@ const SERVICE_UNAVAILABLE = 'service-unavailable'
 const SIGNOUT = 'signout'
 const SIGNED_OUT = 'signed-out'
 const CREATE_REPORT_CANCEL = 'create-report/cancel'
-
 const CREATE_A_REPORT = 'create-a-report'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
+const GET_ADDRESSES = 'get-addresses'
+
+// Meta data
+const POSTCODE_DETAILS = 'postcode-details'
+const BUILDING_DATA = 'building-data'
+const CHOOSE_ADDRESS = 'choose-address'
+const SELECTED_ADDRESS = 'selected-address'
+const SELECTED_ADDRESS_DATA = 'selected-address-data'
 
 const views = {
   ERROR,
@@ -32,7 +39,8 @@ const views = {
 }
 
 const routes = {
-  ...views
+  ...views,
+  GET_ADDRESSES
 }
 
 for (const [key, value] of Object.entries(views)) {
@@ -40,7 +48,12 @@ for (const [key, value] of Object.entries(views)) {
 }
 
 const redisKeys = {
-  ...views
+  ...views,
+  POSTCODE_DETAILS,
+  BUILDING_DATA,
+  CHOOSE_ADDRESS,
+  SELECTED_ADDRESS,
+  SELECTED_ADDRESS_DATA
 }
 
 const statusCodes = {

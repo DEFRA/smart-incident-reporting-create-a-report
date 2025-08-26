@@ -12,6 +12,20 @@ const otherDateInput = document.getElementById('dateObserved-4')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
+
+const findAddressButton = document.getElementById('change-search')
+
+const addressSearchResults = document.getElementById('address-search-results')
+
+const locationOfIncident = document.getElementById('location-of-incident')
+const chooseAddress = document.getElementById('choose-address')
+const useGridRef = document.getElementById('use-grid-ref')
+const changeSearch = document.getElementById('change-search')
+const findDifferentAddress = document.getElementById('find-different-address')
+
+const addressInput = document.getElementById('address-input')
+const selectedAddress = document.getElementById('selected-address')
+
 const three = 3
 
 // Events
@@ -31,6 +45,55 @@ yesterdayDateInput.addEventListener('change', () => {
 otherDateInput.addEventListener('change', () => {
   toggleDate()
 })
+
+/* findAddressButton.addEventListener('click', (e) => {
+  console.log('Button is clicked')
+  // getAddresses()
+  locationOfIncident.style.display = 'none'
+  addressSearchResults.style.display = 'block'
+}) */
+
+useGridRef.addEventListener('click', (e) => {
+  console.log('grid ref is clicked')
+  document.getElementById('locationOfIncident').checked = true
+  const ngrRadio = document.getElementById('conditional-locationOfIncident')
+  const addressRadio = document.getElementById('conditional-locationOfIncident-2')
+  addressRadio.classList.add('govuk-radios__conditional--hidden')
+  ngrRadio.classList.remove('govuk-radios__conditional--hidden')
+  document.getElementById('buildingDetails').value = ''
+  document.getElementById('postcodeDetails').value = ''
+  selectedAddress.classList.add('hidden')
+  locationOfIncident.classList.remove('hidden')
+  chooseAddress.classList.add('hidden')
+})
+
+changeSearch.addEventListener('click', (e) => {
+  console.log('change is clicked')
+  locationOfIncident.classList.remove('hidden')
+  chooseAddress.classList.add('hidden')
+  selectedAddress.classList.add('hidden')
+})
+
+findDifferentAddress.addEventListener('click', (e) => {
+  console.log('findDifferent address is clicked')
+  selectedAddress.classList.add('hidden')
+  document.getElementById('buildingDetails').value = ''
+  document.getElementById('postcodeDetails').value = ''
+  addressInput.classList.remove('hidden')
+})
+/* async function getAddresses() {
+  const buildingDetails = document.getElementById('buildingDetails').value
+  const postcode = document.getElementById('postcode').value
+  console.log('Data for buildingDetails', buildingDetails)
+  console.log('Data for postcode', postcode)
+  const response = await fetch('/get-addresses', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ buildingDetails, postcode })
+  })
+  const data = await response.json()
+  console.log('Data for JSON response', data)
+} */
 
 // funcs
 const toggleIncidentTypes = () => {
