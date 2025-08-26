@@ -13,10 +13,6 @@ const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
 
-const findAddressButton = document.getElementById('change-search')
-
-const addressSearchResults = document.getElementById('address-search-results')
-
 const locationOfIncident = document.getElementById('location-of-incident')
 const chooseAddress = document.getElementById('choose-address')
 const useGridRef = document.getElementById('use-grid-ref')
@@ -46,13 +42,6 @@ otherDateInput.addEventListener('change', () => {
   toggleDate()
 })
 
-/* findAddressButton.addEventListener('click', (e) => {
-  console.log('Button is clicked')
-  // getAddresses()
-  locationOfIncident.style.display = 'none'
-  addressSearchResults.style.display = 'block'
-}) */
-
 useGridRef.addEventListener('click', (e) => {
   console.log('grid ref is clicked')
   document.getElementById('locationOfIncident').checked = true
@@ -81,19 +70,6 @@ findDifferentAddress.addEventListener('click', (e) => {
   document.getElementById('postcodeDetails').value = ''
   addressInput.classList.remove('hidden')
 })
-/* async function getAddresses() {
-  const buildingDetails = document.getElementById('buildingDetails').value
-  const postcode = document.getElementById('postcode').value
-  console.log('Data for buildingDetails', buildingDetails)
-  console.log('Data for postcode', postcode)
-  const response = await fetch('/get-addresses', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ buildingDetails, postcode })
-  })
-  const data = await response.json()
-  console.log('Data for JSON response', data)
-} */
 
 // funcs
 const toggleIncidentTypes = () => {
