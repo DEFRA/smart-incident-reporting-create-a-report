@@ -252,26 +252,26 @@ const buildAnswersData = (reportPayload, questions) => {
     answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
     otherDetails: gridref
   },
-    {
-      ...baseIncidentLocationAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
-      otherDetails: Math.floor(eaNoCoordinates.ea).toString()
-    },
-    {
-      ...baseIncidentLocationAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
-      otherDetails: Math.floor(eaNoCoordinates.no).toString()
-    },
-    {
-      ...baseIncidentLocationAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
-      otherDetails: latLngCoordinates.lng.toString()
-    },
-    {
-      ...baseIncidentLocationAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
-      otherDetails: latLngCoordinates.lat.toString()
-    })
+  {
+    ...baseIncidentLocationAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+    otherDetails: Math.floor(eaNoCoordinates.ea).toString()
+  },
+  {
+    ...baseIncidentLocationAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+    otherDetails: Math.floor(eaNoCoordinates.no).toString()
+  },
+  {
+    ...baseIncidentLocationAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+    otherDetails: latLngCoordinates.lng.toString()
+  },
+  {
+    ...baseIncidentLocationAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+    otherDetails: latLngCoordinates.lat.toString()
+  })
   if (reportPayload.locationDescription) {
     data.push({
       questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,

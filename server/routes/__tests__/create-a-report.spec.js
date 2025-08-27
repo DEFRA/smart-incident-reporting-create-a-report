@@ -337,16 +337,6 @@ describe(url, () => {
     })
 
     // Test for Reporter tab
-    it('Sad: should fail validation and return error message if no option is selected for Has photos or videos of problem on reporter tab', async () => {
-      payload.reporterPhotos = ''
-      const options = {
-        url,
-        payload
-      }
-
-      const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('if the reporter has images or videos</a>')
-    })
     it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = ''

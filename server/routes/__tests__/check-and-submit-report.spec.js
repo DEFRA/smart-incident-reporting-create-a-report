@@ -149,14 +149,14 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4001,
               otherDetails: 'Water Company'
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4003,
               otherDetails: 'Water Services Ltd'
@@ -316,14 +316,14 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4002,
               otherDetails: 'Public organisation'
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4003,
               otherDetails: 'Other Organisation Name'
