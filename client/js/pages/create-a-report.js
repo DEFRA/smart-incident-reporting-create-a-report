@@ -13,6 +13,7 @@ const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
 const three = 3
+const five = 5
 
 // Events
 toggleIncidentTypesButton.addEventListener('click', (e) => {
@@ -36,7 +37,7 @@ otherDateInput.addEventListener('change', () => {
 const toggleIncidentTypes = () => {
   const hideIncidents = toggleIncidentTypesButton.innerText.indexOf('Hide') > -1
   incidentInputs.forEach(input => {
-    if (input.id.substring(input.id.indexOf('-') + 1) > 5) {
+    if (parseInt(input.id.substring(input.id.indexOf('-') + 1)) > five) {
       input.parentElement.style.display = hideIncidents ? 'none' : ''
     }
   })
