@@ -179,109 +179,134 @@ const buildPayload = (session, operatorDetails) => {
 }
 
 const buildAnswersData = (reportPayload, questions) => {
-  const data = []
-  // Reported By Email
-  data.push({
-    questionId: questions.REPORTED_BY_EMAIL.questionId,
-    questionAsked: questions.REPORTED_BY_EMAIL.text,
-    questionResponse: true,
-    answerId: reportPayload.descriptionReportedByEmail ? questions.REPORTED_BY_EMAIL.answers.yes.answerId : questions.REPORTED_BY_EMAIL.answers.no.answerId
-  })
+  return [
+    ...buildReportedByEmailAnswer(reportPayload, questions),
+    ...buildPhotosOrVideosAnswer(reportPayload, questions),
+    ...buildReporterTypeAnswers(reportPayload, questions),
+    ...buildIncidentLocationAnswers(reportPayload)
+  ]
+}
 
-  // Has photos or videos
-  data.push({
-    questionId: questions.REPORTED_PHOTOS_OR_VIDEOS.questionId,
-    questionAsked: questions.REPORTED_PHOTOS_OR_VIDEOS.text,
-    questionResponse: true,
-    answerId: reportPayload.reporterPhotos === 'Yes' ? questions.REPORTED_PHOTOS_OR_VIDEOS.answers.yes.answerId : questions.REPORTED_PHOTOS_OR_VIDEOS.answers.no.answerId
-  })
+const buildReportedByEmailAnswer = (reportPayload, questions) => {
+  const question = questions.REPORTED_BY_EMAIL
 
-  // Type of reporter
-  if (reportPayload.reporterType) {
-    const baseReporterAnswer = {
-      questionId: questions.TYPE_OF_REPORTER.questionId,
-      questionAsked: questions.TYPE_OF_REPORTER.text,
-      questionResponse: true
-    }
-    if (reportPayload.reporterType === 'public') {
-      const anonymousReporter = !reportPayload.reporterFirstName && !reportPayload.reporterLastName && !reportPayload.reporterEmail && !reportPayload.reporterPhone
-      if (anonymousReporter) {
-        data.push({
-          ...baseReporterAnswer,
-          answerId: questions.TYPE_OF_REPORTER.answers.anonymous.answerId,
-          otherDetails: 'Anonymous'
-        })
-      } else {
-        data.push({
-          ...baseReporterAnswer,
-          answerId: questions.TYPE_OF_REPORTER.answers.public.answerId,
-          otherDetails: 'Member of public'
-        })
-      }
-    } else {
-      data.push({
-        ...baseReporterAnswer,
-        answerId: reportPayload.reporterType === 'water' ? questions.TYPE_OF_REPORTER.answers.water.answerId : questions.TYPE_OF_REPORTER.answers.other.answerId,
-        otherDetails: reportPayload.reporterType === 'water' ? 'Water Company' : 'Public organisation'
+  return [{
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true,
+    answerId: reportPayload.descriptionReportedByEmail ? question.answers.yes.answerId : question.answers.no.answerId
+  }]
+}
+
+const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
+  const question = questions.REPORTED_PHOTOS_OR_VIDEOS
+
+  return [{
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true,
+    answerId: reportPayload.reporterPhotos === 'Yes' ? question.answers.yes.answerId : question.answers.no.answerId
+  }]
+}
+
+const buildReporterTypeAnswers = (reportPayload, questions) => {
+  const results = []
+
+  if (!reportPayload.reporterType) return results
+
+  const question = questions.TYPE_OF_REPORTER
+  const baseAnswer = {
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true
+  }
+  const isPublic = reportPayload.reporterType === 'public'
+
+  if (isPublic) {
+    const isAnonymous = !reportPayload.reporterFirstName && !reportPayload.reporterLastName && !reportPayload.reporterEmail && !reportPayload.reporterPhone
+
+    results.push({
+      ...baseAnswer,
+      answerId: isAnonymous ? question.answers.anonymous.answerId : question.answers.public.answerId,
+      otherDetails: isAnonymous ? 'Anonymous' : 'Member of public'
+    })
+  } else {
+    const isWater = reportPayload.reporterType === 'water'
+    const organisationType = isWater ? 'Water Company' : 'Public organisation'
+
+    results.push({
+      ...baseAnswer,
+      answerId: isWater ? question.answers.water.answerId : question.answers.other.answerId,
+      otherDetails: organisationType
+    })
+
+    results.push({
+      ...baseAnswer,
+      answerId: question.answers.name.answerId,
+      otherDetails: isWater ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
+    })
+
+    if (reportPayload.reporterRole) {
+      results.push({
+        ...baseAnswer,
+        answerId: question.answers.role.answerId,
+        otherDetails: reportPayload.reporterRole
       })
-      data.push({
-        ...baseReporterAnswer,
-        answerId: questions.TYPE_OF_REPORTER.answers.name.answerId,
-        otherDetails: reportPayload.reporterType === 'water' ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
-      })
-      if (reportPayload.reporterRole) {
-        data.push({
-          ...baseReporterAnswer,
-          answerId: questions.TYPE_OF_REPORTER.answers.role.answerId,
-          otherDetails: reportPayload.reporterRole
-        })
-      }
     }
   }
-  // Location of incident
-  const baseIncidentLocationAnswer = {
-    questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,
-    questionAsked: incidentLocationQuestion.INCIDENT_LOCATION.text,
+
+  return results
+}
+
+const buildIncidentLocationAnswers = (reportPayload) => {
+  const results = []
+  const question = incidentLocationQuestion.INCIDENT_LOCATION
+  const baseAnswer = {
+    questionId: question.questionId,
+    questionAsked: question.text,
     questionResponse: true
   }
   const gridref = formatGridReference(reportPayload.locationGridRef)
   const eaNoCoordinates = ngrToEaNo(gridref)
   const latLngCoordinates = eaNoToLatLng(eaNoCoordinates)
-  data.push({
-    ...baseIncidentLocationAnswer,
-    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
-    otherDetails: gridref
-  },
-  {
-    ...baseIncidentLocationAnswer,
-    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
-    otherDetails: Math.floor(eaNoCoordinates.ea).toString()
-  },
-  {
-    ...baseIncidentLocationAnswer,
-    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
-    otherDetails: Math.floor(eaNoCoordinates.no).toString()
-  },
-  {
-    ...baseIncidentLocationAnswer,
-    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
-    otherDetails: latLngCoordinates.lng.toString()
-  },
-  {
-    ...baseIncidentLocationAnswer,
-    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
-    otherDetails: latLngCoordinates.lat.toString()
-  })
+
+  results.push(
+    {
+      ...baseAnswer,
+      answerId: question.answers.nationalGridReference.answerId,
+      otherDetails: gridref
+    },
+    {
+      ...baseAnswer,
+      answerId: question.answers.easting.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.ea).toString()
+    },
+    {
+      ...baseAnswer,
+      answerId: question.answers.northing.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.no).toString()
+    },
+    {
+      ...baseAnswer,
+      answerId: question.answers.lng.answerId,
+      otherDetails: latLngCoordinates.lng.toString()
+    },
+    {
+      ...baseAnswer,
+      answerId: question.answers.lat.answerId,
+      otherDetails: latLngCoordinates.lat.toString()
+    }
+  )
+
   if (reportPayload.locationDescription) {
-    data.push({
-      questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,
-      questionAsked: incidentLocationQuestion.INCIDENT_LOCATION.text,
-      questionResponse: true,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.locationDescription.answerId,
+    results.push({
+      ...baseAnswer,
+      answerId: question.answers.locationDescription.answerId,
       otherDetails: reportPayload.locationDescription
     })
   }
-  return data
+
+  return results
 }
 
 export default [
