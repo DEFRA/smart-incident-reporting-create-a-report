@@ -348,6 +348,17 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
+    it('Sad: should fail validation and return error message if No answer is selected for Has photos or videos of problem and has selected the type of reporter as water company with an empty email field', async () => {
+      payload.reporterPhotos = ''
+      payload.reporterType = 'water'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
+    })
     it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = 'testmail'
@@ -392,7 +403,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
-    it('Sad: should fail validation and return error message if no is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
       payload.reporterPhotos = 'No'
       payload.reporterEmail = 'testmail'
       const options = {
@@ -456,6 +467,16 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterPhone">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192</a>')
+    })
+    it('Sad: should fail validation and return error message if type of reporter is not selected ', async () => {
+      payload.reporterType = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterType">Select the type of reporter</a>')
     })
     it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
       payload.reporterType = 'water'
