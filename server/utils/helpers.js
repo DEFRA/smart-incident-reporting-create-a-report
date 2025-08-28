@@ -216,7 +216,6 @@ const validateLocationTab = (payload, errorSummary) => {
         href: '#addressId-1'
       })
     }
-
   }
 }
 
