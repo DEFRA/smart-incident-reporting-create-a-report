@@ -16,7 +16,6 @@ const CREATE_REPORT_CANCEL = 'create-report/cancel'
 const CREATE_A_REPORT = 'create-a-report'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
-const GET_ADDRESSES = 'get-addresses'
 
 // Meta data
 const POSTCODE_DETAILS = 'postcode-details'
@@ -38,10 +37,7 @@ const views = {
   REPORT_SUBMITTED
 }
 
-const routes = {
-  ...views,
-  GET_ADDRESSES
-}
+const routes = {}
 
 for (const [key, value] of Object.entries(views)) {
   routes[key] = `/${value}`

@@ -284,26 +284,26 @@ const buildAnswersData = (reportPayload, questions, selectedAddress) => {
       answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
       otherDetails: gridref
     },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
-        otherDetails: Math.floor(eaNoCoordinates.ea).toString()
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
-        otherDetails: Math.floor(eaNoCoordinates.no).toString()
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
-        otherDetails: latLngCoordinates.lng.toString()
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
-        otherDetails: latLngCoordinates.lat.toString()
-      })
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.ea).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+      otherDetails: Math.floor(eaNoCoordinates.no).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+      otherDetails: latLngCoordinates.lng.toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+      otherDetails: latLngCoordinates.lat.toString()
+    })
     if (reportPayload.locationDescription) {
       data.push({
         questionId: incidentLocationQuestion.INCIDENT_LOCATION.questionId,
@@ -329,26 +329,26 @@ const buildAnswersData = (reportPayload, questions, selectedAddress) => {
       answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
       otherDetails: ngr
     },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
-        otherDetails: Math.floor(point[0]).toString()
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
-        otherDetails: Math.floor(point[1]).toString()
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
-        otherDetails: lngLat[0].toFixed(six)
-      },
-      {
-        ...baseIncidentLocationAnswer,
-        answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
-        otherDetails: lngLat[1].toFixed(six)
-      })
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+      otherDetails: Math.floor(point[0]).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+      otherDetails: Math.floor(point[1]).toString()
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+      otherDetails: lngLat[0].toFixed(six)
+    },
+    {
+      ...baseIncidentLocationAnswer,
+      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+      otherDetails: lngLat[1].toFixed(six)
+    })
 
     // Build answers for address
     const baseLocationAddressAnswer = {
@@ -363,27 +363,26 @@ const buildAnswersData = (reportPayload, questions, selectedAddress) => {
       answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine1.answerId,
       otherDetails: addressLine1
     },
-      {
-        ...baseLocationAddressAnswer,
-        answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine2.answerId,
-        otherDetails: ''
-      },
-      {
-        ...baseLocationAddressAnswer,
-        answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.townOrCity.answerId,
-        otherDetails: townOrCity
-      },
-      {
-        ...baseLocationAddressAnswer,
-        answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.county.answerId,
-        otherDetails: ''
-      },
-      {
-        ...baseLocationAddressAnswer,
-        answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.postcode.answerId,
-        otherDetails: postcode
-      })
-
+    {
+      ...baseLocationAddressAnswer,
+      answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine2.answerId,
+      otherDetails: ''
+    },
+    {
+      ...baseLocationAddressAnswer,
+      answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.townOrCity.answerId,
+      otherDetails: townOrCity
+    },
+    {
+      ...baseLocationAddressAnswer,
+      answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.county.answerId,
+      otherDetails: ''
+    },
+    {
+      ...baseLocationAddressAnswer,
+      answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.postcode.answerId,
+      otherDetails: postcode
+    })
   } else {
     // do nothing
   }

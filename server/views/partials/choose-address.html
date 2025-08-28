@@ -1,0 +1,83 @@
+{% set changeSearchButton %}
+  <p class="govuk-body">
+    <button type="submit" name="action" value="change-address" class="button-no-style govuk-link" data-module="govuk-button">
+      Change search
+    </button>          
+  </p>
+{% endset %}
+
+{% set noAddressFoundHtml %}  
+  <h1 class="govuk-heading-l">
+    No address found
+  </h1>  
+  <p class="govuk-body">
+    We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+  </p>
+  <p class="govuk-body">
+    Check you have entered the correct postcode.
+  </p>
+
+  {{ changeSearchButton | safe }}
+{% endset %}
+
+{% set addressFoundHtml %}
+  <fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+      <h1 class="govuk-fieldset__heading">
+        Choose an address
+      </h1>
+    </legend>
+    
+    {{ changeSearchButton | safe }}
+    
+    {% if showFullResults %}
+      <p class="govuk-body">
+        We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+      </p>
+      <p class="govuk-body">
+        {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ postcodeDetails }}</strong>.
+      </p>
+    {% else %}    
+      <p class="govuk-body">
+        {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+      </p>
+    {% endif %}
+
+    {% if findErrorMessageById(errorSummary.location, 'addressId-1') %}
+    <p class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> Select an address
+    </p>
+    {% endif %}
+    
+    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+      {% for result in resultsData %}
+      {% set counter = ( counter | default(0) ) + 1 %}
+      <div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="addressId-{{ counter }}" name="addressId" type="radio" value="{{ result.uprn }}" {% if answer === result.uprn %}checked{% endif %}>
+        <label class="govuk-label govuk-radios__label" for="addressId-{{ counter }}">
+          {{ result.address }}
+        </label>
+      </div>
+      {% endfor %}
+    </div>   
+  </fieldset>
+  
+  <button type="submit" name="action" value="select-address" class="govuk-button govuk-button--secondary govuk-!-margin-top-6" data-module="govuk-button">
+    Use this address
+  </button>
+{% endset %}
+
+<div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+  <p class="govuk-body">
+    <button type="submit" name="action" value="use-grid-reference" class="button-no-style govuk-link" data-module="govuk-button">
+        Use a grid reference
+    </button>                  
+  </p>
+
+  {% if resultsFound %}
+    {{ addressFoundHtml | safe }}
+  {% else %}
+    {{ noAddressFoundHtml | safe }}
+  {% endif %}
+
+</div>
