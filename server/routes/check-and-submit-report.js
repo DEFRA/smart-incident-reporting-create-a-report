@@ -230,19 +230,11 @@ const buildReporterTypeAnswers = (reportPayload, questions) => {
     })
   } else {
     const isWater = reporterType === 'water'
-    const organisationType = isWater ? 'Water Company' : 'Public organisation'
+    const orgAnswer = getOrganisationAnswer(question, baseAnswer, isWater)
+    const nameAnswer = getNameAnswer(question, baseAnswer, isWater, reportPayload)
 
-    results.push({
-      ...baseAnswer,
-      answerId: isWater ? question.answers.water.answerId : question.answers.other.answerId,
-      otherDetails: organisationType
-    })
-
-    results.push({
-      ...baseAnswer,
-      answerId: question.answers.name.answerId,
-      otherDetails: isWater ? reportPayload.reporterWaterName : reportPayload.reporterOtherName
-    })
+    results.push(orgAnswer)
+    results.push(nameAnswer)
 
     if (reportPayload.reporterRole) {
       results.push({
@@ -305,6 +297,22 @@ const buildIncidentLocationAnswers = (reportPayload) => {
   }
 
   return results
+}
+
+const getOrganisationAnswer = (question, baseAnswer, isWater) => {
+  return {
+    ...baseAnswer,
+    answerId: isWater ? question.answers.water.answerId : question.answers.other.answerId,
+    otherDetails: isWater ? 'Water Company' : 'Public organisation'
+  }
+}
+
+const getNameAnswer = (question, baseAnswer, isWater, payload) => {
+  return {
+    ...baseAnswer,
+    answerId: question.answers.name.answerId,
+    otherDetails: isWater ? payload.reporterWaterName : payload.reporterOtherName
+  }
 }
 
 export default [
