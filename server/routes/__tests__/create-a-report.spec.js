@@ -24,7 +24,7 @@ const payload = {
   reporterFirstName: 'John',
   reporterLastName: 'Smith',
   reporterPhone: '01234567890',
-  reporterOrgType: 'water',
+  reporterType: 'water',
   reporterWaterName: 'Water Services Ltd',
   reporterOtherName: '',
   reporterPhotos: 'Yes'
@@ -35,7 +35,7 @@ describe(url, () => {
     it(`Should return success response and correct view for ${url}`, async () => {
       const response = await submitGetRequest({ url })
       // Test for correct auth mock
-      expect(response.payload).toContain('<p style="color: white;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
+      expect(response.payload).toContain('<p style="color: white; margin-top: 20px;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
     })
   })
   describe('POST', () => {
@@ -299,7 +299,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="12">Test data</textarea>')
+      expect(response.payload).toContain('<textarea class="govuk-textarea" id="descriptionDescription" name="descriptionDescription" rows="20">Test data</textarea>')
     })
 
     // Other date validation
@@ -337,19 +337,20 @@ describe(url, () => {
     })
 
     // Test for Reporter tab
-    it('Sad: should fail validation and return error message if no option is selected for Has photos or videos of problem on reporter tab', async () => {
-      payload.reporterPhotos = ''
+    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
+      payload.reporterPhotos = 'Yes'
+      payload.reporterEmail = ''
       const options = {
         url,
         payload
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('if the reporter has images or videos</a>')
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
-      payload.reporterPhotos = 'Yes'
-      payload.reporterEmail = ''
+    it('Sad: should fail validation and return error message if No answer is selected for Has photos or videos of problem and has selected the type of reporter as water company with an empty email field', async () => {
+      payload.reporterPhotos = ''
+      payload.reporterType = 'water'
       const options = {
         url,
         payload
@@ -402,7 +403,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
-    it('Sad: should fail validation and return error message if no is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
       payload.reporterPhotos = 'No'
       payload.reporterEmail = 'testmail'
       const options = {
@@ -467,8 +468,18 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterPhone">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192</a>')
     })
+    it('Sad: should fail validation and return error message if type of reporter is not selected ', async () => {
+      payload.reporterType = ''
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterType">Select the type of reporter</a>')
+    })
     it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
-      payload.reporterOrgType = 'water'
+      payload.reporterType = 'water'
       payload.reporterWaterName = ''
       const options = {
         url,
@@ -479,7 +490,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterWaterName">Select a water company</a>')
     })
     it('Sad: should fail validation and return error message if water company name is not selected ', async () => {
-      payload.reporterOrgType = 'other'
+      payload.reporterType = 'other'
       payload.reporterOtherName = ''
       const options = {
         url,
@@ -510,7 +521,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterLastName">Last name must be 40 characters or less</a>')
     })
     it('Sad: should fail validation and return error message if length of the organisation name exceeds the maximum of 50 characters', async () => {
-      payload.reporterOrgType = 'other'
+      payload.reporterType = 'other'
       payload.reporterOtherName = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
       const options = {
         url,
@@ -777,7 +788,7 @@ describe(url, () => {
           reporterFirstName: 'John',
           reporterLastName: 'Smith',
           reporterPhone: '01234567890',
-          reporterOrgType: 'water',
+          reporterType: 'water',
           reporterWaterName: 'Water Services Ltd',
           reporterOtherName: '',
           reporterPhotos: 'Yes'
@@ -805,7 +816,7 @@ describe(url, () => {
         reporterFirstName: 'John',
         reporterLastName: 'Smith',
         reporterPhone: '01234567890',
-        reporterOrgType: 'water',
+        reporterType: 'water',
         reporterWaterName: 'Water Services Ltd',
         reporterOtherName: '',
         reporterPhotos: 'Yes',

@@ -72,14 +72,10 @@
           Incident description
         </label>
       </h1>
-      <p class="govuk-body">
-        <a href="https://defra.sharepoint.com/teams/Team3360/SitePages/ICS-Knowledge-Base.aspx" class="govuk-link--no-visited-state" target="_new">
-        Open the knowledge base</a>.
-      </p>
       {{ govukTextarea({
         name: "descriptionDescription",
         id: "descriptionDescription",
-        rows: 12,
+        rows: 20,
         value: descriptionDescription,
         errorMessage: findErrorMessageById(errorSummary.description, "descriptionDescription")
       }) }}
@@ -121,20 +117,30 @@
       errorMessage: findErrorMessageById(errorSummary.description, "descriptionIncidentType"),
       items: [
       {
-        checked: descriptionIncidentType == reportTypes.waterPollution.value,
-        value: reportTypes.waterPollution.value,
-        text: reportTypes.waterPollution.text
-      },
-      {
         checked: descriptionIncidentType == reportTypes.odour.value,
         value: reportTypes.odour.value,
         text: reportTypes.odour.text
       },
       {
+        checked: descriptionIncidentType == reportTypes.waterPollution.value,
+        value: reportTypes.waterPollution.value,
+        text: reportTypes.waterPollution.text
+      },
+      {
+        checked: descriptionIncidentType == reportTypes.noise.value,
+        value: reportTypes.noise.value,
+        text: reportTypes.noise.text
+      },
+      {
         checked: descriptionIncidentType == reportTypes.watercourseBlockage.value,
         value: reportTypes.watercourseBlockage.value,
         text: reportTypes.watercourseBlockage.text
-      }, 
+      },
+      {
+        checked: descriptionIncidentType == reportTypes.burningWaste.value,
+        value: reportTypes.burningWaste.value,
+        text: reportTypes.burningWaste.text
+      },
       {
         checked: descriptionIncidentType == reportTypes.abstractionLow.value,
         value: reportTypes.abstractionLow.value,
@@ -149,11 +155,6 @@
         checked: descriptionIncidentType == reportTypes.beachPollution.value,
         value: reportTypes.beachPollution.value,
         text: reportTypes.beachPollution.text
-      },
-      {
-        checked: descriptionIncidentType == reportTypes.burningWaste.value,
-        value: reportTypes.burningWaste.value,
-        text: reportTypes.burningWaste.text
       },
       {
         checked: descriptionIncidentType == reportTypes.damageToNature.value,
@@ -239,11 +240,6 @@
         checked: descriptionIncidentType == reportTypes.navigationIncident.value,
         value: reportTypes.navigationIncident.value,
         text: reportTypes.navigationIncident.text
-      },
-      {
-        checked: descriptionIncidentType == reportTypes.noise.value,
-        value: reportTypes.noise.value,
-        text: reportTypes.noise.text
       },
       {
         checked: descriptionIncidentType == reportTypes.oilAndChemicalSpills.value,

@@ -111,25 +111,23 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate reporter name length
   validateReporterName(payload, errorSummary)
 
-  if (!payload.reporterPhotos) {
-    errorSummary.errorList.push({
-      text: 'Select \'yes\' if the reporter has images or videos',
-      href: '#reporterPhotos'
-    })
-  }
-
   // Validate reporter tab email
   validateReporterEmail(payload, errorSummary)
 
   // Validate phone number
   validatePhone(payload, errorSummary)
 
-  if (payload.reporterOrgType === 'water' && !payload.reporterWaterName) {
+  if (!payload.reporterType) {
+    errorSummary.errorList.push({
+      text: 'Select the type of reporter',
+      href: '#reporterType'
+    })
+  } else if (payload.reporterType === 'water' && !payload.reporterWaterName) {
     errorSummary.errorList.push({
       text: 'Select a water company',
       href: '#reporterWaterName'
     })
-  } else if (payload.reporterOrgType === 'other') {
+  } else if (payload.reporterType === 'other') {
     if (!payload.reporterOtherName) {
       errorSummary.errorList.push({
         text: 'Enter an organisation name',
@@ -338,7 +336,7 @@ const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
   const emailId = '#reporterEmail'
-  if (payload.reporterPhotos === 'Yes') {
+  if (payload.reporterPhotos === 'Yes' || payload.reporterType === 'water') {
     if (!payload.reporterEmail) {
       errorSummary.errorList.push({
         text: 'Enter an email address',

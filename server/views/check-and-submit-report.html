@@ -91,13 +91,49 @@
       rows: [
         {
           key: {
+            text: "Type of reporter"
+          },
+          value: {
+            text: "Member of public"
+          }
+        } if (reporterType == "public"),
+
+        {
+          key: {
+            text: "Type of reporter"
+          },
+          value: {
+            text: "Water company"
+          }
+        } if ((reporterType == "water") and (reporterWaterName)),
+
+        {
+          key: {
             text: "Water company name"
           },
           value: {
             text: reporterWaterName
           }
-        } if ((reporterOrgType == "water") and (reporterWaterName)),
+        } if ((reporterType == "water") and (reporterWaterName)),
+        
+        {
+          key: {
+            text: "Type of reporter"
+          },
+          value: {
+            text: "Organisation"
+          }
+        } if ((reporterType == "other") and (reporterOtherName)),
   
+        {
+          key: {
+            text: "Reporter role or job title"
+          },
+          value: {
+            text: reporterRole
+          }
+        } if ((reporterType == "other") and (reporterRole)),
+
         {
           key: {
             text: "Organisation name"
@@ -105,7 +141,7 @@
           value: {
             text: reporterOtherName
           }
-        } if ((reporterOrgType == "other") and (reporterOtherName)),
+        } if ((reporterType == "other") and (reporterOtherName)),
    
         {
           key: {
@@ -158,8 +194,8 @@
           },
           value: {
             html: reporterPhotos
-          }
-        }
+          } 
+        } if reporterPhotos
       ]
     }) }}
   
