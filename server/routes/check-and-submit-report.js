@@ -217,7 +217,8 @@ const buildReporterTypeAnswers = (reportPayload, questions) => {
     questionAsked: question.text,
     questionResponse: true
   }
-  const isPublic = reportPayload.reporterType === 'public'
+  const reporterType = reportPayload.reporterType
+  const isPublic = reporterType === 'public'
 
   if (isPublic) {
     const isAnonymous = !reportPayload.reporterFirstName && !reportPayload.reporterLastName && !reportPayload.reporterEmail && !reportPayload.reporterPhone
@@ -228,7 +229,7 @@ const buildReporterTypeAnswers = (reportPayload, questions) => {
       otherDetails: isAnonymous ? 'Anonymous' : 'Member of public'
     })
   } else {
-    const isWater = reportPayload.reporterType === 'water'
+    const isWater = reporterType === 'water'
     const organisationType = isWater ? 'Water Company' : 'Public organisation'
 
     results.push({
