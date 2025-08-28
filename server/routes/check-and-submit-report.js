@@ -211,9 +211,6 @@ const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
 
 const buildReporterTypeAnswers = (reportPayload, questions) => {
   const results = []
-
-  if (!reportPayload.reporterType) return results
-
   const question = questions.TYPE_OF_REPORTER
   const baseAnswer = {
     questionId: question.questionId,
