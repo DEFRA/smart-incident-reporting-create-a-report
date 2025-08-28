@@ -149,14 +149,14 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4001,
               otherDetails: 'Water Company'
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4003,
               otherDetails: 'Water Services Ltd'
@@ -235,7 +235,7 @@ describe(url, () => {
         })
       }))
     })
-    it('Edge cases for payload data', async () => {
+    it('Edge cases for payload data - 1', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
       sessionData['create-a-report'].reporterType = 'other'
@@ -316,14 +316,14 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4002,
               otherDetails: 'Public organisation'
             }),
             expect.objectContaining({
               questionId: 4000,
-              questionAsked: 'External organisation report',
+              questionAsked: 'Type of reporter',
               questionResponse: true,
               answerId: 4003,
               otherDetails: 'Other Organisation Name'
@@ -332,7 +332,119 @@ describe(url, () => {
         })
       }))
     })
-    it('Further edge cases for payload data', async () => {
+    it('Edge cases for payload data - 2 : data with member of public', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].descriptionReportedByEmail = ''
+      sessionData['create-a-report'].reporterType = 'public'
+      sessionData['create-a-report'].locationDescription = ''
+      sessionData['create-a-report'].reporterPhotos = 'No'
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          reporterName: sessionData['create-a-report'].reporterFirstName + ' ' + sessionData['create-a-report'].reporterLastName,
+          reporterPhoneNumber: sessionData['create-a-report'].reporterPhone,
+          reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
+          otherDetails: sessionData['create-a-report'].descriptionDescription,
+          questionSetId: 0,
+          incidentCategory: 2,
+          reasonForCategorisation: 'Test reason for categorisation',
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3800,
+              questionAsked: 'Reported by email?',
+              questionResponse: true,
+              answerId: 3802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Has photos or videos of problem',
+              questionResponse: true,
+              answerId: 3902
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'Type of reporter',
+              questionResponse: true,
+              answerId: 4004,
+              otherDetails: 'Member of public'
+            })
+          ])
+        })
+      }))
+    })
+    it('Edge cases for payload data - 3: data with member of public and anonymous', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterFirstName = ''
+      sessionData['create-a-report'].reporterLastName = ''
+      sessionData['create-a-report'].reporterEmail = ''
+      sessionData['create-a-report'].reporterPhone = ''
+      sessionData['create-a-report'].descriptionReportedByEmail = ''
+      sessionData['create-a-report'].reporterType = 'public'
+      sessionData['create-a-report'].locationDescription = ''
+      sessionData['create-a-report'].reporterPhotos = 'No'
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          reporterName: ' ',
+          reporterPhoneNumber: '',
+          reporterEmailAddress: '',
+          otherDetails: sessionData['create-a-report'].descriptionDescription,
+          questionSetId: 0,
+          incidentCategory: 2,
+          reasonForCategorisation: 'Test reason for categorisation',
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3800,
+              questionAsked: 'Reported by email?',
+              questionResponse: true,
+              answerId: 3802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Has photos or videos of problem',
+              questionResponse: true,
+              answerId: 3902
+            }),
+            expect.objectContaining({
+              questionId: 4000,
+              questionAsked: 'Type of reporter',
+              questionResponse: true,
+              answerId: 4006,
+              otherDetails: 'Anonymous'
+            })
+          ])
+        })
+      }))
+    })
+    it('Edge cases for payload data - 4', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
       sessionData['create-a-report'].reporterType = ''
