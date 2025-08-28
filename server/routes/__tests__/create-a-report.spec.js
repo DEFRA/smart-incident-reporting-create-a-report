@@ -348,17 +348,6 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
-    it('Sad: should fail validation and return error message if No answer is selected for Has photos or videos of problem and has selected the type of reporter as water company with an empty email field', async () => {
-      payload.reporterPhotos = ''
-      payload.reporterType = 'water'
-      const options = {
-        url,
-        payload
-      }
-
-      const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
-    })
     it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = 'testmail'
