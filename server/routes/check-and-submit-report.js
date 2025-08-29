@@ -209,12 +209,12 @@ const buildPayload = (session, operatorDetails) => {
   return payload
 }
 
-const buildAnswersData = (reportPayload, questions) => {
+const buildAnswersData = (reportPayload, questions, selectedAddress) => {
   return [
     ...buildReportedByEmailAnswer(reportPayload, questions),
     ...buildPhotosOrVideosAnswer(reportPayload, questions),
     ...buildReporterTypeAnswers(reportPayload, questions),
-    ...buildIncidentLocationAnswers(reportPayload)
+    ...buildIncidentLocationAnswers(reportPayload, selectedAddress)
   ]
 }
 
@@ -279,14 +279,9 @@ const buildReporterTypeAnswers = (reportPayload, questions) => {
   return results
 }
 
-const buildIncidentLocationAnswers = (reportPayload) => {
+const buildIncidentLocationAnswersGridRef = (reportPayload, baseAnswer, question) => {
   const results = []
-  const question = incidentLocationQuestion.INCIDENT_LOCATION
-  const baseAnswer = {
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true
-  }
+
   const gridref = formatGridReference(reportPayload.locationGridRef)
   const eaNoCoordinates = ngrToEaNo(gridref)
   const latLngCoordinates = eaNoToLatLng(eaNoCoordinates)
@@ -330,6 +325,97 @@ const buildIncidentLocationAnswers = (reportPayload) => {
   return results
 }
 
+const buildIncidentLocationAnswersAddress = (reportPayload, baseAnswer, question, selectedAddress) => {
+  const results = []
+
+  const point = [selectedAddress[0].x, selectedAddress[0].y]
+  const ngr = bngToNgr(point).text
+  const lngLat = oSGBToWGS84(point)
+  const six = 6
+
+  results.push({
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
+    otherDetails: ngr
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+    otherDetails: Math.floor(point[0]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+    otherDetails: Math.floor(point[1]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+    otherDetails: lngLat[0].toFixed(six)
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+    otherDetails: lngLat[1].toFixed(six)
+  })
+
+  // Build answers for address
+  const baseLocationAddressAnswer = {
+    questionId: incidentLocationQuestion.LOCATION_ADDRESS.questionId,
+    questionAsked: incidentLocationQuestion.LOCATION_ADDRESS.text,
+    questionResponse: true
+  }
+  const addressData = selectedAddress[0].address
+  const { addressLine1, townOrCity, postcode } = formatAddress(addressData)
+
+  results.push({
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine1.answerId,
+    otherDetails: addressLine1
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine2.answerId,
+    otherDetails: ''
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.townOrCity.answerId,
+    otherDetails: townOrCity
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.county.answerId,
+    otherDetails: ''
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.postcode.answerId,
+    otherDetails: postcode
+  })
+
+  return results
+}
+
+const buildIncidentLocationAnswers = (reportPayload, selectAddress) => {
+  const question = incidentLocationQuestion.INCIDENT_LOCATION
+  const baseAnswer = {
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true
+  }
+
+  let results
+
+  if (reportPayload.locationOfIncident === 'gridReference') {
+    results = buildIncidentLocationAnswersGridRef(reportPayload, baseAnswer, question)
+  } else if (reportPayload.locationOfIncident === 'address') {
+    results = buildIncidentLocationAnswersAddress(reportPayload, baseAnswer, question, selectAddress)
+  }
+
+  return results
+}
+
 const getOrganisationAnswer = (question, baseAnswer, isWater) => {
   return {
     ...baseAnswer,
@@ -344,6 +430,29 @@ const getNameAnswer = (question, baseAnswer, isWater, payload) => {
     answerId: question.answers.name.answerId,
     otherDetails: isWater ? payload.reporterWaterName : payload.reporterOtherName
   }
+}
+
+const formatAddress = (address) => {
+  const addressParts = address.split(',')
+  const n = 2
+  const addressLine1 = addressParts.slice(0, -n).join()
+  const townOrCity = addressParts[addressParts.length - 2].trimStart()
+  const postcode = addressParts[addressParts.length - 1].trimStart()
+
+  return {
+    addressLine1,
+    townOrCity,
+    postcode
+  }
+}
+
+const constructAddress = (request) => {
+  const selectedAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
+  let address
+  if (selectedAddress) {
+    address = `${selectedAddress.addressLine1}<br>${selectedAddress.townOrCity}<br>${selectedAddress.postcode}`
+  }
+  return address
 }
 
 export default [
