@@ -168,6 +168,7 @@ const validateReporterTab = (payload, errorSummary) => {
 }
 
 const validateLocationTab = (payload, errorSummary) => {
+  console.log(payload)
   // Do location validation
   if (!payload.locationOfIncident) {
     errorSummary.errorList.push({

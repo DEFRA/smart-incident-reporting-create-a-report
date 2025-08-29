@@ -7,44 +7,20 @@ import moment from 'moment'
 
 function checkReportAction (h, request, payloadData) {
   console.log('check report button is clicked')
-  let hideLocationOfIncident
-  let hideAddressInput
-  let hideSelectedAddress
-  let hideChooseAddress
-  hideLocationOfIncident = false
-  hideAddressInput = true
-  hideSelectedAddress = false
-  const selectedAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
-  let answer
-  if (selectedAddress) {
-    answer = selectedAddress[0].uprn
-  }
+
+  let selectAddress = false
+  let addressChosen = false
+
   const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
-  if (!displayAddress) {
-    hideAddressInput = false
-    hideSelectedAddress = true
+
+  if (displayAddress) {
+    selectAddress = true
+    addressChosen = true
   }
 
-  if (payloadData.buildingDetails && payloadData.postcodeDetails && !payloadData.addressId) {
-    hideLocationOfIncident = true
-    hideChooseAddress = false
-  }
-
-  if (answer) {
-    hideLocationOfIncident = false
-    hideChooseAddress = true
-    hideSelectedAddress = false
-  }
   // Set default value for photos or videos checkbox
   if (!payloadData.reporterPhotos) {
     payloadData.reporterPhotos = 'No'
-  }
-
-  if (!payloadData.buildingDetails || !payloadData.postcodeDetails) {
-    hideLocationOfIncident = false
-    hideChooseAddress = true
-    hideSelectedAddress = true
-    hideAddressInput = false
   }
 
   // Trim whitespaces for string inputs in payload
@@ -90,17 +66,14 @@ function checkReportAction (h, request, payloadData) {
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const dispName = request.auth.credentials.profile.displayName
     return h.view(constants.views.CREATE_A_REPORT, {
-      hideLocationOfIncident,
-      hideAddressInput,
-      hideSelectedAddress,
-      hideChooseAddress,
       errorSummary,
       ...payloadData,
       reportTypes,
       dispName,
       ...displayAddress,
       ...result,
-      answer
+      selectAddress,
+      addressChosen
     })
   }
 
@@ -118,12 +91,11 @@ async function findAddressAction (h, request, payloadData) {
 
   // Return view if errors
   if (errorSummary.location.errorList.length > 0) {
-    const hideLocationOfIncident = false
-    const hideAddressInput = false
+    const selectAddress = true
     const dispName = request.auth.credentials.profile.displayName
+
     return h.view(constants.views.CREATE_A_REPORT, {
-      hideLocationOfIncident,
-      hideAddressInput,
+      selectAddress,
       errorSummary,
       ...payloadData,
       reportTypes,
@@ -154,15 +126,12 @@ function selectAddressAction (h, request, payloadData) {
 
   // Return view if errors
   if (errorSummary.location.errorList.length > 0) {
-    const hideLocationOfIncident = true
-    const hideAddressInput = true
-    const hideChooseAddress = false
     const dispName = request.auth.credentials.profile.displayName
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     return h.view(constants.views.CREATE_A_REPORT, {
-      hideLocationOfIncident,
-      hideAddressInput,
-      hideChooseAddress,
+      // hideLocationOfIncident,
+      // hideAddressInput,
+      // hideChooseAddress,
       errorSummary,
       ...result,
       ...payloadData,
@@ -195,7 +164,10 @@ function selectAddressAction (h, request, payloadData) {
 function differentAddressAction (h, request, payloadData) {
   console.log('different address button is clicked')
 
+  const selectAddress = true
+
   return h.view(constants.views.CREATE_A_REPORT, {
+    selectAddress,
     reportTypes
   })
 }
@@ -203,11 +175,13 @@ function differentAddressAction (h, request, payloadData) {
 function changeAddressAction (h, request, payloadData) {
   console.log('change address button is clicked')
 
+  const buildingDetails = request.yar.get(constants.redisKeys.BUILDING_DATA)
   const selectAddress = true
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectAddress,
     ...payloadData,
+    ...buildingDetails,
     reportTypes
   })
 }
@@ -215,11 +189,13 @@ function changeAddressAction (h, request, payloadData) {
 function useGridReferenceAction (h, request, payloadData) {
   console.log('use grid reference button is clicked')
 
+  const buildingDetails = request.yar.get(constants.redisKeys.BUILDING_DATA)
   const selectGridReference = true
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectGridReference,
     ...payloadData,
+    ...buildingDetails,
     reportTypes
   })
 }
