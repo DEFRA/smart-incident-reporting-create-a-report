@@ -69,6 +69,7 @@ const showMessage = config.showNonLiveMessage
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
+    console.log(reportPayload)
     const selectedAddress = constructAddress(request)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
     if (!reportPayload ||

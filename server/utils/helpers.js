@@ -67,6 +67,8 @@ const validateEmail = email => {
 }
 
 const validateReportPayload = payload => {
+  console.log(payload)
+
   const errorSummary = {
     description: getErrorSummary(),
     location: getErrorSummary(),
@@ -168,7 +170,6 @@ const validateReporterTab = (payload, errorSummary) => {
 }
 
 const validateLocationTab = (payload, errorSummary) => {
-  console.log(payload)
   // Do location validation
   if (!payload.locationOfIncident) {
     errorSummary.errorList.push({
@@ -189,7 +190,7 @@ const validateLocationTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
-  } else if (payload.locationOfIncident === 'address') {
+  } else if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
     if (!payload.buildingDetails) {
       errorSummary.errorList.push({
         text: 'Enter a building number or name',
@@ -199,7 +200,7 @@ const validateLocationTab = (payload, errorSummary) => {
 
     if (!payload.postcodeDetails) {
       errorSummary.errorList.push({
-        text: 'Enter an postcode',
+        text: 'Enter a postcode',
         href: '#postcodeDetails'
       })
     } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
@@ -231,7 +232,7 @@ const validateBuildingData = (payload, errorSummary) => {
 
     if (!payload.postcodeDetails) {
       errorSummary.errorList.push({
-        text: 'Enter an postcode',
+        text: 'Enter a postcode',
         href: '#postcodeDetails'
       })
     } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
