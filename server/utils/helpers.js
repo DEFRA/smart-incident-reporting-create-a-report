@@ -67,8 +67,6 @@ const validateEmail = email => {
 }
 
 const validateReportPayload = payload => {
-  console.log(payload)
-
   const errorSummary = {
     description: getErrorSummary(),
     location: getErrorSummary(),

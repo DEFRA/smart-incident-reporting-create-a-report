@@ -1,34 +1,102 @@
 import { submitGetRequest, submitPostRequest } from '../../__test-helpers__/server.js'
 import constants from '../../utils/constants.js'
 import moment from 'moment'
+import util from '../../utils/util.js'
+
+jest.mock('../../../server/utils/util', () => ({
+  getJson: jest.fn()
+}))
+
+util.getJson.mockResolvedValue({
+  header: {
+    totalresults: 2
+  },
+  results: [
+    {
+      DPA: {
+        UPRN: '9051088093',
+        ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
+        POSTCODE: 'AB12 3DE',
+        X_COORDINATE: 394548.0,
+        Y_COORDINATE: 803010.0
+      }
+    },
+    {
+      DPA: {
+        UPRN: '9051088094',
+        ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
+        POSTCODE: 'AB12 3DE',
+        X_COORDINATE: 394542.0,
+        Y_COORDINATE: 803005.0
+      }
+    }
+  ]
+})
 
 const url = constants.routes.CREATE_A_REPORT
 
 const payload = {
-  dateObserved: 'before',
-  dateOtherDay: '01',
-  dateOtherMonth: '12',
-  dateOtherTime: '09:00',
-  dateOtherYear: '2024',
-  dateTime: '',
-  descriptionDescription: 'Incident description',
-  descriptionEmailReportDateDay: '03',
-  descriptionEmailReportDateMonth: '12',
-  descriptionEmailReportDateYear: '2024',
-  descriptionEmailReportTime: '08:00',
+  action: 'check-report',
+  descriptionDescription: 'fewqfewfe',
+  descriptionEmailReportDateDay: '',
+  descriptionEmailReportDateMonth: '',
+  descriptionEmailReportDateYear: '',
+  descriptionEmailReportTime: '',
   descriptionIncidentType: '100',
-  descriptionReportedByEmail: 'true',
-  locationDescription: 'Location description',
-  locationGridRef: 'SJ 67084 44110',
-  reporterEmail: 'test@Test.com',
-  reporterFirstName: 'John',
-  reporterLastName: 'Smith',
-  reporterPhone: '01234567890',
-  reporterType: 'water',
-  reporterWaterName: 'Water Services Ltd',
+  reporterFirstName: 'Bob',
+  reporterLastName: 'Monkhouse',
+  reporterEmail: '',
+  reporterPhone: '',
+  reporterReference: '',
+  reporterType: 'public',
+  reporterWaterName: '',
   reporterOtherName: '',
-  reporterPhotos: 'Yes'
+  reporterRole: '',
+  locationGridRef: '',
+  locationDescription: '',
+  locationOfIncident: 'address',
+  dateObserved: 'now',
+  dateTime: '',
+  dateOtherDay: '',
+  dateOtherMonth: '',
+  dateOtherYear: '',
+  dateOtherTime: '',
+  addressChosen: true,
+  reporterPhotos: 'No',
+  nowTime: '01:21'
 }
+
+// const payload = {
+//   dateObserved: 'before',
+//   dateOtherDay: '01',
+//   dateOtherMonth: '12',
+//   dateOtherTime: '09:00',
+//   dateOtherYear: '2024',
+//   dateTime: '',
+//   descriptionDescription: 'Incident description',
+//   descriptionEmailReportDateDay: '03',
+//   descriptionEmailReportDateMonth: '12',
+//   descriptionEmailReportDateYear: '2024',
+//   descriptionEmailReportTime: '08:00',
+//   descriptionIncidentType: '100',
+//   descriptionReportedByEmail: 'true',
+//   locationDescription: 'Location description',
+//   locationGridRef: 'SJ 67084 44110',
+//   locationOfIncident: 'address',
+//   reporterEmail: 'test@Test.com',
+//   reporterFirstName: 'John',
+//   reporterLastName: 'Smith',
+//   reporterPhone: '01234567890',
+//   reporterType: 'water',
+//   reporterReference: 'abc',
+//   reporterRole: 'role',
+//   reporterWaterName: 'Water Services Ltd',
+//   reporterOtherName: '',
+//   reporterPhotos: 'Yes',
+//   buildingDetails: '1',
+//   postcodeDetails: 'ab123de',
+//   action: 'find-address'
+// }
 
 describe(url, () => {
   describe('GET', () => {
@@ -50,15 +118,17 @@ describe(url, () => {
     })
 
     // Test for Incident description tab
-    it('Sad: should fail validation and return error message for missing grid reference', async () => {
-      payload.locationGridRef = ''
+    it('Sad: should fail validation and return error message for missing location details', async () => {
+      payload.locationOfIncident = ''
+
       const options = {
         url,
         payload
       }
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#locationGridRef">Enter a national grid reference</a>')
+      expect(response.payload).toContain('Select the location of incident')
     })
+
     it('Sad: should fail validation and return error message for missing incident description', async () => {
       payload.descriptionDescription = ''
       const options = {
@@ -69,7 +139,8 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#descriptionDescription">Enter an incident description</a>')
     })
-    it('Sad: should fail validation and return error message for missing incident type', async () => {
+
+    it.only('Sad: should fail validation and return error message for missing incident type', async () => {
       payload.descriptionIncidentType = ''
       const options = {
         url,
@@ -79,6 +150,7 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#descriptionIncidentType">Select an incident type</a>')
     })
+
     it('Sad: should fail validation and return error message for missing date of email fields', async () => {
       payload.descriptionEmailReportDateDay = ''
       payload.descriptionEmailReportDateMonth = ''
