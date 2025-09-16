@@ -52,16 +52,16 @@ const mockPayload = {
   reporterWaterName: '',
   reporterOtherName: '',
   reporterRole: '',
-  locationGridRef: '',
+  locationGridRef: 'SP 23916 82277',
   locationDescription: '',
-  locationOfIncident: 'address',
+  locationOfIncident: 'gridReference',
   dateObserved: 'now',
   dateTime: '',
   dateOtherDay: '',
   dateOtherMonth: '',
   dateOtherYear: '',
   dateOtherTime: '',
-  addressChosen: true,
+  addressChosen: false,
   reporterPhotos: 'No'
 }
 
