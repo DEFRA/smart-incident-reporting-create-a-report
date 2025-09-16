@@ -245,13 +245,11 @@ const validateBuildingData = (payload, errorSummary) => {
 }
 
 const validateAddressSelection = (payload, errorSummary) => {
-  if (payload.locationOfIncident === 'address') {
-    if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
-      errorSummary.errorList.push({
-        text: 'Select an address',
-        href: '#addressId-1'
-      })
-    }
+  if (!payload.addressId) {
+    errorSummary.errorList.push({
+      text: 'Select an address',
+      href: '#addressId-1'
+    })
   }
 }
 

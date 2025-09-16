@@ -105,6 +105,7 @@ async function findAddress (h, request, payloadData) {
 
   const { buildingDetails, postcodeDetails } = request.payload
   const result = await helpers.findAddresses(request)
+
   request.yar.set(constants.redisKeys.CHOOSE_ADDRESS, result)
   request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcodeDetails })
 
@@ -125,8 +126,11 @@ function selectAddress (h, request, payloadData) {
   if (errorSummary.location.errorList.length > 0) {
     const dispName = request.auth.credentials.profile.displayName
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
+    const showChooseAddress = true
+
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
+      showChooseAddress,
       ...result,
       ...payloadData,
       reportTypes,

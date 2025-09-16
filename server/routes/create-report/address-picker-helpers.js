@@ -59,13 +59,16 @@ const findAddresses = async (request) => {
         }
       })
 
+    const addressItemsForView = resultsData.map(result => ({ value: result.uprn, text: result.address }))
+
     return {
       resultsFound: true,
       buildingDetails,
       postcodeDetails,
       showFullResults: fullResults,
       resultsData,
-      resultlength: resultsData.length
+      resultlength: resultsData.length,
+      addressItemsForView
     }
   } else {
     return cachedResult
@@ -118,7 +121,11 @@ const capitaliseAddress = (address) => {
   return capitalisedAddress
 }
 
+const getAddressItemsForView = (addressResults) =>
+  addressResults.resultsData.map(result => ({ value: result.uprn, text: result.address }))
+
 export default {
   formatAddress,
-  findAddresses
+  findAddresses,
+  getAddressItemsForView
 }

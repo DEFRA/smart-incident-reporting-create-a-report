@@ -10,6 +10,36 @@ const getSessionData = () => {
   return JSON.parse(JSON.stringify(sessionData))
 }
 
+// const mockPayload = {
+//   action: 'check-report',
+//   descriptionDescription: 'fewqfewfe',
+//   descriptionEmailReportDateDay: '',
+//   descriptionEmailReportDateMonth: '',
+//   descriptionEmailReportDateYear: '',
+//   descriptionEmailReportTime: '',
+//   descriptionIncidentType: '100',
+//   reporterFirstName: 'Bob',
+//   reporterLastName: 'Monkhouse',
+//   reporterEmail: '',
+//   reporterPhone: '',
+//   reporterReference: '',
+//   reporterType: 'public',
+//   reporterWaterName: '',
+//   reporterOtherName: '',
+//   reporterRole: '',
+//   locationGridRef: '',
+//   locationDescription: '',
+//   locationOfIncident: 'address',
+//   dateObserved: 'now',
+//   dateTime: '',
+//   dateOtherDay: '',
+//   dateOtherMonth: '',
+//   dateOtherYear: '',
+//   dateOtherTime: '',
+//   addressChosen: true,
+//   reporterPhotos: 'No'
+// }
+
 const sessionData = {
   'create-a-report': {
     dateObserved: 'before',
