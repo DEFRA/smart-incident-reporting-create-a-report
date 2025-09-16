@@ -188,7 +188,9 @@ const validateLocationTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
-  } else if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
+  }
+
+  if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
     if (!payload.buildingDetails) {
       errorSummary.errorList.push({
         text: 'Enter a building number or name',
@@ -196,15 +198,17 @@ const validateLocationTab = (payload, errorSummary) => {
       })
     }
 
+    const postcodeDetails = '#postcodeDetails'
+
     if (!payload.postcodeDetails) {
       errorSummary.errorList.push({
         text: 'Enter a postcode',
-        href: '#postcodeDetails'
+        href: postcodeDetails
       })
     } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
       errorSummary.errorList.push({
         text: 'Enter a full postcode, for example W1 8QS',
-        href: '#postcodeDetails'
+        href: postcodeDetails
       })
     } else {
       // do nothing
@@ -228,15 +232,17 @@ const validateBuildingData = (payload, errorSummary) => {
       })
     }
 
+    const postcodeDetails = '#postcodeDetails'
+
     if (!payload.postcodeDetails) {
       errorSummary.errorList.push({
         text: 'Enter a postcode',
-        href: '#postcodeDetails'
+        href: postcodeDetails
       })
     } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
       errorSummary.errorList.push({
         text: 'Enter a full postcode, for example W1 8QS',
-        href: '#postcodeDetails'
+        href: postcodeDetails
       })
     } else {
       // do nothing

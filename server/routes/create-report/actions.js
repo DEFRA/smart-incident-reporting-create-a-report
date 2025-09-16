@@ -18,7 +18,9 @@ function checkReport (h, request, payloadData) {
 
   if (payloadData.locationOfIncident === 'address') {
     selectAddress = true
-  } else if (payloadData.locationOfIncident === 'gridReference') {
+  }
+
+  if (payloadData.locationOfIncident === 'gridReference') {
     selectGridReference = true
   }
 
@@ -119,19 +121,19 @@ async function findAddress (h, request, payloadData) {
   })
 }
 
-function selectAddress (h, request, payloadData) {
+function chooseAddress (h, request, payloadData) {
   const errorSummary = validateAddressSelectionPayload(payloadData)
 
   // Return view if errors
   if (errorSummary.location.errorList.length > 0) {
     const dispName = request.auth.credentials.profile.displayName
-    const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
+    const addressResult = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const showChooseAddress = true
 
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
       showChooseAddress,
-      ...result,
+      ...addressResult,
       ...payloadData,
       reportTypes,
       dispName
@@ -160,7 +162,7 @@ function selectAddress (h, request, payloadData) {
   })
 }
 
-function differentAddress (h, request, payloadData) {
+function differentAddress (h, payloadData) {
   const selectAddress = true
 
   return h.view(constants.views.CREATE_A_REPORT, {
@@ -197,7 +199,7 @@ function useGridReference (h, request, payloadData) {
 export default {
   checkReport,
   findAddress,
-  selectAddress,
+  chooseAddress,
   differentAddress,
   changeAddress,
   useGridReference

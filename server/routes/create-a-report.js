@@ -26,19 +26,33 @@ const handlers = {
     const { action } = request.payload
     const payloadData = request.payload
 
+    let actionResult
+
     if (action === 'check-report') {
-      return actions.checkReport(h, request, payloadData)
-    } else if (action === 'find-address') {
-      return actions.findAddress(h, request, payloadData)
-    } else if (action === 'select-address') {
-      return actions.selectAddress(h, request, payloadData)
-    } else if (action === 'change-address') { // Back to address picker with data
-      return actions.changeAddress(h, request, payloadData)
-    } else if (action === 'different-address') { // Back to address picker with no data
-      return actions.differentAddress(h, request, payloadData)
-    } else if (action === 'use-grid-reference') { // Back to grid ref select, retain address data
-      return actions.useGridReference(h, request, payloadData)
+      actionResult = actions.checkReport(h, request, payloadData)
     }
+
+    if (action === 'find-address') {
+      actionResult = actions.findAddress(h, request, payloadData)
+    }
+
+    if (action === 'select-address') {
+      actionResult = actions.chooseAddress(h, request, payloadData)
+    }
+
+    if (action === 'change-address') { // Back to address picker with data
+      actionResult = actions.changeAddress(h, request, payloadData)
+    }
+
+    if (action === 'different-address') { // Back to address picker with no data
+      actionResult = actions.differentAddress(h, payloadData)
+    }
+
+    if (action === 'use-grid-reference') { // Back to grid ref select, retain address data
+      actionResult = actions.useGridReference(h, request, payloadData)
+    }
+
+    return actionResult
   }
 }
 const getContext = session => {
@@ -52,7 +66,9 @@ const getContext = session => {
 
   if (payloadData?.locationOfIncident === 'address') {
     selectAddress = true
-  } else if (payloadData?.locationOfIncident === 'gridReference') {
+  }
+
+  if (payloadData?.locationOfIncident === 'gridReference') {
     selectGridReference = true
   }
 

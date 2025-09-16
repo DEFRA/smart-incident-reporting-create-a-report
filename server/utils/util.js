@@ -6,7 +6,9 @@ wreck.defaults({
 const makeRequest = async (method, url, options, _ext = false) => {
   const response = await wreck[method](url, options)
   const { res, payload } = response
-  if (res.statusCode !== 200) {
+  const ok = 200
+
+  if (res.statusCode !== ok) {
     if (payload) {
       throw payload
     }

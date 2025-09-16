@@ -325,7 +325,7 @@ const buildIncidentLocationAnswersGridRef = (reportPayload, baseAnswer, question
   return results
 }
 
-const buildIncidentLocationAnswersAddress = (reportPayload, baseAnswer, question, selectedAddress) => {
+const buildIncidentLocationAnswersAddress = (baseAnswer, selectedAddress) => {
   const results = []
 
   const point = [selectedAddress[0].x, selectedAddress[0].y]
@@ -409,7 +409,9 @@ const buildIncidentLocationAnswers = (reportPayload, selectAddress) => {
 
   if (reportPayload.locationOfIncident === 'gridReference') {
     results = buildIncidentLocationAnswersGridRef(reportPayload, baseAnswer, question)
-  } else if (reportPayload.locationOfIncident === 'address') {
+  }
+
+  if (reportPayload.locationOfIncident === 'address') {
     results = buildIncidentLocationAnswersAddress(reportPayload, baseAnswer, question, selectAddress)
   }
 
