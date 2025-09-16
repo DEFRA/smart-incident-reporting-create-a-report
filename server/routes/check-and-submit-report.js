@@ -412,7 +412,7 @@ const buildIncidentLocationAnswers = (reportPayload, selectAddress) => {
   }
 
   if (reportPayload.locationOfIncident === 'address') {
-    results = buildIncidentLocationAnswersAddress(reportPayload, baseAnswer, question, selectAddress)
+    results = buildIncidentLocationAnswersAddress(baseAnswer, selectAddress)
   }
 
   return results

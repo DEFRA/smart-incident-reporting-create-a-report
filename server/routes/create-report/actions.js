@@ -4,40 +4,13 @@ import moment from 'moment'
 import { reportTypes } from '../../utils/report-types.js'
 import helpers from './address-picker-helpers.js'
 
-function checkReport (h, request, payloadData) {
-  let selectAddress = false
-  let selectGridReference = false
-  let addressChosen = false
-
-  const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
-
-  if (displayAddress) {
-    addressChosen = true
-    payloadData.addressChosen = true
-  }
-
-  if (payloadData.locationOfIncident === 'address') {
-    selectAddress = true
-  }
-
-  if (payloadData.locationOfIncident === 'gridReference') {
-    selectGridReference = true
-  }
-
+function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
   if (!payloadData.reporterPhotos) {
     payloadData.reporterPhotos = 'No'
   }
 
-  // Trim whitespaces for string inputs in payload
-  for (const [key, value] of Object.entries(payloadData)) {
-    if (typeof value === 'string') {
-      payloadData[key] = value.trim()
-    }
-    if (key === 'descriptionDescription') {
-      payloadData[key] = value.replace(/\n +/g, '\n')
-    }
-  }
+  payloadData.addressChosen = !!addressChosen
 
   // Set time for date of incident - now
   if (payloadData.dateObserved === 'now') {
@@ -52,10 +25,37 @@ function checkReport (h, request, payloadData) {
     payloadData.dateOtherTime = ''
   }
 
-  // Set default value for photos or videos checkbox
-  if (!payloadData.reporterPhotos) {
-    payloadData.reporterPhotos = 'No'
+  // Trim whitespaces for string inputs in payload
+  for (const [key, value] of Object.entries(payloadData)) {
+    if (typeof value === 'string') {
+      payloadData[key] = value.trim()
+    }
+    if (key === 'descriptionDescription') {
+      payloadData[key] = value.replace(/\n +/g, '\n')
+    }
   }
+}
+
+function checkReport (h, request, payloadData) {
+  let selectAddress = false
+  let selectGridReference = false
+  let addressChosen = false
+
+  const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
+
+  if (displayAddress) {
+    addressChosen = true
+  }
+
+  if (payloadData.locationOfIncident === 'address') {
+    selectAddress = true
+  }
+
+  if (payloadData.locationOfIncident === 'gridReference') {
+    selectGridReference = true
+  }
+
+  checkReportFinalisePayloadData(payloadData, addressChosen)
 
   // Store data in redis cache
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)

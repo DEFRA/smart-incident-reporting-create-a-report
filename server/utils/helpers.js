@@ -174,7 +174,9 @@ const validateLocationTab = (payload, errorSummary) => {
       text: 'Select the location of incident',
       href: '#locationOfIncident'
     })
-  } else if (payload.locationOfIncident === 'gridReference') {
+  }
+
+  if (payload.locationOfIncident === 'gridReference') {
     if (!payload.locationGridRef) {
       errorSummary.errorList.push({
         text: 'Enter a national grid reference',
@@ -191,28 +193,7 @@ const validateLocationTab = (payload, errorSummary) => {
   }
 
   if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
-    if (!payload.buildingDetails) {
-      errorSummary.errorList.push({
-        text: 'Enter a building number or name',
-        href: '#buildingDetails'
-      })
-    }
-
-    const postcodeDetails = '#postcodeDetails'
-
-    if (!payload.postcodeDetails) {
-      errorSummary.errorList.push({
-        text: 'Enter a postcode',
-        href: postcodeDetails
-      })
-    } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
-      errorSummary.errorList.push({
-        text: 'Enter a full postcode, for example W1 8QS',
-        href: postcodeDetails
-      })
-    } else {
-      // do nothing
-    }
+    validateBuildingData(payload, errorSummary)
 
     if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
       errorSummary.errorList.push({
