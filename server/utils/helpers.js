@@ -213,7 +213,7 @@ const validateLocationTab = (payload, errorSummary) => {
     if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
       errorSummary.errorList.push({
         text: 'Select an address',
-        href: '#addressId-1'
+        href: '#addressId'
       })
     }
   }
@@ -248,7 +248,7 @@ const validateAddressSelection = (payload, errorSummary) => {
   if (!payload.addressId) {
     errorSummary.errorList.push({
       text: 'Select an address',
-      href: '#addressId-1'
+      href: '#addressId'
     })
   }
 }
