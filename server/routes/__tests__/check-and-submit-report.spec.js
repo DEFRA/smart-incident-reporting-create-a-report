@@ -10,36 +10,6 @@ const getSessionData = () => {
   return JSON.parse(JSON.stringify(sessionData))
 }
 
-// const mockPayload = {
-//   action: 'check-report',
-//   descriptionDescription: 'fewqfewfe',
-//   descriptionEmailReportDateDay: '',
-//   descriptionEmailReportDateMonth: '',
-//   descriptionEmailReportDateYear: '',
-//   descriptionEmailReportTime: '',
-//   descriptionIncidentType: '100',
-//   reporterFirstName: 'Bob',
-//   reporterLastName: 'Monkhouse',
-//   reporterEmail: '',
-//   reporterPhone: '',
-//   reporterReference: '',
-//   reporterType: 'public',
-//   reporterWaterName: '',
-//   reporterOtherName: '',
-//   reporterRole: '',
-//   locationGridRef: '',
-//   locationDescription: '',
-//   locationOfIncident: 'address',
-//   dateObserved: 'now',
-//   dateTime: '',
-//   dateOtherDay: '',
-//   dateOtherMonth: '',
-//   dateOtherYear: '',
-//   dateOtherTime: '',
-//   addressChosen: true,
-//   reporterPhotos: 'No'
-// }
-
 const sessionData = {
   'create-a-report': {
     dateObserved: 'before',
@@ -57,6 +27,7 @@ const sessionData = {
     descriptionReportedByEmail: 'true',
     locationDescription: 'Location description',
     locationGridRef: 'SJ 67084 44110',
+    locationOfIncident: 'gridReference',
     reporterEmail: 'test@Test.com',
     reporterFirstName: 'John',
     reporterLastName: 'Smith',
@@ -76,10 +47,12 @@ describe(url, () => {
     it(`Should return success response and correct view for ${url} if sessiondata is present and correct`, async () => {
       await submitGetRequest({ url }, 'Check and submit report', 200, getSessionData())
     })
+
     it('Should redirect to create a report if report data is invalid', async () => {
       const response = await submitGetRequest({ url }, undefined, 302)
       expect(response.headers.location).toEqual(constants.routes.CREATE_A_REPORT)
     })
+
     it(`Happy: Should return 12 character NGR value with the required spaces when locationGridRef has no spaces ${url}`, async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].locationGridRef = 'SJ6708444110'
@@ -195,6 +168,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Should post payload with the formatted location grid reference to service bus and set REPORT_SUBMITTED to true', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].locationGridRef = 'SJ6708444110'
@@ -265,6 +239,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Edge cases for payload data - 1', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
@@ -362,6 +337,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Edge cases for payload data - 2 : data with member of public', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
@@ -416,6 +392,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Edge cases for payload data - 3: data with member of public and anonymous', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterFirstName = ''
@@ -474,6 +451,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Edge cases for payload data - 4', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].descriptionReportedByEmail = ''
@@ -556,6 +534,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Should fail payload validation if invalid payload with 500 server error', async () => {
       const sessionData = getSessionData()
       const options = {
@@ -607,6 +586,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Date set to yesterday', async () => {
       const sessionData = getSessionData()
       const yesterday = new Date(new Date().toDateString())
@@ -645,6 +625,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Date set to before', async () => {
       const sessionData = getSessionData()
       const before = new Date(new Date().toDateString())
@@ -686,6 +667,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Sad: errors on no answerId', async () => {
       const sessionData = getSessionData()
       const options = {
@@ -697,6 +679,7 @@ describe(url, () => {
       expect(response.payload).toContain('Select an incident category')
       expect(response.payload).toContain('Enter a reason for the selected categorisation')
     })
+
     it('Date of incident set to now', async () => {
       const date = new Date(new Date().toDateString())
       const currentTime = moment().format('HH:mm')
