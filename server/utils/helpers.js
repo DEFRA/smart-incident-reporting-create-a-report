@@ -171,7 +171,7 @@ const validateLocationTab = (payload, errorSummary) => {
   // Do location validation
   if (!payload.locationOfIncident) {
     errorSummary.errorList.push({
-      text: 'Select the location of incident',
+      text: 'Select how you want to give a location',
       href: '#locationOfIncident'
     })
   }
