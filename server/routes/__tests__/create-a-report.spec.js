@@ -98,7 +98,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('Select the location of incident')
+      expect(response.payload).toContain('Select how you want to give a location')
     })
 
     it('Sad: should fail validation and return error message for missing incident description', async () => {
