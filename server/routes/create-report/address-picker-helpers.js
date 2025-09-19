@@ -2,6 +2,9 @@ import constants from '../../utils/constants.js'
 import { findByPostcode } from '../../services/find-location.js'
 
 const formatAddress = (address) => {
+  console.log('\n------')
+  console.log(address)
+
   const addressParts = address.split(',')
   const n = 2
   const addressLine1 = addressParts.slice(0, -n).join()
@@ -121,11 +124,7 @@ const capitaliseAddress = (address) => {
   return capitalisedAddress
 }
 
-const getAddressItemsForView = (addressResults) =>
-  addressResults.resultsData.map(result => ({ value: result.uprn, text: result.address }))
-
 export default {
   formatAddress,
-  findAddresses,
-  getAddressItemsForView
+  findAddresses
 }
