@@ -39,7 +39,7 @@ const init = async server => {
 }
 
 const _registerPlugins = async server => {
-  // await server.register(logging)
+  await server.register(logging)
   await server.register(session)
   await server.register(auth)
   await server.register(errorPages)
