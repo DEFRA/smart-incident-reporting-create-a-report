@@ -1,10 +1,7 @@
-import constants from '../../utils/constants.js'
-import { findByPostcode } from '../../services/find-location.js'
+import constants from './constants.js'
+import { findByPostcode } from '../services/find-location.js'
 
 const formatAddress = (address) => {
-  console.log('\n------')
-  console.log(address)
-
   const addressParts = address.split(',')
   const n = 2
   const addressLine1 = addressParts.slice(0, -n).join()
@@ -18,9 +15,8 @@ const formatAddress = (address) => {
   }
 }
 
-const findAddresses = async (request) => {
-  const cachedResult = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
-  const { buildingDetails, postcodeDetails } = request.payload
+const findAddresses = async (session, buildingDetails, postcodeDetails) => {
+  const cachedResult = session.get(constants.redisKeys.CHOOSE_ADDRESS)
 
   let isBuildingDetailsCached = false
   let isPostcodeCached = false
@@ -34,12 +30,12 @@ const findAddresses = async (request) => {
     let payload
     if (isPostcodeCached && !isBuildingDetailsCached) {
       // use the cached postcode data for updated building details
-      payload = request.yar.get(constants.redisKeys.POSTCODE_DETAILS)
+      payload = session.get(constants.redisKeys.POSTCODE_DETAILS)
     } else {
       // calling API for fresh search or updated postcode
       const apiResults = await findByPostcode(postcodeDetails)
       payload = apiResults.payload
-      request.yar.set(constants.redisKeys.POSTCODE_DETAILS, payload)
+      session.set(constants.redisKeys.POSTCODE_DETAILS, payload)
     }
 
     if (payload.header.totalresults === 0) {

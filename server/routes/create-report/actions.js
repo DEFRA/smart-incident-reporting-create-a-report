@@ -2,7 +2,7 @@ import constants from '../../utils/constants.js'
 import { validateReportPayload, validateBuildingDataPayload, validateAddressSelectionPayload } from '../../utils/helpers.js'
 import moment from 'moment'
 import { reportTypes } from '../../utils/report-types.js'
-import helpers from './address-picker-helpers.js'
+import helpers from '../../utils/address-picker-helpers.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
@@ -106,7 +106,7 @@ async function findAddress (h, request, payloadData) {
   }
 
   const { buildingDetails, postcodeDetails } = request.payload
-  const result = await helpers.findAddresses(request)
+  const result = await helpers.findAddresses(request.yar, buildingDetails, postcodeDetails)
 
   request.yar.set(constants.redisKeys.CHOOSE_ADDRESS, result)
   request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcodeDetails })
