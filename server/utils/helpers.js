@@ -4,6 +4,7 @@ import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import dirname from '../../dirname.cjs'
 import moment from 'moment'
+import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
 // import * as dateHelpers from '@defra/smart-incident-reporting/server/utils/date-helpers.js'
 
 // Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
@@ -339,8 +340,6 @@ const validateDate = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
 const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) => {
   // Validation for time of email
   const zero = 0
-  const maxMinutes = 59
-  const maxHours = 23
   const maxMonths = 12
   const maxDays = 31
   const firstValidYear = 1900
@@ -348,40 +347,35 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
   const validDay = dateparts.day > zero && dateparts.day <= maxDays
   const validMonth = dateparts.month > zero && dateparts.month <= maxMonths
   const validYear = dateparts.year > firstValidYear && dateparts.year < latestYear
+
   if (!dateparts.time) {
     errorMsg(`Enter ${aOrThe} time${errorMsgPostfix}`, errorSummary, href)
-  } else {
-    let validTimeFormat = false
-    const maxTimeLength = 3
-    if (moment(dateparts.time, 'HH:mm').isValid() && dateparts.time.length >= maxTimeLength) {
-      const timeParts = dateparts.time.split(':')
-      const hours = timeParts[0]?.padStart(2, '0')
-      const minutes = timeParts[1]?.padStart(2, '0')
-      validTimeFormat = timeParts.length === 2 && (hours >= zero && hours <= maxHours) && (minutes >= zero && minutes <= maxMinutes)
-    }
+    return
+  }
 
-    let dateString
-    let validDate = false
-    if (validDay && validMonth && validYear) {
-      dateString = `${dateparts.year}-${dateparts.month?.padStart(2, '0')}-${dateparts.day?.padStart(2, '0')}`
-      validDate = moment(dateString, 'YYYY-MM-DD').isValid()
-    }
+  const formattedTime = formatTime(dateparts.time, '24hr')
+  const validTimeFormat = formattedTime !== 'INVALID_TIME_FORMAT'
 
-    if (!validTimeFormat) {
-      errorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59', errorSummary, href)
-    } else if (validTimeFormat && validDay && validMonth && validYear && validDate) {
-      const dateTimeString = `${dateparts.year}-${dateparts.month.padStart(2, '0')}-${dateparts.day.padStart(2, '0')} ${dateparts.time}`
-      const dateTime = moment(dateTimeString, 'YYYY-MM-DD hh:mm')
-      const maxAgeMinutes = 5
-      const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
-      if (!isDateTimeInPast) {
-        errorMsg('Time must be in the past', errorSummary, href)
-      }
-    } else {
-      // do nothing
+  let dateString
+  let validDate = false
+  if (validDay && validMonth && validYear) {
+    dateString = `${dateparts.year}-${dateparts.month?.padStart(2, '0')}-${dateparts.day?.padStart(2, '0')}`
+    validDate = moment(dateString, 'YYYY-MM-DD').isValid()
+  }
+
+  if (!validTimeFormat) {
+    errorMsg('Enter a time using the 24-hour clock, from 00:00 for midnight, to 23:59', errorSummary, href)
+  } else if (validDate) {
+    const dateTimeString = `${dateparts.year}-${dateparts.month.padStart(2, '0')}-${dateparts.day.padStart(2, '0')} ${formattedTime}`
+    const dateTime = moment(dateTimeString, 'YYYY-MM-DD HH:mm')
+    const maxAgeMinutes = 5
+    const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
+    if (!isDateTimeInPast) {
+      errorMsg('Time must be in the past', errorSummary, href)
     }
   }
 }
+
 
 const errorMsg = (text, errorSummary, href) => {
   errorSummary.errorList.push({
