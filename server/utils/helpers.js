@@ -373,6 +373,8 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
     if (!isDateTimeInPast) {
       errorMsg('Time must be in the past', errorSummary, href)
     }
+  } else {
+    // do nothing
   }
 }
 

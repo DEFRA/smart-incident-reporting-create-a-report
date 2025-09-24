@@ -85,7 +85,7 @@ function checkReport (h, request, payloadData) {
     })
   }
 
-  // Format time and update before redirection
+  // Format time and store before redirection
   const timeFields = ['dateTime', 'dateOtherTime']
   for (const field of timeFields) {
     if (payloadData[field]) {
