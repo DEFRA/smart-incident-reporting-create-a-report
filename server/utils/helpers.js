@@ -376,7 +376,6 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
   }
 }
 
-
 const errorMsg = (text, errorSummary, href) => {
   errorSummary.errorList.push({
     text,
