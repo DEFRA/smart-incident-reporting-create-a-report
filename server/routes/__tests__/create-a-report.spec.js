@@ -645,7 +645,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
     })
 
-    it('Happy: should look up address given ', async () => {
+    it('Happy: should look up address given', async () => {
       util.getJson.mockResolvedValue({
         header: {
           totalresults: 2
@@ -653,20 +653,20 @@ describe(url, () => {
         results: [
           {
             DPA: {
-              UPRN: '9051088093',
+              UPRN: '8',
               ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
               POSTCODE: 'AB12 3DE',
-              X_COORDINATE: 394548.0,
-              Y_COORDINATE: 803010.0
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
             }
           },
           {
             DPA: {
-              UPRN: '9051088094',
+              UPRN: '9',
               ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
               POSTCODE: 'AB12 3DE',
-              X_COORDINATE: 394542.0,
-              Y_COORDINATE: 803005.0
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
             }
           }
         ]
@@ -685,6 +685,97 @@ describe(url, () => {
       await submitPostRequest(options, 200)
     })
 
+    it('Happy: should select chosen address', async () => {
+      const sessionData = {
+        'choose-address': {
+          resultsData: [
+            {
+              uprn: '1',
+              postcodeDetails: 'SG14 3LB',
+              address: '9, Watermill Lane, Hertford, SG14 3LB',
+              x: 100001,
+              y: 100001
+            },
+            {
+              uprn: '2',
+              postcodeDetails: 'SG14 3LB',
+              address: '10, Watermill Lane, Hertford, SG14 3LB',
+              x: 100002,
+              y: 100002
+            }
+          ]
+        }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'select-address'
+      payload.addressId = '2'
+      const options = {
+        url,
+        payload
+      }
+
+      await submitPostRequest(options, 200, sessionData)
+    })
+
+    it('Happy: should show address selection on change address button with saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'change-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="address" checked')
+      expect(response.payload).toContain('id="buildingDetails" name="buildingDetails" type="text" value="10"')
+      expect(response.payload).toContain('id="postcodeDetails" name="postcodeDetails" type="text" value="SG143LB"')
+    })
+
+    it('Happy: should show address selection on different address button without saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'different-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="address" checked')
+      expect(response.payload).toContain('class="govuk-input govuk-!-width-one-half" id="buildingDetails" name="buildingDetails" type="text" aria-describedby="buildingDetails-hint">')
+      expect(response.payload).toContain('class="govuk-input govuk-input--width-10" id="postcodeDetails" name="postcodeDetails" type="text" autocomplete="postal-code">')
+    })
+
+    it('Happy: should show grid ref radio on use grid ref button but keep saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'use-grid-reference'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="gridReference" checked')
+      expect(response.payload).toContain('id="buildingDetails" name="buildingDetails" type="text" value="10"')
+      expect(response.payload).toContain('id="postcodeDetails" name="postcodeDetails" type="text" value="SG143LB"')
+    })
+
     it('Sad: should fail validation and return error message for missing building number and postcode', async () => {
       const payload = getPayload()
       payload.locationOfIncident = 'address'
@@ -697,6 +788,19 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('Enter a building number or name')
       expect(response.payload).toContain('Enter a postcode')
+    })
+
+    it('Sad: should error if no address selected on select chosen address button', async () => {
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'select-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('Select an address')
     })
 
     // Test for Date of incident tab
