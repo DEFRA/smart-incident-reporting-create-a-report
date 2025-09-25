@@ -52,7 +52,9 @@ describe(url, () => {
     it('Should show errors from session data if fails validation for address', async () => {
       const sessionData = {
         'create-a-report': {
-          locationOfIncident: 'address'
+          locationOfIncident: 'address',
+          buildingDetails: '10',
+          postcodeDetails: 'abc'
         },
         'selected-address': 'test123'
       }
@@ -1080,6 +1082,74 @@ describe(url, () => {
       const expectedPayload = {
         ...payload,
         nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts valid answer today for email report', async () => {
+      const date = new Date()
+      const day = date.getDate().toString()
+      const month = (date.getMonth() + 1).toString()
+      const year = date.getFullYear().toString()
+
+      const payload = getPayload()
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = day
+      payload.descriptionEmailReportDateMonth = month
+      payload.descriptionEmailReportDateYear = year
+      payload.descriptionEmailReportTime = '00:02'
+      payload.dateOtherDay = day
+      payload.dateOtherMonth = month
+      payload.dateOtherYear = year
+      payload.dateObserved = 'today'
+      payload.dateTime = '00:01'
+      const options = {
+        url,
+        payload
+      }
+
+      const expectedPayload = {
+        ...payload
+      }
+
+      const response = await submitPostRequest(options)
+      console.log(response.payload)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts valid answer yesterday', async () => {
+      const date = new Date()
+      const day = date.getDate().toString()
+      const month = (date.getMonth() + 1).toString()
+      const year = date.getFullYear().toString()
+      date.setDate(date.getDate() - 1)
+      const dayYest = date.getDate().toString()
+      const monthYest = (date.getMonth() + 1).toString()
+      const yearYest = date.getFullYear().toString()
+
+      const payload = getPayload()
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = day
+      payload.descriptionEmailReportDateMonth = month
+      payload.descriptionEmailReportDateYear = year
+      payload.descriptionEmailReportTime = '00:02'
+      payload.dateOtherDay = dayYest
+      payload.dateOtherMonth = monthYest
+      payload.dateOtherYear = yearYest
+      payload.dateObserved = 'yesterday'
+      payload.dateTime = '10:00'
+      const options = {
+        url,
+        payload
+      }
+
+      const expectedPayload = {
+        ...payload,
+        dateTime: '10:00'
       }
 
       const response = await submitPostRequest(options)
