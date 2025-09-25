@@ -74,6 +74,15 @@ describe(url, () => {
       // Test for correct auth mock
       expect(response.payload).toContain('<p style="color: white; margin-top: 20px;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
     })
+
+    it('Should show errors from session data if fails validation', async () => {
+      const sessionData = {
+        'create-a-report': {}
+      }
+
+      const response = await submitGetRequest({ url }, null, 200, sessionData)
+      expect(response.payload).toContain('There is a problem')
+    })
   })
 
   describe('POST', () => {
@@ -661,8 +670,6 @@ describe(url, () => {
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
     })
-
-    // FIXME: more tests in here
 
     // Test for Date of incident tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
