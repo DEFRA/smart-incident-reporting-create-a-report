@@ -49,9 +49,23 @@ describe(url, () => {
       expect(response.payload).toContain('<p style="color: white; margin-top: 20px;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
     })
 
-    it('Should show errors from session data if fails validation', async () => {
+    it('Should show errors from session data if fails validation for address', async () => {
       const sessionData = {
-        'create-a-report': {}
+        'create-a-report': {
+          locationOfIncident: 'address'
+        },
+        'selected-address': 'test123'
+      }
+
+      const response = await submitGetRequest({ url }, null, 200, sessionData)
+      expect(response.payload).toContain('There is a problem')
+    })
+
+    it('Should show errors from session data if fails validation for grid ref', async () => {
+      const sessionData = {
+        'create-a-report': {
+          locationOfIncident: 'gridReference'
+        }
       }
 
       const response = await submitGetRequest({ url }, null, 200, sessionData)
@@ -61,13 +75,18 @@ describe(url, () => {
 
   describe('POST', () => {
     it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT if valid session', async () => {
+      const sessionData = {
+        'selected-address': 'test123'
+      }
+
       const payload = getPayload()
+      payload.locationOfIncident = 'address'
       const options = {
         url,
         payload
       }
 
-      const response = await submitPostRequest(options)
+      const response = await submitPostRequest(options, 302, sessionData)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
     })
 
