@@ -70,6 +70,7 @@ const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const selectedAddress = constructAddress(request)
+    console.log(selectedAddress)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
     if (!reportPayload ||
       errorSummary.description.errorList.length > 0 ||
@@ -77,6 +78,7 @@ const handlers = {
       errorSummary.location.errorList.length > 0 ||
       errorSummary.date.errorList.length > 0
     ) {
+      console.log(JSON.stringify(errorSummary, null, 2))
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
@@ -124,6 +126,7 @@ const handlers = {
 
     // Post data to service bus queue
     const payload = buildPayload(request.yar, request.auth.credentials.profile)
+    console.log(payload.reportingAnEnvironmentalProblem.data)
 
     // test the payload against the schema
     if (!validatePayload(payload)) {
