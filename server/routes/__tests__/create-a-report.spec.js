@@ -7,32 +7,6 @@ jest.mock('../../../server/utils/util', () => ({
   getJson: jest.fn()
 }))
 
-util.getJson.mockResolvedValue({
-  header: {
-    totalresults: 2
-  },
-  results: [
-    {
-      DPA: {
-        UPRN: '9051088093',
-        ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
-        POSTCODE: 'AB12 3DE',
-        X_COORDINATE: 394548.0,
-        Y_COORDINATE: 803010.0
-      }
-    },
-    {
-      DPA: {
-        UPRN: '9051088094',
-        ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
-        POSTCODE: 'AB12 3DE',
-        X_COORDINATE: 394542.0,
-        Y_COORDINATE: 803005.0
-      }
-    }
-  ]
-})
-
 const url = constants.routes.CREATE_A_REPORT
 
 const mockPayload = {
@@ -669,6 +643,60 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
+    })
+
+    it('Happy: should look up address given ', async () => {
+      util.getJson.mockResolvedValue({
+        header: {
+          totalresults: 2
+        },
+        results: [
+          {
+            DPA: {
+              UPRN: '9051088093',
+              ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 394548.0,
+              Y_COORDINATE: 803010.0
+            }
+          },
+          {
+            DPA: {
+              UPRN: '9051088094',
+              ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 394542.0,
+              Y_COORDINATE: 803005.0
+            }
+          }
+        ]
+      })
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'find-address'
+      payload.buildingDetails = '98'
+      payload.postcodeDetails = 'AB123DE'
+      const options = {
+        url,
+        payload
+      }
+
+      await submitPostRequest(options, 200)
+    })
+
+    it('Sad: should fail validation and return error message for missing building number and postcode', async () => {
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'find-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('Enter a building number or name')
+      expect(response.payload).toContain('Enter a postcode')
     })
 
     // Test for Date of incident tab
