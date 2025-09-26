@@ -5,7 +5,6 @@ import addFormats from 'ajv-formats'
 import dirname from '../../dirname.cjs'
 import moment from 'moment'
 import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
-// import * as dateHelpers from '@defra/smart-incident-reporting/server/utils/date-helpers.js'
 
 // Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 // Grid ref regex with spaces
