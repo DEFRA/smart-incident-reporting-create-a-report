@@ -12,6 +12,7 @@ const getSessionData = () => {
 
 const sessionData = {
   'create-a-report': {
+    action: 'check-report',
     dateObserved: 'before',
     dateOtherDay: '01',
     dateOtherMonth: '12',
@@ -35,8 +36,23 @@ const sessionData = {
     reporterReference: 'REF1234567890',
     reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
-    reporterPhotos: 'Yes'
-  }
+    reporterPhotos: 'Yes',
+    reporterRole: 'Jam'
+  },
+  'selected-address': {
+    addressLine1: '10, Watermill Lane',
+    townOrCity: 'Hertford',
+    postcode: 'SG14 3LB'
+  },
+  'selected-address-data': [
+    {
+      uprn: '2',
+      postcodeDetails: 'SG14 3LB',
+      address: '10, Watermill Lane, Hertford, SG14 3LB',
+      x: 100001,
+      y: 100001
+    }
+  ]
 }
 
 const answerId = 2
@@ -46,6 +62,16 @@ describe(url, () => {
   describe('GET', () => {
     it(`Should return success response and correct view for ${url} if sessiondata is present and correct`, async () => {
       await submitGetRequest({ url }, 'Check and submit report', 200, getSessionData())
+    })
+
+    it(`Should return success response and correct view for ${url} if sessiondata with address is present and correct`, async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '10'
+      sessionData['create-a-report'].postcodeDetails = 'SG143LB'
+      sessionData['create-a-report'].addressId = '1'
+
+      await submitGetRequest({ url }, 'Check and submit report', 200, sessionData)
     })
 
     it('Should redirect to create a report if report data is invalid', async () => {
@@ -234,6 +260,90 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4102,
               otherDetails: 'Location description'
+            })
+          ])
+        })
+      }))
+    })
+
+    it('Should generate correct payload for address location', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
+      expect(sendMessage).toHaveBeenCalledTimes(1)
+      expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+        info: expect.any(Function)
+      }),
+      expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          reportType: 100,
+          reporterName: sessionData['create-a-report'].reporterFirstName + ' ' + sessionData['create-a-report'].reporterLastName,
+          reporterPhoneNumber: sessionData['create-a-report'].reporterPhone,
+          reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
+          otherDetails: sessionData['create-a-report'].descriptionDescription,
+          questionSetId: 0,
+          incidentCategory: 2,
+          reasonForCategorisation: 'Test reason for categorisation',
+          loggedByDisplayName: 'Smith, John',
+          loggedByUserPrincipalName: 'test@test.com',
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 2702,
+              otherDetails: '100001'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 2703,
+              otherDetails: '100001'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 2704,
+              otherDetails: '-6.252067'
+            }),
+            expect.objectContaining({
+              questionId: 4100,
+              questionAsked: 'Location of incident',
+              questionResponse: true,
+              answerId: 2705,
+              otherDetails: '50.721988'
+            }),
+            expect.objectContaining({
+              questionId: 1400,
+              questionAsked: 'Enter your address',
+              questionResponse: true,
+              answerId: 1401,
+              otherDetails: '10, Watermill Lane'
+            }),
+            expect.objectContaining({
+              questionId: 1400,
+              questionAsked: 'Enter your address',
+              questionResponse: true,
+              answerId: 1403,
+              otherDetails: 'Hertford'
+            }),
+            expect.objectContaining({
+              questionId: 1400,
+              questionAsked: 'Enter your address',
+              questionResponse: true,
+              answerId: 1405,
+              otherDetails: 'SG14 3LB'
             })
           ])
         })

@@ -7,32 +7,6 @@ jest.mock('../../../server/utils/util', () => ({
   getJson: jest.fn()
 }))
 
-util.getJson.mockResolvedValue({
-  header: {
-    totalresults: 2
-  },
-  results: [
-    {
-      DPA: {
-        UPRN: '9051088093',
-        ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
-        POSTCODE: 'AB12 3DE',
-        X_COORDINATE: 394548.0,
-        Y_COORDINATE: 803010.0
-      }
-    },
-    {
-      DPA: {
-        UPRN: '9051088094',
-        ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
-        POSTCODE: 'AB12 3DE',
-        X_COORDINATE: 394542.0,
-        Y_COORDINATE: 803005.0
-      }
-    }
-  ]
-})
-
 const url = constants.routes.CREATE_A_REPORT
 
 const mockPayload = {
@@ -74,17 +48,47 @@ describe(url, () => {
       // Test for correct auth mock
       expect(response.payload).toContain('<p style="color: white; margin-top: 20px;">Smith, John  <a href="/signout" class="govuk-link govuk-link--inverse govuk-!-margin-top-1">Sign out</a></p>')
     })
+
+    it('Should show errors from session data if fails validation for address', async () => {
+      const sessionData = {
+        'create-a-report': {
+          locationOfIncident: 'address',
+          buildingDetails: '10',
+          postcodeDetails: 'abc'
+        },
+        'selected-address': 'test123'
+      }
+
+      const response = await submitGetRequest({ url }, null, 200, sessionData)
+      expect(response.payload).toContain('There is a problem')
+    })
+
+    it('Should show errors from session data if fails validation for grid ref', async () => {
+      const sessionData = {
+        'create-a-report': {
+          locationOfIncident: 'gridReference'
+        }
+      }
+
+      const response = await submitGetRequest({ url }, null, 200, sessionData)
+      expect(response.payload).toContain('There is a problem')
+    })
   })
 
   describe('POST', () => {
     it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT if valid session', async () => {
+      const sessionData = {
+        'selected-address': 'test123'
+      }
+
       const payload = getPayload()
+      payload.locationOfIncident = 'address'
       const options = {
         url,
         payload
       }
 
-      const response = await submitPostRequest(options)
+      const response = await submitPostRequest(options, 302, sessionData)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
     })
 
@@ -662,7 +666,163 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
     })
 
-    // FIXME: more tests in here
+    it('Happy: should look up address given', async () => {
+      util.getJson.mockResolvedValue({
+        header: {
+          totalresults: 2
+        },
+        results: [
+          {
+            DPA: {
+              UPRN: '8',
+              ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
+            }
+          },
+          {
+            DPA: {
+              UPRN: '9',
+              ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
+            }
+          }
+        ]
+      })
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'find-address'
+      payload.buildingDetails = '98'
+      payload.postcodeDetails = 'AB123DE'
+      const options = {
+        url,
+        payload
+      }
+
+      await submitPostRequest(options, 200)
+    })
+
+    it('Happy: should select chosen address', async () => {
+      const sessionData = {
+        'choose-address': {
+          resultsData: [
+            {
+              uprn: '1',
+              postcodeDetails: 'SG14 3LB',
+              address: '9, Watermill Lane, Hertford, SG14 3LB',
+              x: 100001,
+              y: 100001
+            },
+            {
+              uprn: '2',
+              postcodeDetails: 'SG14 3LB',
+              address: '10, Watermill Lane, Hertford, SG14 3LB',
+              x: 100002,
+              y: 100002
+            }
+          ]
+        }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'select-address'
+      payload.addressId = '2'
+      const options = {
+        url,
+        payload
+      }
+
+      await submitPostRequest(options, 200, sessionData)
+    })
+
+    it('Happy: should show address selection on change address button with saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'change-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="address" checked')
+      expect(response.payload).toContain('id="buildingDetails" name="buildingDetails" type="text" value="10"')
+      expect(response.payload).toContain('id="postcodeDetails" name="postcodeDetails" type="text" value="SG143LB"')
+    })
+
+    it('Happy: should show address selection on different address button without saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'different-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="address" checked')
+      expect(response.payload).toContain('class="govuk-input govuk-!-width-one-half" id="buildingDetails" name="buildingDetails" type="text" aria-describedby="buildingDetails-hint">')
+      expect(response.payload).toContain('class="govuk-input govuk-input--width-10" id="postcodeDetails" name="postcodeDetails" type="text" autocomplete="postal-code">')
+    })
+
+    it('Happy: should show grid ref radio on use grid ref button but keep saved address data', async () => {
+      const sessionData = {
+        'building-data': { buildingDetails: '10', postcodeDetails: 'SG143LB' }
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'use-grid-reference'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200, sessionData)
+      expect(response.payload).toContain('type="radio" value="gridReference" checked')
+      expect(response.payload).toContain('id="buildingDetails" name="buildingDetails" type="text" value="10"')
+      expect(response.payload).toContain('id="postcodeDetails" name="postcodeDetails" type="text" value="SG143LB"')
+    })
+
+    it('Sad: should fail validation and return error message for missing building number and postcode', async () => {
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'find-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('Enter a building number or name')
+      expect(response.payload).toContain('Enter a postcode')
+    })
+
+    it('Sad: should error if no address selected on select chosen address button', async () => {
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'select-address'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('Select an address')
+    })
 
     // Test for Date of incident tab
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
@@ -922,6 +1082,74 @@ describe(url, () => {
       const expectedPayload = {
         ...payload,
         nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts valid answer today for email report', async () => {
+      const date = new Date()
+      const day = date.getDate().toString()
+      const month = (date.getMonth() + 1).toString()
+      const year = date.getFullYear().toString()
+
+      const payload = getPayload()
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = day
+      payload.descriptionEmailReportDateMonth = month
+      payload.descriptionEmailReportDateYear = year
+      payload.descriptionEmailReportTime = '00:02'
+      payload.dateOtherDay = day
+      payload.dateOtherMonth = month
+      payload.dateOtherYear = year
+      payload.dateObserved = 'today'
+      payload.dateTime = '00:01'
+      const options = {
+        url,
+        payload
+      }
+
+      const expectedPayload = {
+        ...payload
+      }
+
+      const response = await submitPostRequest(options)
+      console.log(response.payload)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts valid answer yesterday', async () => {
+      const date = new Date()
+      const day = date.getDate().toString()
+      const month = (date.getMonth() + 1).toString()
+      const year = date.getFullYear().toString()
+      date.setDate(date.getDate() - 1)
+      const dayYest = date.getDate().toString()
+      const monthYest = (date.getMonth() + 1).toString()
+      const yearYest = date.getFullYear().toString()
+
+      const payload = getPayload()
+      payload.descriptionReportedByEmail = 'true'
+      payload.descriptionEmailReportDateDay = day
+      payload.descriptionEmailReportDateMonth = month
+      payload.descriptionEmailReportDateYear = year
+      payload.descriptionEmailReportTime = '00:02'
+      payload.dateOtherDay = dayYest
+      payload.dateOtherMonth = monthYest
+      payload.dateOtherYear = yearYest
+      payload.dateObserved = 'yesterday'
+      payload.dateTime = '10:00'
+      const options = {
+        url,
+        payload
+      }
+
+      const expectedPayload = {
+        ...payload,
+        dateTime: '10:00'
       }
 
       const response = await submitPostRequest(options)

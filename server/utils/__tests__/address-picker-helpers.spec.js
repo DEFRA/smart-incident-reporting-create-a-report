@@ -104,7 +104,7 @@ describe('address-picker-helpers', () => {
       expect(result).toEqual(addressData)
     })
 
-    it('Postcode result is cached by building number isn\'t so reuse postcode data', async () => {
+    it('Postcode result is cached but building number same isn\'t so reuse postcode data', async () => {
       const postcodeData = sessionDataMock[postcodeDetails]()
       const addressData = sessionDataMock[chooseAddress]()
       const sessionData = {
@@ -125,7 +125,7 @@ describe('address-picker-helpers', () => {
       expect(result).toEqual(addressData)
     })
 
-    it('No results in cached or API data, so return false to results found', async () => {
+    it('No results in cache or API data, so return false to results found', async () => {
       const addressData = sessionDataMock[chooseAddress]()
       const postcodeData = sessionDataMock[postcodeDetails]()
       postcodeData.header.totalresults = 0
@@ -145,7 +145,7 @@ describe('address-picker-helpers', () => {
       expect(result.resultsFound).toBe(false)
     })
 
-    it('No cached results, call OS API', async () => {
+    it('No cached results, call OS API with building number not correct', async () => {
       const sessionData = {}
       const session = {
         get: (key) => {
@@ -161,6 +161,75 @@ describe('address-picker-helpers', () => {
 
       const addressData = sessionDataMock[chooseAddress]()
       const result = await helpers.findAddresses(session, '100', 'SG14 3LB')
+      expect(result).toEqual(addressData)
+    })
+
+    it('No cached results, call OS API test duplicate UPRN', async () => {
+      const sessionData = {}
+      const session = {
+        get: (key) => {
+          return sessionData[key]
+        },
+        set: (key, value) => {
+          sessionData[key] = value
+        }
+      }
+
+      const postcodeData = sessionDataMock[postcodeDetails]()
+      postcodeData.results.push({
+        DPA: {
+          UPRN: '1',
+          ADDRESS: '9, WATERMILL LANE, HERTFORD, SG14 3LB',
+          POSTCODE: 'SG14 3LB',
+          X_COORDINATE: 100001,
+          Y_COORDINATE: 100001
+        }
+      })
+      findLocation.findByPostcode.mockResolvedValueOnce({ payload: postcodeData })
+
+      const addressData = sessionDataMock[chooseAddress]()
+      const result = await helpers.findAddresses(session, '100', 'SG14 3LB')
+      expect(result).toEqual(addressData)
+    })
+
+    it('No cached results, call OS API with matching building number', async () => {
+      const sessionData = {}
+      const session = {
+        get: (key) => {
+          return sessionData[key]
+        },
+        set: (key, value) => {
+          sessionData[key] = value
+        }
+      }
+
+      const postcodeData = sessionDataMock[postcodeDetails]()
+      findLocation.findByPostcode.mockResolvedValueOnce({ payload: postcodeData })
+
+      const addressData = {
+        resultsFound: true,
+        buildingDetails: '10',
+        postcodeDetails: 'SG14 3LB',
+        showFullResults: false,
+        resultsData: [
+          {
+            uprn: '2',
+            postcodeDetails: 'SG14 3LB',
+            address: '10, Watermill Lane, Hertford, SG14 3LB',
+            x: 100002,
+            y: 100002
+          }
+        ],
+        resultlength: 1,
+        addressItemsForView: [
+          {
+            value: '2',
+            text: '10, Watermill Lane, Hertford, SG14 3LB'
+          }
+        ]
+      }
+
+      const result = await helpers.findAddresses(session, '10', 'SG14 3LB')
       expect(result).toEqual(addressData)
     })
   })
