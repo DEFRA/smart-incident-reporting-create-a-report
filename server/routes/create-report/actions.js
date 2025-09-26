@@ -3,6 +3,7 @@ import { validateReportPayload, validateBuildingDataPayload, validateAddressSele
 import moment from 'moment'
 import { reportTypes } from '../../utils/report-types.js'
 import helpers from '../../utils/address-picker-helpers.js'
+import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
@@ -83,6 +84,16 @@ function checkReport (h, request, payloadData) {
       addressChosen
     })
   }
+
+  // Format time and store before redirection
+  const timeFields = ['dateTime', 'dateOtherTime']
+  for (const field of timeFields) {
+    if (payloadData[field]) {
+      const formattedTime = formatTime(payloadData[field], '24hr')
+      payloadData[field] = formattedTime
+    }
+  }
+  request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
   // redirect to check answers page
   return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
