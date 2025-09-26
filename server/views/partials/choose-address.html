@@ -1,0 +1,78 @@
+{% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set changeSearchButton %}
+  <p class="govuk-body">
+    <button type="submit" name="action" value="change-address" class="button-no-style govuk-link" data-module="govuk-button">
+      Change search
+    </button>          
+  </p>
+{% endset %}
+
+{% set noAddressFoundHtml %}  
+  <h1 class="govuk-heading-l">
+    No address found
+  </h1>  
+  <p class="govuk-body">
+    We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+  </p>
+  <p class="govuk-body">
+    Check you have entered the correct postcode.
+  </p>
+
+  {{ changeSearchButton | safe }}
+{% endset %}
+
+{% set radioHintHtml %}  
+  {{ changeSearchButton | safe }}
+    
+  {% if showFullResults %}
+    <p class="govuk-body">
+      We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+    </p>
+    <p class="govuk-body">
+      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ postcodeDetails }}</strong>.
+    </p>
+  {% else %}    
+    <p class="govuk-body">
+      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+    </p>
+  {% endif %}
+{% endset %}
+
+{% set addressFoundHtml %}
+  {{ govukRadios({
+    classes: "govuk-radios--small",
+    name: "addressId",
+    fieldset: {
+      legend: {
+        text: "Choose an address",
+        isPageHeading: true,
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    hint: {
+      html: radioHintHtml
+    },
+    items: addressItemsForView,
+    errorMessage: findErrorMessageById(errorSummary.location, 'addressId')
+  }) }}
+  
+  <button type="submit" name="action" value="select-address" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+    Use this address
+  </button>
+{% endset %}
+
+<div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">
+  <p class="govuk-body">
+    <button type="submit" name="action" value="use-grid-reference" class="button-no-style govuk-link" data-module="govuk-button">
+        Use a grid reference
+    </button>                  
+  </p>
+
+  {% if resultsFound %}
+    {{ addressFoundHtml | safe }}
+  {% else %}
+    {{ noAddressFoundHtml | safe }}
+  {% endif %}
+
+</div>

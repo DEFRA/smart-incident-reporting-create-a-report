@@ -12,6 +12,8 @@ const gridRefRegexWs = /^([STNHOstnho][A-Za-z]\s)(\d{5}\s\d{5})$/
 // Grid ref regex without spaces
 const gridRefRegexWos = /^([STNHOstnho][A-Za-z])(\d{5}\d{5})$/
 
+const postcodeRegExp = /^([A-Za-z][A-Ha-hJ-Yj-y]?\d[A-Za-z0-9]? ?\d[A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$/ // https://stackoverflow.com/a/51885364
+
 const phoneRegex = /^[\s\d-+()#]*$/
 
 const sirpSchema = JSON.parse(fs.readFileSync(`${dirname}/server/schemas/sirp-car-schema.json`))
@@ -81,6 +83,26 @@ const validateReportPayload = payload => {
   return errorSummary
 }
 
+const validateBuildingDataPayload = payload => {
+  const errorSummary = {
+    location: getErrorSummary()
+  }
+
+  // Tab validations
+  validateBuildingData(payload, errorSummary.location)
+  return errorSummary
+}
+
+const validateAddressSelectionPayload = payload => {
+  const errorSummary = {
+    location: getErrorSummary()
+  }
+
+  // Tab validations
+  validateAddressSelection(payload, errorSummary.location)
+  return errorSummary
+}
+
 const validateDescriptionTab = (payload, errorSummary) => {
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
@@ -147,18 +169,74 @@ const validateReporterTab = (payload, errorSummary) => {
 
 const validateLocationTab = (payload, errorSummary) => {
   // Do location validation
-  if (!payload.locationGridRef) {
+  if (!payload.locationOfIncident) {
     errorSummary.errorList.push({
-      text: 'Enter a national grid reference',
-      href: '#locationGridRef'
+      text: 'Select how you want to give a location',
+      href: '#locationOfIncident'
     })
-  } else if (!validateGridReference(payload.locationGridRef)) {
+  }
+
+  if (payload.locationOfIncident === 'gridReference') {
+    if (!payload.locationGridRef) {
+      errorSummary.errorList.push({
+        text: 'Enter a national grid reference',
+        href: '#locationGridRef'
+      })
+    } else if (!validateGridReference(payload.locationGridRef)) {
+      errorSummary.errorList.push({
+        text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
+        href: '#locationGridRef'
+      })
+    } else {
+      // do nothing
+    }
+  }
+
+  if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
+    validateBuildingData(payload, errorSummary)
+
+    if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
+      errorSummary.errorList.push({
+        text: 'Select an address',
+        href: '#addressId'
+      })
+    }
+  }
+}
+
+const validateBuildingData = (payload, errorSummary) => {
+  if (payload.locationOfIncident === 'address') {
+    if (!payload.buildingDetails) {
+      errorSummary.errorList.push({
+        text: 'Enter a building number or name',
+        href: '#buildingDetails'
+      })
+    }
+
+    const postcodeDetails = '#postcodeDetails'
+
+    if (!payload.postcodeDetails) {
+      errorSummary.errorList.push({
+        text: 'Enter a postcode',
+        href: postcodeDetails
+      })
+    } else if (!postcodeRegExp.test(payload.postcodeDetails)) {
+      errorSummary.errorList.push({
+        text: 'Enter a full postcode, for example W1 8QS',
+        href: postcodeDetails
+      })
+    } else {
+      // do nothing
+    }
+  }
+}
+
+const validateAddressSelection = (payload, errorSummary) => {
+  if (!payload.addressId) {
     errorSummary.errorList.push({
-      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
-      href: '#locationGridRef'
+      text: 'Select an address',
+      href: '#addressId'
     })
-  } else {
-    // do nothing
   }
 }
 
@@ -420,6 +498,8 @@ export {
   validatePayload,
   validateEmail,
   validateReportPayload,
+  validateBuildingDataPayload,
+  validateAddressSelectionPayload,
   validateGridReference,
   formatGridReference
 }

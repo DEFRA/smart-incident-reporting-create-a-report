@@ -4,6 +4,8 @@ import { validatePayload, validateReportPayload, formatGridReference, getErrorSu
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
 import { ngrToEaNo, eaNoToLatLng } from '../utils/ngr-transform.js'
+import bngToNgr from '../utils/bng-to-ngr.js'
+import { oSGBToWGS84 } from '../utils/transform-point.js'
 import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 
@@ -32,6 +34,32 @@ const incidentLocationQuestion = {
         answerId: 2705
       }
     }
+  },
+  LOCATION_ADDRESS: {
+    questionId: 1400,
+    text: 'Enter your address',
+    answers: {
+      addressLine1: {
+        answerId: 1401,
+        text: 'Address line 1'
+      },
+      addressLine2: {
+        answerId: 1402,
+        text: 'Address line 2 (optional)'
+      },
+      townOrCity: {
+        answerId: 1403,
+        text: 'Town or city'
+      },
+      county: {
+        answerId: 1404,
+        text: 'County (optional)'
+      },
+      postcode: {
+        answerId: 1405,
+        text: 'Postcode'
+      }
+    }
   }
 }
 
@@ -41,6 +69,7 @@ const showMessage = config.showNonLiveMessage
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
+    const selectedAddress = constructAddress(request)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
     if (!reportPayload ||
       errorSummary.description.errorList.length > 0 ||
@@ -62,7 +91,8 @@ const handlers = {
       ...reportPayload,
       reportTypes,
       ngrValue,
-      incidentCategories
+      incidentCategories,
+      selectedAddress
     })
   },
   post: async (request, h) => {
@@ -129,6 +159,7 @@ const validateIncidentCategory = (answerId, answerDetails) => {
 
 const buildPayload = (session, operatorDetails) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
+  const selectedAddress = session.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
   const { answerId, answerDetails } = session.get(constants.redisKeys.CHECK_AND_SUBMIT_REPORT)
   let datetimeEmailReported
   if (reportPayload.descriptionReportedByEmail) {
@@ -171,19 +202,19 @@ const buildPayload = (session, operatorDetails) => {
       reasonForCategorisation: answerDetails,
       loggedByDisplayName: operatorDetails.raw.displayName,
       loggedByUserPrincipalName: operatorDetails.raw.userPrincipalName,
-      data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions)
+      data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions, selectedAddress)
     }
   }
 
   return payload
 }
 
-const buildAnswersData = (reportPayload, questions) => {
+const buildAnswersData = (reportPayload, questions, selectedAddress) => {
   return [
     ...buildReportedByEmailAnswer(reportPayload, questions),
     ...buildPhotosOrVideosAnswer(reportPayload, questions),
     ...buildReporterTypeAnswers(reportPayload, questions),
-    ...buildIncidentLocationAnswers(reportPayload)
+    ...buildIncidentLocationAnswers(reportPayload, selectedAddress)
   ]
 }
 
@@ -248,14 +279,9 @@ const buildReporterTypeAnswers = (reportPayload, questions) => {
   return results
 }
 
-const buildIncidentLocationAnswers = (reportPayload) => {
+const buildIncidentLocationAnswersGridRef = (reportPayload, baseAnswer, question) => {
   const results = []
-  const question = incidentLocationQuestion.INCIDENT_LOCATION
-  const baseAnswer = {
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true
-  }
+
   const gridref = formatGridReference(reportPayload.locationGridRef)
   const eaNoCoordinates = ngrToEaNo(gridref)
   const latLngCoordinates = eaNoToLatLng(eaNoCoordinates)
@@ -299,6 +325,99 @@ const buildIncidentLocationAnswers = (reportPayload) => {
   return results
 }
 
+const buildIncidentLocationAnswersAddress = (baseAnswer, selectedAddress) => {
+  const results = []
+
+  const point = [selectedAddress[0].x, selectedAddress[0].y]
+  const ngr = bngToNgr(point).text
+  const lngLat = oSGBToWGS84(point)
+  const six = 6
+
+  results.push({
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
+    otherDetails: ngr
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+    otherDetails: Math.floor(point[0]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+    otherDetails: Math.floor(point[1]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+    otherDetails: lngLat[0].toFixed(six)
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+    otherDetails: lngLat[1].toFixed(six)
+  })
+
+  // Build answers for address
+  const baseLocationAddressAnswer = {
+    questionId: incidentLocationQuestion.LOCATION_ADDRESS.questionId,
+    questionAsked: incidentLocationQuestion.LOCATION_ADDRESS.text,
+    questionResponse: true
+  }
+  const addressData = selectedAddress[0].address
+  const { addressLine1, townOrCity, postcode } = formatAddress(addressData)
+
+  results.push({
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine1.answerId,
+    otherDetails: addressLine1
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine2.answerId,
+    otherDetails: ''
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.townOrCity.answerId,
+    otherDetails: townOrCity
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.county.answerId,
+    otherDetails: ''
+  },
+  {
+    ...baseLocationAddressAnswer,
+    answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.postcode.answerId,
+    otherDetails: postcode
+  })
+
+  return results
+}
+
+const buildIncidentLocationAnswers = (reportPayload, selectAddress) => {
+  const question = incidentLocationQuestion.INCIDENT_LOCATION
+  const baseAnswer = {
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true
+  }
+
+  let results
+
+  if (reportPayload.locationOfIncident === 'gridReference') {
+    results = buildIncidentLocationAnswersGridRef(reportPayload, baseAnswer, question)
+  }
+
+  if (reportPayload.locationOfIncident === 'address') {
+    results = buildIncidentLocationAnswersAddress(baseAnswer, selectAddress)
+  }
+
+  return results
+}
+
 const getOrganisationAnswer = (question, baseAnswer, isWater) => {
   return {
     ...baseAnswer,
@@ -313,6 +432,29 @@ const getNameAnswer = (question, baseAnswer, isWater, payload) => {
     answerId: question.answers.name.answerId,
     otherDetails: isWater ? payload.reporterWaterName : payload.reporterOtherName
   }
+}
+
+const formatAddress = (address) => {
+  const addressParts = address.split(',')
+  const n = 2
+  const addressLine1 = addressParts.slice(0, -n).join()
+  const townOrCity = addressParts[addressParts.length - 2].trimStart()
+  const postcode = addressParts[addressParts.length - 1].trimStart()
+
+  return {
+    addressLine1,
+    townOrCity,
+    postcode
+  }
+}
+
+const constructAddress = (request) => {
+  const selectedAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
+  let address
+  if (selectedAddress) {
+    address = `${selectedAddress.addressLine1}<br>${selectedAddress.townOrCity}<br>${selectedAddress.postcode}`
+  }
+  return address
 }
 
 export default [

@@ -204,7 +204,7 @@
       card: {
       classes: "govuk-!-margin-bottom-6",
         title: {
-          text: "Location"
+          text: "Location of incident"
         },
         actions: {
           items: [
@@ -224,7 +224,7 @@
           value: {
             text: ngrValue
           }
-        },
+        } if (locationOfIncident == "gridReference"),
         {
           key: {
             text: "Location description"
@@ -232,8 +232,15 @@
           value: {
             text: locationDescription
           }
-        } if locationDescription
-  
+        } if (locationOfIncident == "gridReference") and (locationDescription),
+        {
+          key: {
+            text: "Address"
+          },
+          value: {
+            html: selectedAddress
+          }
+        } if (locationOfIncident == "address")
       ]
     }) }}
   

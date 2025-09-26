@@ -12,6 +12,7 @@ const otherDateInput = document.getElementById('dateObserved-4')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
+
 const three = 3
 const five = 5
 
