@@ -19,7 +19,8 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     payloadData.nowTime = currentTime
 
     // clear other payload time/date data
-    payloadData.dateTime = ''
+    payloadData.dateTimeToday = ''
+    payloadData.dateTimeYesterday = ''
     payloadData.dateOtherDay = ''
     payloadData.dateOtherMonth = ''
     payloadData.dateOtherYear = ''
@@ -86,7 +87,7 @@ function checkReport (h, request, payloadData) {
   }
 
   // Format time and store before redirection
-  const timeFields = ['dateTime', 'dateOtherTime']
+  const timeFields = ['dateTimeToday', 'dateTimeYesterday', 'dateOtherTime']
   for (const field of timeFields) {
     if (payloadData[field]) {
       const formattedTime = formatTime(payloadData[field], '24hr')

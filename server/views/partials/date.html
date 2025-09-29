@@ -18,109 +18,128 @@
   </div>
 </div>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-quarter">
-    {{ govukRadios({
-      classes: "govuk-radios--small",
-      name: "dateObserved",
-      id: "dateObserved",
-      errorMessage: findErrorMessageById(errorSummary.date, "dateObserved"),
-      items: [
-        {
-          checked: dateObserved === 'now',
-          value: "now",
-          text: "Now"
-        },
-        {
-          checked: dateObserved === 'today',
-          value: "today",
-          text: "Today"
-        },
-        {
-          checked: dateObserved === 'yesterday',
-          value: "yesterday",
-          text: "Yesterday"
-        },
-        {
-          checked: dateObserved === 'before',
-          value: "before",
-          text: "Before then"
+<div class="govuk-grid-row govuk-!-margin-left-0">
+  {% set dateTimeTodayHtml %}
+  {{ govukInput({
+    id: "dateTimeToday",
+    name: "dateTimeToday",
+    classes: "govuk-input--width-5",
+    value: dateTimeToday,
+    errorMessage: findErrorMessageById(errorSummary.date, "dateTimeToday"),
+    label: {
+      text: "Time (approximate)"
+    },
+    hint: {
+      text: "For example, 09:30 or 18:45."
+    },
+    autocomplete: "off"
+  }) }}
+  {% endset %}
+
+  {% set dateTimeYesterdayHtml %}
+  {{ govukInput({
+    id: "dateTimeYesterday",
+    name: "dateTimeYesterday",
+    classes: "govuk-input--width-5",
+    value: dateTimeYesterday,
+    errorMessage: findErrorMessageById(errorSummary.date, "dateTimeYesterday"),
+    label: {
+      text: "Time (approximate)"
+    },
+    hint: {
+      text: "For example, 09:30 or 18:45."
+    },
+    autocomplete: "off"
+  }) }}
+  {% endset %}
+
+  {% set otherDateTimeHtml %}
+  {{ govukDateInput({
+    id: "dateOther",
+    fieldset: {
+      legend: {
+        text: "Date",
+        classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
+      }
+    },
+    errorMessage: findErrorMessageById(errorSummary.date, "dateOther"),
+    items: [
+      {
+        name: "dateOtherDay",
+        id: "dateOtherDay",
+        label: "Day",
+        value: dateOtherDay,
+        classes: "govuk-input--width-2"
+      },
+      {
+        name: "dateOtherMonth",
+        id: "dateOtherMonth",
+        label: "Month",
+        value: dateOtherMonth,
+        classes: "govuk-input--width-2"
+      },
+      {
+        name: "dateOtherYear",
+        id: "dateOtherYear",
+        label: "Year",
+        value: dateOtherYear,
+        classes: "govuk-input--width-4"
+      }
+    ]    
+  }) }}
+
+  {{ govukInput({
+    id: "dateOtherTime",
+    name: "dateOtherTime",
+    classes: "govuk-input--width-5",
+    value: dateOtherTime,
+    errorMessage: findErrorMessageById(errorSummary.date, "dateOtherTime"),
+    autocomplete: "off",
+    label: {
+      text: "Time",
+      classes: "govuk-fieldset__legend--s"
+    },
+    hint: {
+      text: "For example, 09:30 or 18:45."
+    }
+  }) }}
+  {% endset %}
+
+  {{ govukRadios({
+    classes: "govuk-radios--small",
+    name: "dateObserved",
+    id: "dateObserved",
+    errorMessage: findErrorMessageById(errorSummary.date, "dateObserved"),
+    items: [
+      {
+        checked: dateObserved === 'now',
+        value: "now",
+        text: "Now"
+      },
+      {
+        checked: dateObserved === 'today',
+        value: "today",
+        text: "Today",
+        conditional: {
+          html: dateTimeTodayHtml
         }
-      ]
-    }) }}
-  </div>
-  <div class="govuk-grid-column-three-quarters">
-
-    <div id="timeInput" style="display: none;">
-      <div class="govuk-!-padding-top-3"></div>
-      {{ govukInput({
-        id: "dateTime",
-        name: "dateTime",
-        classes: "govuk-input--width-5",
-        value: dateTime,
-        errorMessage: findErrorMessageById(errorSummary.date, "dateTime"),
-        label: {
-          text: "Time (approximate)"
-        },
-        hint: {
-          text: "For example, 09:30 or 18:45."
-        },
-        autocomplete: "off"
-      }) }}
-    </div>
-
-    <div id="otherDateTimeInput" style="display: none;">
-      {{ govukDateInput({
-        id: "dateOther",
-        fieldset: {
-          legend: {
-            text: "Date",
-            classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
-          }
-        },
-        errorMessage: findErrorMessageById(errorSummary.date, "dateOther"),
-        items: [
-          {
-            name: "dateOtherDay",
-            id: "dateOtherDay",
-            label: "Day",
-            value: dateOtherDay,
-            classes: "govuk-input--width-2"
-          },
-          {
-            name: "dateOtherMonth",
-            id: "dateOtherMonth",
-            label: "Month",
-            value: dateOtherMonth,
-            classes: "govuk-input--width-2"
-          },
-          {
-            name: "dateOtherYear",
-            id: "dateOtherYear",
-            label: "Year",
-            value: dateOtherYear,
-            classes: "govuk-input--width-4"
-          }
-        ]    
-      }) }}
-
-      {{ govukInput({
-        id: "dateOtherTime",
-        name: "dateOtherTime",
-        classes: "govuk-input--width-5",
-        value: dateOtherTime,
-        errorMessage: findErrorMessageById(errorSummary.date, "dateOtherTime"),
-        autocomplete: "off",
-        label: {
-          text: "Time",
-          classes: "govuk-fieldset__legend--s"
-        },
-        hint: {
-          text: "For example, 09:30 or 18:45."
+      },
+      {
+        checked: dateObserved === 'yesterday',
+        value: "yesterday",
+        text: "Yesterday",
+        conditional: {
+          html: dateTimeYesterdayHtml
         }
-      }) }}
-
-    </div>
-
-  </div>
+      },
+      {
+        checked: dateObserved === 'before',
+        value: "before",
+        text: "Before then",
+        conditional: {
+          html: otherDateTimeHtml
+        }
+      }
+    ]
+  }) }}
 </div>
