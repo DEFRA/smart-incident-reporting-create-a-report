@@ -87,7 +87,7 @@ function checkReport (h, request, payloadData) {
   }
 
   // Format time and store before redirection
-  const timeFields = ['dateTimeToday', 'dateTimeYesterday', 'dateOtherTime']
+  const timeFields = ['dateTimeToday', 'dateTimeYesterday', 'dateOtherTime', 'descriptionEmailReportTime']
   for (const field of timeFields) {
     if (payloadData[field]) {
       const formattedTime = formatTime(payloadData[field], '24hr')
