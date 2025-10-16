@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import constants from './constants.js'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
@@ -20,7 +20,7 @@ const phoneRegex = /^[\s\d-+()#]*$/
 const sirpSchema = JSON.parse(fs.readFileSync(`${dirname}/server/schemas/sirp-car-schema.json`))
 
 const getErrorSummary = () => {
-  return JSON.parse(JSON.stringify(constants.errorSummary))
+  return structuredClone(constants.errorSummary)
 }
 
 const validatePayload = (payload) => {
