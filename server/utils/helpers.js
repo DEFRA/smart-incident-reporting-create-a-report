@@ -5,6 +5,7 @@ import addFormats from 'ajv-formats'
 import dirname from '../../dirname.cjs'
 import moment from 'moment'
 import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
+import { validateEmail } from '@defra/sir-app-library'
 
 // Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 // Grid ref regex with spaces
@@ -31,39 +32,6 @@ const validatePayload = (payload) => {
     console.error(ajv.errors)
   }
   return valid
-}
-
-const validateEmail = email => {
-  const maxLength = 255
-  const domainPartMaxLength = 63
-  const tester = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/
-  // https://en.wikipedia.org/wiki/Email_address  The format of an email address is local-part@domain, where the
-  // local part may be up to 64 octets long and the domain may have a maximum of 255 octets.
-  if (!email || email.length === 0 || email.length > maxLength) {
-    return false
-  }
-
-  const emailParts = email.split('@')
-
-  if (emailParts.length !== 2 || !tester.test(email)) {
-    return false
-  }
-
-  const account = emailParts[0]
-  const address = emailParts[1]
-  if (account.length > 64 || address.length > maxLength) {
-    return false
-  }
-
-  const domainParts = address.split('.')
-
-  // https://en.wikipedia.org/wiki/Email_address#Domain
-  // It must match the requirements for a hostname, a list of dot-separated DNS labels, each label being limited to a length of 63 characters
-  const domainIssue = domainParts.some(part => {
-    return part.length > domainPartMaxLength
-  })
-
-  return !domainIssue
 }
 
 const validateReportPayload = payload => {
@@ -490,7 +458,6 @@ const formatGridReference = gridRef => {
 export {
   getErrorSummary,
   validatePayload,
-  validateEmail,
   validateReportPayload,
   validateBuildingDataPayload,
   validateAddressSelectionPayload,

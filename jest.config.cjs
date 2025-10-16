@@ -1,6 +1,6 @@
 module.exports = {
   transformIgnorePatterns: [
-    'node_modules/(?!(@defra/smart-incident-reporting)/)'
+    'node_modules/(?!(@defra/smart-incident-reporting|@defra/sir-app-library)/)'
   ],
   collectCoverage: true,
   coverageReporters: [
