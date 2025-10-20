@@ -176,14 +176,19 @@ const buildPayload = (session, operatorDetails) => {
   } else if (reportPayload.dateObserved === 'before') {
     const dateTimeString = `${reportPayload.dateOtherYear?.padStart(2, '0')}-${reportPayload.dateOtherMonth?.padStart(2, '0')}-${reportPayload.dateOtherDay} ${reportPayload.dateOtherTime}`
     dateTimeObserved = new Date(dateTimeString).toISOString()
-  } else {
-    if (reportPayload.dateObserved === 'yesterday') {
-      date.setDate(date.getDate() - 1)
-    }
-    const timeParts = reportPayload.dateTime.split(':')
+  } else if (reportPayload.dateObserved === 'yesterday') {
+    const timeParts = reportPayload.dateTimeYesterday.split(':')
+    date.setDate(date.getDate() - 1)
     date.setHours(timeParts[0]?.padStart(2, '0'))
     date.setMinutes(timeParts[1]?.padStart(2, '0'))
     dateTimeObserved = date.toISOString()
+  } else if (reportPayload.dateObserved === 'today') {
+    const timeParts = reportPayload.dateTimeToday.split(':')
+    date.setHours(timeParts[0]?.padStart(2, '0'))
+    date.setMinutes(timeParts[1]?.padStart(2, '0'))
+    dateTimeObserved = date.toISOString()
+  } else {
+    // do nothing
   }
 
   const payload = {

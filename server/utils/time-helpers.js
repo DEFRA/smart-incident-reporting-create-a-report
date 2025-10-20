@@ -3,8 +3,8 @@ const INVALID = 'INVALID_TIME_FORMAT'
 // Normalize input separators to colon
 const normalizeSeparators = (str) => {
   return str
-    .replace(/[;.\-]/g, ':')  // Replace ; . - with :
-    .replace(/\s+/g, '')      // Remove all spaces
+    .replace(/[;.-]/g, ':') // Replace ; . - with :
+    .replace(/\s+/g, '') // Remove all spaces
 }
 
 // Parse time string into hours and minutes

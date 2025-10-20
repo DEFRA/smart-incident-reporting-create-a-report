@@ -18,7 +18,8 @@ const sessionData = {
     dateOtherMonth: '12',
     dateOtherTime: '09:00',
     dateOtherYear: '2024',
-    dateTime: '',
+    dateTimeToday: '',
+    dateTimeYesterday: '',
     descriptionDescription: 'Incident description',
     descriptionEmailReportDateDay: '03',
     descriptionEmailReportDateMonth: '12',
@@ -665,7 +666,7 @@ describe(url, () => {
     it('Date set to today', async () => {
       const today = new Date(new Date().toDateString())
       sessionData['create-a-report'].dateObserved = 'today'
-      sessionData['create-a-report'].dateTime = '00:00'
+      sessionData['create-a-report'].dateTimeToday = '00:00'
       sessionData['create-a-report'].descriptionEmailReportDateDay = today.getDate().toString()
       sessionData['create-a-report'].descriptionEmailReportDateMonth = (today.getMonth() + 1).toString()
       sessionData['create-a-report'].descriptionEmailReportDateYear = today.getFullYear().toString()
@@ -702,7 +703,7 @@ describe(url, () => {
       const yesterday = new Date(new Date().toDateString())
       yesterday.setDate(yesterday.getDate() - 1)
       sessionData['create-a-report'].dateObserved = 'yesterday'
-      sessionData['create-a-report'].dateTime = '00:00'
+      sessionData['create-a-report'].dateTimeYesterday = '00:00'
       sessionData['create-a-report'].descriptionEmailReportDateDay = yesterday.getDate().toString()
       sessionData['create-a-report'].descriptionEmailReportDateMonth = (yesterday.getMonth() + 1).toString()
       sessionData['create-a-report'].descriptionEmailReportDateYear = yesterday.getFullYear().toString()

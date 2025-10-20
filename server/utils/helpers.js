@@ -4,7 +4,7 @@ import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import dirname from '../../dirname.cjs'
 import moment from 'moment'
-import { formatTime24hr } from '../../utils/time-helpers.js'
+import { formatTime24hr } from './time-helpers.js'
 
 // Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 // Grid ref regex with spaces
