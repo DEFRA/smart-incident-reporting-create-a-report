@@ -40,7 +40,9 @@ const formatOutput24hr = (hours, minutes) => {
 // Main function
 const formatTime24hr = (input) => {
   const raw = String(input).trim()
-  if (!raw) return INVALID
+  if (!raw) {
+    return INVALID
+  }
 
   // Normalize separators
   const normalized = normalizeSeparators(raw)
@@ -52,11 +54,15 @@ const formatTime24hr = (input) => {
 
   // Parse time
   const parsed = parseHourMinuteSimple(normalized)
-  if (!parsed) return INVALID
+  if (!parsed) {
+    return INVALID
+  }
 
   // Validate time
   const validated = validate24HrTime(parsed.hours, parsed.minutes)
-  if (!validated) return INVALID
+  if (!validated) {
+    return INVALID
+  }
 
   // Format and return
   return formatOutput24hr(validated.hours, validated.minutes)
