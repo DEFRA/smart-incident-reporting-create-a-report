@@ -1,5 +1,9 @@
 const INVALID = 'INVALID_TIME_FORMAT'
 
+// ---- Constants (avoid magic numbers) ----
+const MINUTES_MAX = 59
+const HOUR_24_MAX = 23
+
 // Normalize input separators to colon
 const normalizeSeparators = (str) => {
   return str
@@ -23,8 +27,8 @@ const parseHourMinuteSimple = (str) => {
 // Validate time in 24hr format
 const validate24HrTime = (hours, minutes) => {
   if (
-    hours < 0 || hours > 23 ||
-    minutes < 0 || minutes > 59
+    hours < 0 || hours > HOUR_24_MAX ||
+    minutes < 0 || minutes > MINUTES_MAX
   ) {
     return null
   }
