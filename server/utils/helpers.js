@@ -4,7 +4,7 @@ import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 import dirname from '../../dirname.cjs'
 import moment from 'moment'
-import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
+import { formatTime24hr } from './time-helpers.js'
 
 // Based on OS Grid ref regex: https://gist.github.com/simonjgreen/44739fe52a8b68d8128e1237f8b3dfcd
 // Grid ref regex with spaces
@@ -252,15 +252,19 @@ const validateDateTab = (payload, errorSummary) => {
     // Set dates for today and yesterday options
     if (payload.dateObserved !== 'before') {
       dateHref = dateObservedRef
-      timeHref = '#dateTime'
       const date = new Date()
+      if (payload.dateObserved === 'today') {
+        timeHref = '#dateTimeToday'
+        time = payload.dateTimeToday
+      }
       if (payload.dateObserved === 'yesterday') {
+        timeHref = '#dateTimeYesterday'
+        time = payload.dateTimeYesterday
         date.setDate(date.getDate() - 1)
       }
       day = date.getDate().toString()
       month = (date.getMonth() + 1).toString()
       year = date.getFullYear().toString()
-      time = payload.dateTime
     } else {
       dateHref = '#dateOther'
       timeHref = '#dateOtherTime'
@@ -352,7 +356,7 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
     return
   }
 
-  const formattedTime = formatTime(dateparts.time, '24hr')
+  const formattedTime = formatTime24hr(dateparts.time)
   const validTimeFormat = formattedTime !== 'INVALID_TIME_FORMAT'
 
   let dateString
@@ -452,9 +456,9 @@ const validateDateofIncident = (payload, errorSummary) => {
     if (payload.dateObserved === 'now') {
       dateTimeOfIncident = `${year}-${month}-${day} ${payload.nowTime}`
     } else if (payload.dateObserved === 'today') {
-      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTime}`
+      dateTimeOfIncident = `${year}-${month}-${day} ${payload.dateTimeToday}`
     } else if (payload.dateObserved === 'yesterday') {
-      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTime}`
+      dateTimeOfIncident = `${year}-${month}-${day - 1} ${payload.dateTimeYesterday}`
     } else if (payload.dateObserved === 'before') {
       dateTimeOfIncident = `${payload.dateOtherYear}-${payload.dateOtherMonth?.padStart(2, '0')}-${payload.dateOtherDay?.padStart(2, '0')} ${payload.dateOtherTime}`
     } else {

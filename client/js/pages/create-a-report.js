@@ -3,36 +3,12 @@ import accessibleAutocomplete from 'accessible-autocomplete'
 const toggleIncidentTypesButton = document.querySelector('#toggle-incident-types')
 const incidentInputs = document.querySelectorAll('input[id^="descriptionIncidentType"]')
 const divider = document.querySelector('.govuk-radios__divider')
-const timeInput = document.getElementById('timeInput')
-const otherDateTimeInput = document.getElementById('otherDateTimeInput')
-const nowDateInput = document.getElementById('dateObserved')
-const todayDateInput = document.getElementById('dateObserved-2')
-const yesterdayDateInput = document.getElementById('dateObserved-3')
-const otherDateInput = document.getElementById('dateObserved-4')
 const errorSummaries = document.getElementsByClassName('govuk-error-summary')
 const tabPanels = document.getElementsByClassName('govuk-tabs__panel')
 const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
 
 const three = 3
 const five = 5
-
-// Events
-toggleIncidentTypesButton.addEventListener('click', (e) => {
-  e.preventDefault()
-  toggleIncidentTypes()
-})
-nowDateInput.addEventListener('change', () => {
-  toggleDate()
-})
-todayDateInput.addEventListener('change', () => {
-  toggleDate()
-})
-yesterdayDateInput.addEventListener('change', () => {
-  toggleDate()
-})
-otherDateInput.addEventListener('change', () => {
-  toggleDate()
-})
 
 // funcs
 const toggleIncidentTypes = () => {
@@ -44,24 +20,6 @@ const toggleIncidentTypes = () => {
   })
   divider.style.display = hideIncidents ? 'none' : ''
   toggleIncidentTypesButton.innerText = toggleIncidentTypesButton.innerText.replace(hideIncidents ? 'Hide' : 'Show', hideIncidents ? 'Show' : 'Hide')
-}
-
-const toggleDate = () => {
-  if (nowDateInput.checked) {
-    timeInput.style.display = 'none'
-    otherDateTimeInput.style.display = 'none'
-  } else if (todayDateInput.checked) {
-    timeInput.style.display = 'block'
-    otherDateTimeInput.style.display = 'none'
-  } else if (yesterdayDateInput.checked) {
-    timeInput.style.display = 'block'
-    otherDateTimeInput.style.display = 'none'
-  } else if (otherDateInput.checked) {
-    timeInput.style.display = 'none'
-    otherDateTimeInput.style.display = 'block'
-  } else {
-    // do nothing
-  }
 }
 
 const showFirstErrorTab = () => {
@@ -91,7 +49,6 @@ window.addEventListener('load', () => {
   if (!showIncidentTypes()) {
     toggleIncidentTypes()
   }
-  toggleDate()
 })
 
 const selectEl = document.querySelector('#reporterWaterName')
