@@ -10,6 +10,11 @@ const tabListItems = document.getElementsByClassName('govuk-tabs__list-item')
 const three = 3
 const five = 5
 
+toggleIncidentTypesButton.addEventListener('click', (e) => {
+  e.preventDefault()
+  toggleIncidentTypes()
+})
+
 // funcs
 const toggleIncidentTypes = () => {
   const hideIncidents = toggleIncidentTypesButton.innerText.indexOf('Hide') > -1
