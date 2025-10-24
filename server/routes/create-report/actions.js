@@ -3,7 +3,7 @@ import { validateReportPayload, validateBuildingDataPayload, validateAddressSele
 import moment from 'moment'
 import { reportTypes } from '../../utils/report-types.js'
 import helpers from '../../utils/address-picker-helpers.js'
-import { formatTime } from '@defra/smart-incident-reporting/server/utils/time-helpers.js'
+import { formatTime24hr } from '../../utils/time-helpers.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
@@ -19,7 +19,8 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     payloadData.nowTime = currentTime
 
     // clear other payload time/date data
-    payloadData.dateTime = ''
+    payloadData.dateTimeToday = ''
+    payloadData.dateTimeYesterday = ''
     payloadData.dateOtherDay = ''
     payloadData.dateOtherMonth = ''
     payloadData.dateOtherYear = ''
@@ -86,10 +87,10 @@ function checkReport (h, request, payloadData) {
   }
 
   // Format time and store before redirection
-  const timeFields = ['dateTime', 'dateOtherTime']
+  const timeFields = ['dateTimeToday', 'dateTimeYesterday', 'dateOtherTime', 'descriptionEmailReportTime']
   for (const field of timeFields) {
     if (payloadData[field]) {
-      const formattedTime = formatTime(payloadData[field], '24hr')
+      const formattedTime = formatTime24hr(payloadData[field])
       payloadData[field] = formattedTime
     }
   }

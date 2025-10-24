@@ -30,7 +30,8 @@ const mockPayload = {
   locationDescription: '',
   locationOfIncident: 'gridReference',
   dateObserved: 'now',
-  dateTime: '',
+  dateTimeToday: '',
+  dateTimeYesterday: '',
   dateOtherDay: '',
   dateOtherMonth: '',
   dateOtherYear: '',
@@ -411,27 +412,27 @@ describe(url, () => {
     it('Sad: should fail validation and return error message if dateobserved is today on date tab but no time', async () => {
       const payload = getPayload()
       payload.dateObserved = 'today'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
       const options = {
         url,
         payload
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
+      expect(response.payload).toContain('<a href="#dateTimeToday">Enter a time</a>')
     })
 
     it('Sad: should fail validation and return error message if dateobserved is yesterday on date tab but no time', async () => {
       const payload = getPayload()
       payload.dateObserved = 'yesterday'
-      payload.dateTime = ''
+      payload.dateTimeYesterday = ''
       const options = {
         url,
         payload
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateTime">Enter a time</a>')
+      expect(response.payload).toContain('<a href="#dateTimeYesterday">Enter a time</a>')
     })
 
     // Test for Reporter tab
@@ -828,7 +829,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but no day', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = ''
       payload.dateOtherMonth = '12'
       payload.dateOtherYear = '2024'
@@ -846,7 +848,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but no year', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '10'
       payload.dateOtherMonth = '12'
       payload.dateOtherYear = ''
@@ -864,7 +867,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but no month', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '10'
       payload.dateOtherMonth = ''
       payload.dateOtherYear = '2024'
@@ -882,7 +886,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but bad day', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '40'
       payload.dateOtherMonth = '12'
       payload.dateOtherYear = '2024'
@@ -900,7 +905,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but bad month', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '10'
       payload.dateOtherMonth = '15'
       payload.dateOtherYear = '2024'
@@ -918,7 +924,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but bad year', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '10'
       payload.dateOtherMonth = '12'
       payload.dateOtherYear = 'sdf'
@@ -936,7 +943,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before on date tab but bad date', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '31'
       payload.dateOtherMonth = '04'
       payload.dateOtherYear = '2024'
@@ -954,7 +962,8 @@ describe(url, () => {
     it('Sad: should fail validation if dateobserved is before but date is in future', async () => {
       const payload = getPayload()
       payload.dateObserved = 'before'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = '10'
       payload.dateOtherMonth = '04'
       payload.dateOtherYear = '2030'
@@ -1056,7 +1065,8 @@ describe(url, () => {
       payload.descriptionEmailReportTime = '08:00'
       payload.descriptionReportedByEmail = 'true'
       payload.dateObserved = 'now'
-      payload.dateTime = ''
+      payload.dateTimeToday = ''
+      payload.dateTimeYesterday = ''
       payload.dateOtherDay = ''
       payload.dateOtherMonth = ''
       payload.dateOtherYear = ''
@@ -1105,7 +1115,7 @@ describe(url, () => {
       payload.dateOtherMonth = month
       payload.dateOtherYear = year
       payload.dateObserved = 'today'
-      payload.dateTime = '00:01'
+      payload.dateTimeToday = '00:01'
       const options = {
         url,
         payload
@@ -1141,7 +1151,7 @@ describe(url, () => {
       payload.dateOtherMonth = monthYest
       payload.dateOtherYear = yearYest
       payload.dateObserved = 'yesterday'
-      payload.dateTime = '10:00'
+      payload.dateTimeYesterday = '10:00'
       const options = {
         url,
         payload
@@ -1149,7 +1159,7 @@ describe(url, () => {
 
       const expectedPayload = {
         ...payload,
-        dateTime: '10:00'
+        dateTimeYesterday: '10:00'
       }
 
       const response = await submitPostRequest(options)
