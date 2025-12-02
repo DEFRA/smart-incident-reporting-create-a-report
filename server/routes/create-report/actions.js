@@ -11,6 +11,11 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     payloadData.reporterPhotos = 'No'
   }
 
+  // Set default value for reporter's home address checkbox
+  if (!payloadData.reporterHomeAddress) {
+    payloadData.reporterHomeAddress = 'No'
+  }
+
   payloadData.addressChosen = !!addressChosen
 
   // Set time for date of incident - now

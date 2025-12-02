@@ -2,6 +2,7 @@
 {% from "dist/govuk/components/input/macro.njk" import govukInput %}
 {% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
+{% from "dist/govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% set grifReferenceHtml %}
   <div class="govuk-!-width-three-quarters">
@@ -34,14 +35,33 @@
   {% if addressChosen %}
     <div>
       <p class="govuk-body">
-        {{ addressLine1 }}<br />{{ townOrCity }}<br />{{ postcode }}
+        {{ addressLine1 }}<br />
+        {% if addressLine2 %}
+          {{ addressLine2 }}<br />
+        {% endif %}
+        {{ townOrCity }}<br />
+        {{ postcode }}
       </p>
       <p class="govuk-body govuk-!-margin-top-6">      
       <button type="submit" name="action" value="different-address" class="button-no-style govuk-link" data-module="govuk-button">
         Find a different addresss
       </button>
       </p>
-    </div>    
+    </div>
+
+    {{ govukCheckboxes({
+      classes: "govuk-checkboxes--small govuk-!-padding-top-6",
+      name: "reporterHomeAddress",
+      id: "reporterHomeAddress",
+      items: [
+        {
+          value: "Yes",
+          checked: reporterHomeAddress === 'Yes',
+          text: "This is the reporter's home address"
+        }
+      ]
+    }) }}
+
   {% else %}
     <div>
       {{ govukInput({
@@ -74,7 +94,8 @@
         Find address
       </button>
     </div>
-  {% endif %}  
+  {% endif %}
+
 {% endset %}
 
 <div class="govuk-grid-column-full govuk-!-padding-top-7 govuk-!-margin-left-0">

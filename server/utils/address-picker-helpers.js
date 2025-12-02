@@ -1,7 +1,7 @@
 import constants from './constants.js'
 import { findByPostcode } from '../services/find-location.js'
 
-const formatAddress = (address) => {
+/* const formatAddress = (address) => {
   const addressParts = address.split(',')
   const n = 2
   const addressLine1 = addressParts.slice(0, -n).join()
@@ -13,7 +13,46 @@ const formatAddress = (address) => {
     townOrCity,
     postcode
   }
+} */
+
+const formatAddress = (address) => {
+  const MAX_LINE_LENGTH = 60
+  const addressParts = address.split(',').map(p => p.trim())
+  const n = 2
+
+  const baseSegments = addressParts.slice(0, -n)
+  const townOrCity = addressParts[addressParts.length - 2]
+  const postcode = addressParts[addressParts.length - 1]
+
+  let addressLine1 = ''
+  let addressLine2 = ''
+
+  const joinSegment = (line, segment) => {
+    return line + (line ? ', ' : '') + segment
+  }
+
+  // Build addressLine1 and addressLine2 without splitting any segment
+  for (const segment of baseSegments) {
+    const nextLine = joinSegment(addressLine1, segment)
+
+    if (nextLine.length <= MAX_LINE_LENGTH) {
+      // add to line 1
+      addressLine1 = nextLine
+    } else {
+      // add to line 2
+      addressLine2 = joinSegment(addressLine2, segment)
+    }
+  }
+
+  return {
+    addressLine1,
+    addressLine2: addressLine2 || null,
+    townOrCity,
+    postcode
+  }
 }
+
+
 
 const findAddresses = async (session, buildingDetails, postcodeDetails) => {
   const cachedResult = session.get(constants.redisKeys.CHOOSE_ADDRESS)
