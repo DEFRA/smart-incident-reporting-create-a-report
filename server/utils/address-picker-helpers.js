@@ -1,20 +1,6 @@
 import constants from './constants.js'
 import { findByPostcode } from '../services/find-location.js'
 
-/* const formatAddress = (address) => {
-  const addressParts = address.split(',')
-  const n = 2
-  const addressLine1 = addressParts.slice(0, -n).join()
-  const townOrCity = addressParts[addressParts.length - 2].trimStart()
-  const postcode = addressParts[addressParts.length - 1].trimStart()
-
-  return {
-    addressLine1,
-    townOrCity,
-    postcode
-  }
-} */
-
 const formatAddress = (address) => {
   const MAX_LINE_LENGTH = 60
   const addressParts = address.split(',').map(p => p.trim())
