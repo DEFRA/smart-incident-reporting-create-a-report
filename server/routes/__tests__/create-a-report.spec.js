@@ -29,6 +29,7 @@ const mockPayload = {
   locationGridRef: 'SP 23916 82277',
   locationDescription: '',
   locationOfIncident: 'gridReference',
+  reporterHomeAddress: 'No',
   dateObserved: 'now',
   dateTimeToday: '',
   dateTimeYesterday: '',

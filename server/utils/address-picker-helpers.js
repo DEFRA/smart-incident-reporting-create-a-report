@@ -52,8 +52,6 @@ const formatAddress = (address) => {
   }
 }
 
-
-
 const findAddresses = async (session, buildingDetails, postcodeDetails) => {
   const cachedResult = session.get(constants.redisKeys.CHOOSE_ADDRESS)
 

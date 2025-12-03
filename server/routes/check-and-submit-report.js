@@ -345,26 +345,26 @@ const buildIncidentLocationAnswersAddress = (baseAnswer, selectedAddress) => {
     answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId,
     otherDetails: ngr
   },
-    {
-      ...baseAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
-      otherDetails: Math.floor(point[0]).toString()
-    },
-    {
-      ...baseAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
-      otherDetails: Math.floor(point[1]).toString()
-    },
-    {
-      ...baseAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
-      otherDetails: lngLat[0].toFixed(six)
-    },
-    {
-      ...baseAnswer,
-      answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
-      otherDetails: lngLat[1].toFixed(six)
-    })
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.easting.answerId,
+    otherDetails: Math.floor(point[0]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.northing.answerId,
+    otherDetails: Math.floor(point[1]).toString()
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId,
+    otherDetails: lngLat[0].toFixed(six)
+  },
+  {
+    ...baseAnswer,
+    answerId: incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId,
+    otherDetails: lngLat[1].toFixed(six)
+  })
 
   // Build answers for address
   const baseLocationAddressAnswer = {
