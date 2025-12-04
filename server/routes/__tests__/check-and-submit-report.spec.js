@@ -38,10 +38,12 @@ const sessionData = {
     reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes',
+    reporterHomeAddress: 'Yes',
     reporterRole: 'Jam'
   },
   'selected-address': {
     addressLine1: '10, Watermill Lane',
+    addressLine2: null, 
     townOrCity: 'Hertford',
     postcode: 'SG14 3LB'
   },
