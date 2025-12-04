@@ -16,6 +16,8 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     payloadData.reporterHomeAddress = 'No'
   } else if (payloadData.locationOfIncident === 'gridReference') {
     payloadData.reporterHomeAddress = ''
+  } else {
+    // do nothing
   }
 
   payloadData.addressChosen = !!addressChosen

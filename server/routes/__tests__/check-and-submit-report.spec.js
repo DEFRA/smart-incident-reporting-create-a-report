@@ -43,7 +43,7 @@ const sessionData = {
   },
   'selected-address': {
     addressLine1: '10, Watermill Lane',
-    addressLine2: null, 
+    addressLine2: null,
     townOrCity: 'Hertford',
     postcode: 'SG14 3LB'
   },
