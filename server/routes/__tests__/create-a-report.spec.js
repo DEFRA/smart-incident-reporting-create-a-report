@@ -29,6 +29,7 @@ const mockPayload = {
   locationGridRef: 'SP 23916 82277',
   locationDescription: '',
   locationOfIncident: 'gridReference',
+  reporterHomeAddress: '',
   dateObserved: 'now',
   dateTimeToday: '',
   dateTimeYesterday: '',
@@ -1163,6 +1164,48 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+    it('Happy: accepts and stores unchecked value of reporterHomeAddress as empty if gridReference is selected', async () => {
+      const payload = getPayload()
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: ''
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+    it('Happy: accepts and stores unchecked value of reporterHomeAddress as No if address is selected', async () => {
+      const sessionData = {
+        'selected-address': 'test123'
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.addressChosen = true
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'No'
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })

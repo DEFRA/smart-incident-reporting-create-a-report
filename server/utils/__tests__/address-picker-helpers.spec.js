@@ -76,6 +76,7 @@ describe('address-picker-helpers', () => {
     it('Formats normal address', () => {
       const result = helpers.formatAddress('10, Watermill Lane, Hertford, SG14 3LB')
       expect(result.addressLine1).toEqual('10, Watermill Lane')
+      expect(result.addressLine2).toEqual(null)
       expect(result.townOrCity).toEqual('Hertford')
       expect(result.postcode).toEqual('SG14 3LB')
     })
@@ -83,8 +84,17 @@ describe('address-picker-helpers', () => {
     it('Formats longer address', () => {
       const result = helpers.formatAddress('Spongeland, 10, Watermill Lane, Hertford, SG14 3LB')
       expect(result.addressLine1).toEqual('Spongeland, 10, Watermill Lane')
+      expect(result.addressLine2).toEqual(null)
       expect(result.townOrCity).toEqual('Hertford')
       expect(result.postcode).toEqual('SG14 3LB')
+    })
+
+    it('Formats extra long address into two lines', () => {
+      const result = helpers.formatAddress('Eaglestone Champion Ltd, Unit 95, The Industrial Quarter, Foxcote Avenue, Bristol Business Park, Peasedown St. John, Bristol, BS2 7EB')
+      expect(result.addressLine1).toEqual('Eaglestone Champion Ltd, Unit 95, The Industrial Quarter')
+      expect(result.addressLine2).toEqual('Foxcote Avenue, Bristol Business Park, Peasedown St. John')
+      expect(result.townOrCity).toEqual('Bristol')
+      expect(result.postcode).toEqual('BS2 7EB')
     })
   })
 

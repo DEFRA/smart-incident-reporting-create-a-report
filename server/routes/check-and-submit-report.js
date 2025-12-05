@@ -8,6 +8,7 @@ import bngToNgr from '../utils/bng-to-ngr.js'
 import { oSGBToWGS84 } from '../utils/transform-point.js'
 import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
+import helpers from '../utils/address-picker-helpers.js'
 
 // Incident location question
 const incidentLocationQuestion = {
@@ -199,6 +200,7 @@ const buildPayload = (session, operatorDetails) => {
       reporterPhoneNumber: reportPayload.reporterPhone,
       reporterReference: reportPayload.reporterReference,
       reportType: Number(reportPayload.descriptionIncidentType),
+      reporterHomeAddress: reportPayload.reporterHomeAddress,
       datetimeObserved: dateTimeObserved,
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
       otherDetails: reportPayload.descriptionDescription,
@@ -371,7 +373,7 @@ const buildIncidentLocationAnswersAddress = (baseAnswer, selectedAddress) => {
     questionResponse: true
   }
   const addressData = selectedAddress[0].address
-  const { addressLine1, townOrCity, postcode } = formatAddress(addressData)
+  const { addressLine1, addressLine2, townOrCity, postcode } = helpers.formatAddress(addressData)
 
   results.push({
     ...baseLocationAddressAnswer,
@@ -381,7 +383,7 @@ const buildIncidentLocationAnswersAddress = (baseAnswer, selectedAddress) => {
   {
     ...baseLocationAddressAnswer,
     answerId: incidentLocationQuestion.LOCATION_ADDRESS.answers.addressLine2.answerId,
-    otherDetails: ''
+    otherDetails: addressLine2 || ''
   },
   {
     ...baseLocationAddressAnswer,
@@ -439,25 +441,19 @@ const getNameAnswer = (question, baseAnswer, isWater, payload) => {
   }
 }
 
-const formatAddress = (address) => {
-  const addressParts = address.split(',')
-  const n = 2
-  const addressLine1 = addressParts.slice(0, -n).join()
-  const townOrCity = addressParts[addressParts.length - 2].trimStart()
-  const postcode = addressParts[addressParts.length - 1].trimStart()
-
-  return {
-    addressLine1,
-    townOrCity,
-    postcode
-  }
-}
-
 const constructAddress = (request) => {
   const selectedAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
   let address
+
   if (selectedAddress) {
-    address = `${selectedAddress.addressLine1}<br>${selectedAddress.townOrCity}<br>${selectedAddress.postcode}`
+    address = selectedAddress.addressLine1
+
+    // Include addressLine2 if present
+    if (selectedAddress.addressLine2) {
+      address += `<br>${selectedAddress.addressLine2}`
+    }
+
+    address += `<br>${selectedAddress.townOrCity}<br>${selectedAddress.postcode}`
   }
   return address
 }

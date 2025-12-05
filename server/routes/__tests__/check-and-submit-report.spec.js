@@ -38,10 +38,12 @@ const sessionData = {
     reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes',
+    reporterHomeAddress: 'Yes',
     reporterRole: 'Jam'
   },
   'selected-address': {
     addressLine1: '10, Watermill Lane',
+    addressLine2: null,
     townOrCity: 'Hertford',
     postcode: 'SG14 3LB'
   },
@@ -91,6 +93,19 @@ describe(url, () => {
       sessionData['create-a-report'].locationGridRef = 'SJ 67084 44110'
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).toContain('SJ 67084 44110')
+    })
+    it(`Happy: Should return address in 4 lines if addressLine1 exceeds 60 characters ${url}`, async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '95'
+      sessionData['create-a-report'].postcodeDetails = 'BS2 7EB'
+      sessionData['create-a-report'].addressId = '1'
+      sessionData['selected-address'].addressLine1 = 'Eaglestone Champion Ltd, Unit 95, The Industrial Quarter'
+      sessionData['selected-address'].addressLine2 = 'Foxcote Avenue, Bristol Business Park, Peasedown St. John'
+      sessionData['selected-address'].townOrCity = 'Bristol'
+      sessionData['selected-address'].postcode = 'BS2 7EB'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('<br>Foxcote Avenue, Bristol Business Park, Peasedown St. John')
     })
   })
   describe('POST', () => {
@@ -645,7 +660,6 @@ describe(url, () => {
         })
       }))
     })
-
     it('Should fail payload validation if invalid payload with 500 server error', async () => {
       const sessionData = getSessionData()
       const options = {

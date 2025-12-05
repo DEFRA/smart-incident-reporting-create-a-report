@@ -103,6 +103,9 @@
         "reporterReference": {
           "type": "string"
         },
+        "reporterHomeAddress": {
+          "type": "string"
+        },
         "questionSetId": {
           "type": "number"
         },
