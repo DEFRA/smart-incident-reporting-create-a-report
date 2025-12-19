@@ -77,6 +77,13 @@ const validateDescriptionTab = (payload, errorSummary) => {
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
+  } else if (payload.descriptionDescription.length > 1500) {
+    errorSummary.errorList.push({
+      text: 'Incident description must be 1500 characters or less',
+      href: '#descriptionDescription'
+    })
+  } else {
+    // do nothing
   }
 
   if (!payload.descriptionIncidentType) {
@@ -107,6 +114,13 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate phone number
   validatePhone(payload, errorSummary)
 
+  if (payload.reporterReference?.length > fifty) {
+    errorSummary.errorList.push({
+      text: 'Reporter\'s reference must be 50 characters or less',
+      href: '#reporterReference'
+    })
+  }
+
   if (!payload.reporterType) {
     errorSummary.errorList.push({
       text: 'Select the type of reporter',
@@ -123,12 +137,13 @@ const validateReporterTab = (payload, errorSummary) => {
         text: 'Enter an organisation name',
         href: '#reporterOtherName'
       })
-    }
-    if (payload.reporterLastName && payload.reporterOtherName.length > fifty) {
+    } else if (payload.reporterOtherName.length > fifty) {
       errorSummary.errorList.push({
         text: 'Organisation name must be 50 characters or less',
         href: '#reporterOtherName'
       })
+    } else {
+      // do nothing
     }
   } else {
     // do nothing
@@ -157,6 +172,13 @@ const validateLocationTab = (payload, errorSummary) => {
       })
     } else {
       // do nothing
+    }
+
+    if (payload.locationDescription?.length > 150) {
+      errorSummary.errorList.push({
+        text: 'Location description must be 150 characters or less',
+        href: '#locationDescription'
+      })
     }
   }
 
