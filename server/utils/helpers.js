@@ -114,7 +114,7 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate phone number
   validatePhone(payload, errorSummary)
 
-  if (payload.reporterReference.length > fifty) {
+  if (payload.reporterReference?.length > fifty) {
     errorSummary.errorList.push({
       text: 'Reporter\'s reference must be 50 characters or less',
       href: '#reporterReference'
