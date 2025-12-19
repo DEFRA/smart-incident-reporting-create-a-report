@@ -72,12 +72,13 @@ const validateAddressSelectionPayload = payload => {
 }
 
 const validateDescriptionTab = (payload, errorSummary) => {
+  const incidentDescriptionMax = 1500
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
-  } else if (payload.descriptionDescription.length > 1500) {
+  } else if (payload.descriptionDescription.length > incidentDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Incident description must be 1500 characters or less',
       href: '#descriptionDescription'
@@ -169,6 +170,7 @@ const validateLocationTab = (payload, errorSummary) => {
 }
 
 const validateGridReferenceLocation = (payload, errorSummary) => {
+  const locationDescriptionMax = 150
   if (!payload.locationGridRef) {
     errorSummary.errorList.push({
       text: 'Enter a national grid reference',
@@ -183,7 +185,7 @@ const validateGridReferenceLocation = (payload, errorSummary) => {
     // do nothing
   }
 
-  if (payload.locationDescription?.length > 150) {
+  if (payload.locationDescription?.length > locationDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Location description must be 150 characters or less',
       href: '#locationDescription'
