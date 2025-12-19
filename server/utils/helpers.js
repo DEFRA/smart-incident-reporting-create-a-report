@@ -157,12 +157,10 @@ const validateLocationTab = (payload, errorSummary) => {
       text: 'Select how you want to give a location',
       href: '#locationOfIncident'
     })
-    return
   }
 
   if (payload.locationOfIncident === 'gridReference') {
     validateGridReferenceLocation(payload, errorSummary)
-    return
   }
 
   if (payload.locationOfIncident === 'address') {
@@ -181,6 +179,8 @@ const validateGridReferenceLocation = (payload, errorSummary) => {
       text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
       href: '#locationGridRef'
     })
+  } else {
+    // do nothing
   }
 
   if (payload.locationDescription?.length > 150) {
