@@ -157,32 +157,42 @@ const validateLocationTab = (payload, errorSummary) => {
       text: 'Select how you want to give a location',
       href: '#locationOfIncident'
     })
+    return
   }
 
   if (payload.locationOfIncident === 'gridReference') {
-    if (!payload.locationGridRef) {
-      errorSummary.errorList.push({
-        text: 'Enter a national grid reference',
-        href: '#locationGridRef'
-      })
-    } else if (!validateGridReference(payload.locationGridRef)) {
-      errorSummary.errorList.push({
-        text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
-        href: '#locationGridRef'
-      })
-    } else {
-      // do nothing
-    }
-
-    if (payload.locationDescription?.length > 150) {
-      errorSummary.errorList.push({
-        text: 'Location description must be 150 characters or less',
-        href: '#locationDescription'
-      })
-    }
+    validateGridReferenceLocation(payload, errorSummary)
+    return
   }
 
-  if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
+  if (payload.locationOfIncident === 'address') {
+    validateAddressLocation(payload, errorSummary)
+  }
+}
+
+const validateGridReferenceLocation = (payload, errorSummary) => {
+  if (!payload.locationGridRef) {
+    errorSummary.errorList.push({
+      text: 'Enter a national grid reference',
+      href: '#locationGridRef'
+    })
+  } else if (!validateGridReference(payload.locationGridRef)) {
+    errorSummary.errorList.push({
+      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
+      href: '#locationGridRef'
+    })
+  }
+
+  if (payload.locationDescription?.length > 150) {
+    errorSummary.errorList.push({
+      text: 'Location description must be 150 characters or less',
+      href: '#locationDescription'
+    })
+  }
+}
+
+const validateAddressLocation = (payload, errorSummary) => {
+  if (!payload.addressChosen) {
     validateBuildingData(payload, errorSummary)
 
     if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
