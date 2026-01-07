@@ -3,6 +3,7 @@
 {% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
 {% from "dist/govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "dist/govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set grifReferenceHtml %}
   <div class="govuk-!-width-three-quarters">
@@ -18,15 +19,18 @@
 
     <div class="govuk-!-padding-bottom-4"></div>
 
-    {{ govukTextarea({
+    {{ govukCharacterCount({
       name: "locationDescription",
       id: "locationDescription",
-      rows: "6",
+      rows: "3",
+      maxlength: 150,
+      threshold: 90,
       label: { text: "Location description (optional)" },
       hint: {
         html: "Include things like the name of the watercourse and nearest town or landmarks. You can also include things like <a href='http://www.what3words.com' target='_new'>what3words</a> or map references."
       },
-      value: locationDescription
+      value: locationDescription,
+      errorMessage: findErrorMessageById(errorSummary.location, "locationDescription")
     }) }}
   </div>
 {% endset %}

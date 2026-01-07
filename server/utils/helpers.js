@@ -72,11 +72,19 @@ const validateAddressSelectionPayload = payload => {
 }
 
 const validateDescriptionTab = (payload, errorSummary) => {
+  const incidentDescriptionMax = 1500
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
+  } else if (payload.descriptionDescription.length > incidentDescriptionMax) {
+    errorSummary.errorList.push({
+      text: 'Incident description must be 1500 characters or less',
+      href: '#descriptionDescription'
+    })
+  } else {
+    // do nothing
   }
 
   if (!payload.descriptionIncidentType) {
@@ -107,6 +115,13 @@ const validateReporterTab = (payload, errorSummary) => {
   // Validate phone number
   validatePhone(payload, errorSummary)
 
+  if (payload.reporterReference?.length > fifty) {
+    errorSummary.errorList.push({
+      text: 'Reporter\'s reference must be 50 characters or less',
+      href: '#reporterReference'
+    })
+  }
+
   if (!payload.reporterType) {
     errorSummary.errorList.push({
       text: 'Select the type of reporter',
@@ -123,12 +138,13 @@ const validateReporterTab = (payload, errorSummary) => {
         text: 'Enter an organisation name',
         href: '#reporterOtherName'
       })
-    }
-    if (payload.reporterLastName && payload.reporterOtherName.length > fifty) {
+    } else if (payload.reporterOtherName.length > fifty) {
       errorSummary.errorList.push({
         text: 'Organisation name must be 50 characters or less',
         href: '#reporterOtherName'
       })
+    } else {
+      // do nothing
     }
   } else {
     // do nothing
@@ -145,22 +161,40 @@ const validateLocationTab = (payload, errorSummary) => {
   }
 
   if (payload.locationOfIncident === 'gridReference') {
-    if (!payload.locationGridRef) {
-      errorSummary.errorList.push({
-        text: 'Enter a national grid reference',
-        href: '#locationGridRef'
-      })
-    } else if (!validateGridReference(payload.locationGridRef)) {
-      errorSummary.errorList.push({
-        text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
-        href: '#locationGridRef'
-      })
-    } else {
-      // do nothing
-    }
+    validateGridReferenceLocation(payload, errorSummary)
   }
 
-  if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
+  if (payload.locationOfIncident === 'address') {
+    validateAddressLocation(payload, errorSummary)
+  }
+}
+
+const validateGridReferenceLocation = (payload, errorSummary) => {
+  const locationDescriptionMax = 150
+  if (!payload.locationGridRef) {
+    errorSummary.errorList.push({
+      text: 'Enter a national grid reference',
+      href: '#locationGridRef'
+    })
+  } else if (!validateGridReference(payload.locationGridRef)) {
+    errorSummary.errorList.push({
+      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
+      href: '#locationGridRef'
+    })
+  } else {
+    // do nothing
+  }
+
+  if (payload.locationDescription?.length > locationDescriptionMax) {
+    errorSummary.errorList.push({
+      text: 'Location description must be 150 characters or less',
+      href: '#locationDescription'
+    })
+  }
+}
+
+const validateAddressLocation = (payload, errorSummary) => {
+  if (!payload.addressChosen) {
     validateBuildingData(payload, errorSummary)
 
     if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {

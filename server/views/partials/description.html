@@ -4,6 +4,7 @@
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
 {% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "dist/govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set emailReportHtml %}
   {{ govukDateInput({
@@ -72,9 +73,11 @@
           Incident description
         </label>
       </h1>
-      {{ govukTextarea({
+      {{ govukCharacterCount({
         name: "descriptionDescription",
         id: "descriptionDescription",
+        maxlength: 1500,
+        threshold: 90,
         rows: 20,
         value: descriptionDescription,
         errorMessage: findErrorMessageById(errorSummary.description, "descriptionDescription")
