@@ -76,12 +76,15 @@ function checkReport (h, request, payloadData) {
 
   // Return view if errors
   if (errorSummary.description.errorList.length > 0 ||
-        errorSummary.reporter.errorList.length > 0 ||
-        errorSummary.location.errorList.length > 0 ||
-        errorSummary.date.errorList.length > 0
+    errorSummary.reporter.errorList.length > 0 ||
+    errorSummary.location.errorList.length > 0 ||
+    errorSummary.date.errorList.length > 0
   ) {
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const dispName = request.auth.credentials.profile.displayName
+
+    payloadData.descriptionDescription = payloadData.descriptionDescription.replace(/\n/g, '&#10;').replace(/\r/g, '&#13;')
+
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
       ...payloadData,
