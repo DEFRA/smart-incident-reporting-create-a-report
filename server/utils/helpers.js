@@ -78,7 +78,7 @@ const validateDescriptionTab = (payload, errorSummary) => {
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
-  } else if (payload.descriptionDescription.length > incidentDescriptionMax) {
+  } else if (payload.descriptionDescription.replace(/\r/g, '').length > incidentDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Incident description must be 1500 characters or less',
       href: '#descriptionDescription'
