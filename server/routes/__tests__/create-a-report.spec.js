@@ -679,6 +679,19 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterOtherName">Organisation name must be 50 characters or less</a>')
     })
 
+    it('Sad: should fail validation and return error message if length of the Reporter role or job title exceeds the maximum of 60 characters', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'other'
+      payload.reporterRole = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterRole">Reporter role or job title must be 60 characters or less</a>')
+    })
+
     // Test for Location of incident tab
     it('Sad: should fail validation and return error message for missing grid reference', async () => {
       const payload = getPayload()

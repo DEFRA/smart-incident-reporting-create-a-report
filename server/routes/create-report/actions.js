@@ -41,9 +41,6 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     if (typeof value === 'string') {
       payloadData[key] = value.trim()
     }
-    if (key === 'descriptionDescription') {
-      payloadData[key] = value.replace(/\n +/g, '\n')
-    }
   }
 }
 
@@ -101,6 +98,12 @@ function checkReport (h, request, payloadData) {
     if (payloadData[field]) {
       const formattedTime = formatTime24hr(payloadData[field])
       payloadData[field] = formattedTime
+    }
+  }
+
+  for (const [key, value] of Object.entries(payloadData)) {
+    if (key === 'descriptionDescription' || key === 'locationDescription') {
+      payloadData[key] = value.replace(/&#13;&#10;/g, '\r\n').replace(/&#13;/g, '\r').replace(/&#10;/g, '\n');
     }
   }
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)

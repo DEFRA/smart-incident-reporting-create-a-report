@@ -79,7 +79,7 @@
         maxlength: 1500,
         threshold: 90,
         rows: 20,
-        value: descriptionDescription,
+        value: descriptionDescription | safe,
         errorMessage: findErrorMessageById(errorSummary.description, "descriptionDescription")
       }) }}
     </div>
