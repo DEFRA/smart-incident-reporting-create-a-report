@@ -196,7 +196,7 @@ const validateGridReferenceLocation = (payload, errorSummary) => {
     // do nothing
   }
 
-  if (payload.locationDescription?.replace(/&#13;&#10;/g, '\n').replace(/&#13;/g, '\n').replace(/&#10;/g, '\n').length> locationDescriptionMax) {
+  if (payload.locationDescription?.replace(/&#13;&#10;/g, '\n').replace(/&#13;/g, '\n').replace(/&#10;/g, '\n').length > locationDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Location description must be 150 characters or less',
       href: '#locationDescription'
