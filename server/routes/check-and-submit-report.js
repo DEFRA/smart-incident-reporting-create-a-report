@@ -84,7 +84,7 @@ const handlers = {
     // formatting for incident description
     for (const [key, value] of Object.entries(reportPayload)) {
       if (key === 'descriptionDescription') {
-        reportPayload[key] = value.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br>')
+        reportPayload[key] = value.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\r\n/g, '<br>')
       }
     }
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
