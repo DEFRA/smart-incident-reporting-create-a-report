@@ -44,6 +44,12 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
   }
 }
 
+const errorDetected = errorSummary =>
+  errorSummary.description.errorList.length > 0 ||
+  errorSummary.reporter.errorList.length > 0 ||
+  errorSummary.location.errorList.length > 0 ||
+  errorSummary.date.errorList.length > 0
+
 function checkReport (h, request, payloadData) {
   let selectAddress = false
   let selectGridReference = false
@@ -72,10 +78,7 @@ function checkReport (h, request, payloadData) {
   const errorSummary = validateReportPayload(payloadData)
 
   // Return view if errors
-  if (errorSummary.description.errorList.length > 0 ||
-        errorSummary.reporter.errorList.length > 0 ||
-        errorSummary.location.errorList.length > 0 ||
-        errorSummary.date.errorList.length > 0
+  if (errorDetected(errorSummary)
   ) {
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const dispName = request.auth.credentials.profile.displayName
