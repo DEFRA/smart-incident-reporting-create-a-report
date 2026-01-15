@@ -59,7 +59,7 @@ const handlers = {
 const getContext = session => {
   const showMessage = config.showNonLiveMessage
   const address = session.get(constants.redisKeys.SELECTED_ADDRESS)
-  const payload = session.get(constants.redisKeys.CREATE_A_REPORT)
+  const payload = session.get(constants.redisKeys.CREATE_A_REPORT) || {}
   const payloadData = formatTextarea(payload)
   let selectAddress = false
   let selectGridReference = false

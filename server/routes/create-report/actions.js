@@ -103,7 +103,7 @@ function checkReport (h, request, payloadData) {
 
   for (const [key, value] of Object.entries(payloadData)) {
     if (key === 'descriptionDescription' || key === 'locationDescription') {
-      payloadData[key] = value.replace(/&#13;&#10;/g, '\r\n').replace(/&#13;/g, '\r').replace(/&#10;/g, '\n')
+      payloadData[key] = value.replace(/&#13;&#10;/g, '\r\n')
     }
   }
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)

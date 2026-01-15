@@ -71,17 +71,20 @@ const validateAddressSelectionPayload = payload => {
   return errorSummary
 }
 
+const getTextAreaLength = string => {
+  // Sometimes the check happens on the raw string,
+  // sometimes on the string that has been processed
+  return string.replace(/&#13;&#10;/g, ' ').replace(/\r\n/g, ' ').length
+}
+
 const validateDescriptionTab = (payload, errorSummary) => {
   const incidentDescriptionMax = 1500
-  console.log('Data for payload.descriptionDescription', payload.descriptionDescription)
-  console.log('Data for payload.descriptionDescription length', payload.descriptionDescription.length)
-  console.log('Data for payload.descriptionDescription updated length', payload.descriptionDescription.replace(/&#13;&#10;/g, '\n').replace(/&#13;/g, '\n').replace(/&#10;/g, '\n').length)
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
-  } else if (payload.descriptionDescription.replace(/&#13;&#10;/g, '\n').replace(/&#13;/g, '\n').replace(/&#10;/g, '\n').length > incidentDescriptionMax) {
+  } else if (getTextAreaLength(payload.descriptionDescription) > incidentDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Incident description must be 1500 characters or less',
       href: '#descriptionDescription'
@@ -196,7 +199,7 @@ const validateGridReferenceLocation = (payload, errorSummary) => {
     // do nothing
   }
 
-  if (payload.locationDescription?.replace(/&#13;&#10;/g, '\n').replace(/&#13;/g, '\n').replace(/&#10;/g, '\n').length > locationDescriptionMax) {
+  if (getTextAreaLength(payload.locationDescription) > locationDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Location description must be 150 characters or less',
       href: '#locationDescription'
@@ -507,7 +510,7 @@ const formatGridReference = gridRef => {
 const formatTextarea = (payload) => {
   for (const [key, value] of Object.entries(payload)) {
     if (key === 'descriptionDescription' || key === 'locationDescription') {
-      payload[key] = value.replace(/\n/g, '&#10;').replace(/\r/g, '&#13;')
+      payload[key] = value.replace(/\r\n/g, '&#13;&#10;')
     }
   }
   return payload

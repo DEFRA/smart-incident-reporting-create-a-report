@@ -67,6 +67,14 @@ const incidentLocationQuestion = {
 // show/hide not a live service message
 const showMessage = config.showNonLiveMessage
 
+const formatTextBlocks = reportPayload => {
+  for (const [key, value] of Object.entries(reportPayload)) {
+    if (key === 'descriptionDescription' || key === 'locationDescription') {
+      reportPayload[key] = value.replace(/\r\n/g, '<br>')
+    }
+  }
+}
+
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
@@ -81,12 +89,9 @@ const handlers = {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
-    // formatting for incident description
-    for (const [key, value] of Object.entries(reportPayload)) {
-      if (key === 'descriptionDescription') {
-        reportPayload[key] = value.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\r\n/g, '<br>')
-      }
-    }
+
+    formatTextBlocks(reportPayload)
+
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       showMessage,
       ...reportPayload,
@@ -106,6 +111,7 @@ const handlers = {
     const errorSummary = validateIncidentCategory(answerId, answerDetails)
     if (errorSummary.errorList.length > 0) {
       const dispName = request.auth.credentials.profile.displayName
+      formatTextBlocks(reportPayload)
       return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
         dispName,
         showMessage,
@@ -203,7 +209,7 @@ const buildPayload = (session, operatorDetails) => {
       reporterHomeAddress: reportPayload.reporterHomeAddress,
       datetimeObserved: dateTimeObserved,
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
-      otherDetails: reportPayload.descriptionDescription,
+      otherDetails: reportPayload.descriptionDescription.replace(/\r/g, ''),
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
       incidentCategory: answerId,
       reasonForCategorisation: answerDetails,
@@ -325,7 +331,7 @@ const buildIncidentLocationAnswersGridRef = (reportPayload, baseAnswer, question
     results.push({
       ...baseAnswer,
       answerId: question.answers.locationDescription.answerId,
-      otherDetails: reportPayload.locationDescription
+      otherDetails: reportPayload.locationDescription.replace(/\r/g, '')
     })
   }
 

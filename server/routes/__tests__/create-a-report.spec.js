@@ -68,7 +68,8 @@ describe(url, () => {
     it('Should show errors from session data if fails validation for grid ref', async () => {
       const sessionData = {
         'create-a-report': {
-          locationOfIncident: 'gridReference'
+          locationOfIncident: 'gridReference',
+          locationDescription: ''
         }
       }
 
