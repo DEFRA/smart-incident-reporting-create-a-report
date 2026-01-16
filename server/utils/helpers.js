@@ -71,6 +71,12 @@ const validateAddressSelectionPayload = payload => {
   return errorSummary
 }
 
+const getTextAreaLength = string => {
+  // Sometimes the check happens on the raw string,
+  // sometimes on the string that has been processed
+  return string.replace(/&#13;&#10;/g, ' ').replace(/\r\n/g, ' ').length
+}
+
 const validateDescriptionTab = (payload, errorSummary) => {
   const incidentDescriptionMax = 1500
   if (!payload.descriptionDescription) {
@@ -78,7 +84,7 @@ const validateDescriptionTab = (payload, errorSummary) => {
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
-  } else if (payload.descriptionDescription.length > incidentDescriptionMax) {
+  } else if (getTextAreaLength(payload.descriptionDescription) > incidentDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Incident description must be 1500 characters or less',
       href: '#descriptionDescription'
@@ -106,6 +112,7 @@ const validateDescriptionTab = (payload, errorSummary) => {
 
 const validateReporterTab = (payload, errorSummary) => {
   const fifty = 50
+  const sixty = 60
   // Validate reporter name length
   validateReporterName(payload, errorSummary)
 
@@ -146,6 +153,13 @@ const validateReporterTab = (payload, errorSummary) => {
     } else {
       // do nothing
     }
+
+    if (payload.reporterRole?.length > sixty) {
+      errorSummary.errorList.push({
+        text: 'Reporter role or job title must be 60 characters or less',
+        href: '#reporterRole'
+      })
+    }
   } else {
     // do nothing
   }
@@ -185,7 +199,7 @@ const validateGridReferenceLocation = (payload, errorSummary) => {
     // do nothing
   }
 
-  if (payload.locationDescription?.length > locationDescriptionMax) {
+  if (getTextAreaLength(payload.locationDescription) > locationDescriptionMax) {
     errorSummary.errorList.push({
       text: 'Location description must be 150 characters or less',
       href: '#locationDescription'
@@ -493,6 +507,15 @@ const formatGridReference = gridRef => {
   return gridRef
 }
 
+const formatTextarea = (payload) => {
+  for (const [key, value] of Object.entries(payload)) {
+    if (key === 'descriptionDescription' || key === 'locationDescription') {
+      payload[key] = value.replace(/\r\n/g, '&#13;&#10;')
+    }
+  }
+  return payload
+}
+
 export {
   getErrorSummary,
   validatePayload,
@@ -500,5 +523,6 @@ export {
   validateBuildingDataPayload,
   validateAddressSelectionPayload,
   validateGridReference,
-  formatGridReference
+  formatGridReference,
+  formatTextarea
 }

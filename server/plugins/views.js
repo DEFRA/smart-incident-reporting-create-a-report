@@ -5,7 +5,7 @@ import config from '../utils/config.js'
 import constants from '../utils/constants.js'
 import fs from 'fs'
 import dirname from '../../dirname.cjs'
-import { findErrorMessageById, monthName } from '../utils/template-helpers.js'
+import { findErrorMessageById, monthName, fieldErrorClasses } from '../utils/template-helpers.js'
 const { version } = JSON.parse(fs.readFileSync('./package.json'))
 const analyticsAccount = config.analyticsAccount
 
@@ -27,6 +27,7 @@ export default {
           env.addGlobal('govukRebrand', true)
           env.addGlobal('findErrorMessageById', findErrorMessageById)
           env.addGlobal('monthName', monthName)
+          env.addGlobal('fieldErrorClasses', fieldErrorClasses)
           return next()
         }
       }

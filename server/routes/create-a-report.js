@@ -1,6 +1,6 @@
 import constants from '../utils/constants.js'
 import config from '../utils/config.js'
-import { validateReportPayload } from '../utils/helpers.js'
+import { validateReportPayload, formatTextarea } from '../utils/helpers.js'
 import { reportTypes } from '../utils/report-types.js'
 import actions from './create-report/actions.js'
 
@@ -24,7 +24,8 @@ const handlers = {
   },
   post: async (request, h) => {
     const { action } = request.payload
-    const payloadData = request.payload
+    const payload = request.payload
+    const payloadData = formatTextarea(payload)
 
     let actionResult
 
@@ -58,8 +59,8 @@ const handlers = {
 const getContext = session => {
   const showMessage = config.showNonLiveMessage
   const address = session.get(constants.redisKeys.SELECTED_ADDRESS)
-  const payloadData = session.get(constants.redisKeys.CREATE_A_REPORT)
-
+  const payload = session.get(constants.redisKeys.CREATE_A_REPORT) || {}
+  const payloadData = formatTextarea(payload)
   let selectAddress = false
   let selectGridReference = false
   let addressChosen = false
