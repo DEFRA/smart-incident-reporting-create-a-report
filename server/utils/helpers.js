@@ -280,29 +280,29 @@ const validateDate = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
   }
   const inValidDate = dateparts.day && dateparts.month && dateparts.year && !validDate
   if (!dateparts.day && !dateparts.month && !dateparts.year) {
-    errorMsg(`Enter ${aOrThe} date${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} date${errorMsgPostfix}`, errorSummary, `${href}Day`)
   } else if (!dateparts.day && dateparts.month && dateparts.year) {
-    errorMsg(`Enter ${aOrThe} day${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} day${errorMsgPostfix}`, errorSummary, `${href}Day`)
   } else if (dateparts.day && !dateparts.month && dateparts.year) {
-    errorMsg(`Enter ${aOrThe} month${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} month${errorMsgPostfix}`, errorSummary, `${href}Month`)
   } else if (dateparts.day && dateparts.month && !dateparts.year) {
-    errorMsg(`Enter ${aOrThe} year${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} year${errorMsgPostfix}`, errorSummary, `${href}Year`)
   } else if (!dateparts.day && !dateparts.month && dateparts.year) {
-    errorMsg(`Enter ${aOrThe} day and month${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} day and month${errorMsgPostfix}`, errorSummary, `${href}Day`)
   } else if (dateparts.day && !dateparts.month && !dateparts.year) {
-    errorMsg(`Enter ${aOrThe} month and year${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} month and year${errorMsgPostfix}`, errorSummary, `${href}Month`)
   } else if (!dateparts.day && dateparts.month && !dateparts.year) {
-    errorMsg(`Enter ${aOrThe} day and year${errorMsgPostfix}`, errorSummary, href)
+    errorMsg(`Enter ${aOrThe} day and year${errorMsgPostfix}`, errorSummary, `${href}Day`)
   } else if (validMonthAndYear) {
-    errorMsg('Enter a day from 1 to 31', errorSummary, href)
+    errorMsg('Enter a day from 1 to 31', errorSummary, `${href}Day`)
   } else if (validDayAndYear) {
-    errorMsg('Enter a month using numbers 1 to 12', errorSummary, href)
+    errorMsg('Enter a month using numbers 1 to 12', errorSummary, `${href}Month`)
   } else if (validDayAndMonth) {
-    errorMsg('Enter a full year, for example 2024', errorSummary, href)
+    errorMsg('Enter a full year, for example 2024', errorSummary, `${href}Year`)
   } else if (validDayOnly || validMonthOnly || validYearOnly || inValidDate) {
-    errorMsg('The date entered must be a real date', errorSummary, href)
+    errorMsg('The date entered must be a real date', errorSummary, `${href}Day`)
   } else if (validDate && validDay && validMonth && validYear && !isPastDate) {
-    errorMsg('Date must be in the past', errorSummary, href)
+    errorMsg('Date must be in the past', errorSummary, `${href}Day`)
   } else {
     // do nothing (blame sonarcloud)
   }

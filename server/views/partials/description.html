@@ -14,28 +14,28 @@
         classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
       }
     },
-    errorMessage: findErrorMessageById(errorSummary.description, "descriptionEmailReportDate"),
+    errorMessage: findErrorMessageById(errorSummary.description, "descriptionEmailReportDateDay") or findErrorMessageById(errorSummary.description, "descriptionEmailReportDateMonth") or findErrorMessageById(errorSummary.description, "descriptionEmailReportDateYear"),
     items: [
       {
         name: "descriptionEmailReportDateDay",
         id: "descriptionEmailReportDateDay",
         label: "Day",
         value: descriptionEmailReportDateDay,
-        classes: "govuk-input--width-2"
+        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateDay") else "")
       },
       {
         name: "descriptionEmailReportDateMonth",
         id: "descriptionEmailReportDateMonth",
         label: "Month",
         value: descriptionEmailReportDateMonth,
-        classes: "govuk-input--width-2"
+        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateMonth") else "")
       },
       {
         name: "descriptionEmailReportDateYear",
         id: "descriptionEmailReportDateYear",
         label: "Year",
         value: descriptionEmailReportDateYear,
-        classes: "govuk-input--width-4"
+        classes: "govuk-input--width-4" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateYear") else "")
       }
     ]    
   }) }}

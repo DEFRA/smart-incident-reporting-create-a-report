@@ -62,28 +62,28 @@
         classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
       }
     },
-    errorMessage: findErrorMessageById(errorSummary.date, "dateOther"),
+    errorMessage: findErrorMessageById(errorSummary.date, "dateOtherDay") or findErrorMessageById(errorSummary.date, "dateOtherMonth") or findErrorMessageById(errorSummary.date, "dateOtherYear"),
     items: [
       {
         name: "dateOtherDay",
         id: "dateOtherDay",
         label: "Day",
         value: dateOtherDay,
-        classes: "govuk-input--width-2"
+        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherDay") else "")
       },
       {
         name: "dateOtherMonth",
         id: "dateOtherMonth",
         label: "Month",
         value: dateOtherMonth,
-        classes: "govuk-input--width-2"
+        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherMonth") else "")
       },
       {
         name: "dateOtherYear",
         id: "dateOtherYear",
         label: "Year",
         value: dateOtherYear,
-        classes: "govuk-input--width-4"
+        classes: "govuk-input--width-4" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherYear") else "")
       }
     ]    
   }) }}
