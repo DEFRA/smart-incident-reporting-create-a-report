@@ -74,7 +74,7 @@ const validateAddressSelectionPayload = payload => {
 const getTextAreaLength = string => {
   // Sometimes the check happens on the raw string,
   // sometimes on the string that has been processed
-  return string.replace(/&#13;&#10;/g, ' ').replace(/\r\n/g, ' ').length
+  return string?.replace(/&#13;&#10;/g, ' ').replace(/\r\n/g, ' ').length
 }
 
 const validateDescriptionTab = (payload, errorSummary) => {

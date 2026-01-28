@@ -218,7 +218,7 @@ describe('helpers', () => {
         const result = validateReportPayload(payload)
 
         expect(result.description.errorList).toContainEqual({
-          text: 'Enter a full year, for example 2025',
+          text: 'Enter a full year, for example 2024',
           href: '#descriptionEmailReportDateYear'
         })
       })
@@ -364,7 +364,7 @@ describe('helpers', () => {
         const result = validateReportPayload(payload)
 
         expect(result.date.errorList).toContainEqual({
-          text: 'Enter a full year, for example 2025',
+          text: 'Enter a full year, for example 2024',
           href: '#dateOtherYear'
         })
       })
