@@ -4,6 +4,7 @@
 {% from "dist/govuk/components/radios/macro.njk" import govukRadios %}
 {% from "dist/govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "dist/govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "dist/govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set emailReportHtml %}
   {{ govukDateInput({
@@ -21,21 +22,21 @@
         id: "descriptionEmailReportDateDay",
         label: "Day",
         value: descriptionEmailReportDateDay,
-        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateDay") else "")
+        classes: fieldErrorClasses(errorSummary.description, 'descriptionEmailReportDate', 'govuk-input--width-2')
       },
       {
         name: "descriptionEmailReportDateMonth",
         id: "descriptionEmailReportDateMonth",
         label: "Month",
         value: descriptionEmailReportDateMonth,
-        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateMonth") else "")
+        classes: fieldErrorClasses(errorSummary.description, 'descriptionEmailReportDate', 'govuk-input--width-2')
       },
       {
         name: "descriptionEmailReportDateYear",
         id: "descriptionEmailReportDateYear",
         label: "Year",
         value: descriptionEmailReportDateYear,
-        classes: "govuk-input--width-4" + (" govuk-input--error" if findErrorMessageById(errorSummary.description, "descriptionEmailReportDateYear") else "")
+        classes: fieldErrorClasses(errorSummary.description, 'descriptionEmailReportDate', 'govuk-input--width-4')
       }
     ]    
   }) }}
@@ -72,11 +73,13 @@
           Incident description
         </label>
       </h1>
-      {{ govukTextarea({
+      {{ govukCharacterCount({
         name: "descriptionDescription",
         id: "descriptionDescription",
+        maxlength: 1500,
+        threshold: 90,
         rows: 20,
-        value: descriptionDescription,
+        value: descriptionDescription | safe,
         errorMessage: findErrorMessageById(errorSummary.description, "descriptionDescription")
       }) }}
     </div>

@@ -69,21 +69,21 @@
         id: "dateOtherDay",
         label: "Day",
         value: dateOtherDay,
-        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherDay") else "")
+        classes: fieldErrorClasses(errorSummary.date, 'dateOther', 'govuk-input--width-2')
       },
       {
         name: "dateOtherMonth",
         id: "dateOtherMonth",
         label: "Month",
         value: dateOtherMonth,
-        classes: "govuk-input--width-2" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherMonth") else "")
+        classes: fieldErrorClasses(errorSummary.date, 'dateOther', 'govuk-input--width-2')
       },
       {
         name: "dateOtherYear",
         id: "dateOtherYear",
         label: "Year",
         value: dateOtherYear,
-        classes: "govuk-input--width-4" + (" govuk-input--error" if findErrorMessageById(errorSummary.date, "dateOtherYear") else "")
+        classes: fieldErrorClasses(errorSummary.date, 'dateOther', 'govuk-input--width-4')
       }
     ]    
   }) }}

@@ -89,6 +89,7 @@
         hint: {
           text: "For example, an internal reference number if a water company report."
         },
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterReference"),
         classes: "govuk-!-width-full",
         value: reporterReference,
         autocomplete: "off"
@@ -278,6 +279,7 @@
         name: "reporterRole",
         value: reporterRole,
         classes: "govuk-input--width-10",
+        errorMessage: findErrorMessageById(errorSummary.reporter, "reporterRole"),
         label: {
           text: "Reporter role or job title (optional)"
         }

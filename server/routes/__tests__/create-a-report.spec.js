@@ -68,7 +68,8 @@ describe(url, () => {
     it('Should show errors from session data if fails validation for grid ref', async () => {
       const sessionData = {
         'create-a-report': {
-          locationOfIncident: 'gridReference'
+          locationOfIncident: 'gridReference',
+          locationDescription: ''
         }
       }
 
@@ -117,6 +118,19 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#descriptionDescription">Enter an incident description</a>')
+    })
+
+    it('Sad: should fail validation and return error message for incident description exceeds the maximum of 1500 characters', async () => {
+      const payload = getPayload()
+      const testString = 'test '.repeat(320).trim()
+      payload.descriptionDescription = testString
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#descriptionDescription">Incident description must be 1500 characters or less</a>')
     })
 
     it('Sad: should fail validation and return error message for missing incident type', async () => {
@@ -579,6 +593,18 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterPhone">Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192</a>')
     })
 
+    it('Sad: should fail validation and return error message if the reporters reference the maximum of 50 characters', async () => {
+      const payload = getPayload()
+      payload.reporterReference = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterReference">Reporter&#39;s reference must be 50 characters or less</a>')
+    })
+
     it('Sad: should fail validation and return error message if type of reporter is not selected ', async () => {
       const payload = getPayload()
       payload.reporterType = ''
@@ -654,6 +680,19 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterOtherName">Organisation name must be 50 characters or less</a>')
     })
 
+    it('Sad: should fail validation and return error message if length of the Reporter role or job title exceeds the maximum of 60 characters', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'other'
+      payload.reporterRole = 'pneumonoultramicroscopicsilicovolcanoconiosispseudopseudohypoparathyroidism'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#reporterRole">Reporter role or job title must be 60 characters or less</a>')
+    })
+
     // Test for Location of incident tab
     it('Sad: should fail validation and return error message for missing grid reference', async () => {
       const payload = getPayload()
@@ -666,6 +705,19 @@ describe(url, () => {
 
       const response = await submitPostRequest(options, 200)
       expect(response.payload).toContain('<a href="#locationGridRef">Enter a full, 12-character national grid reference, like SP 23916 82277</a>')
+    })
+
+    it('Sad: should fail validation and return error message for location description exceeds the maximum of 150 characters', async () => {
+      const payload = getPayload()
+      const testString = 'test '.repeat(32).trim()
+      payload.locationDescription = testString
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#locationDescription">Location description must be 150 characters or less</a>')
     })
 
     it('Happy: should look up address given', async () => {

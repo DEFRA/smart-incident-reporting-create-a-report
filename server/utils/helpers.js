@@ -71,12 +71,26 @@ const validateAddressSelectionPayload = payload => {
   return errorSummary
 }
 
+const getTextAreaLength = string => {
+  // Sometimes the check happens on the raw string,
+  // sometimes on the string that has been processed
+  return string.replace(/&#13;&#10;/g, ' ').replace(/\r\n/g, ' ').length
+}
+
 const validateDescriptionTab = (payload, errorSummary) => {
+  const incidentDescriptionMax = 1500
   if (!payload.descriptionDescription) {
     errorSummary.errorList.push({
       text: 'Enter an incident description',
       href: '#descriptionDescription'
     })
+  } else if (getTextAreaLength(payload.descriptionDescription) > incidentDescriptionMax) {
+    errorSummary.errorList.push({
+      text: 'Incident description must be 1500 characters or less',
+      href: '#descriptionDescription'
+    })
+  } else {
+    // do nothing
   }
 
   if (!payload.descriptionIncidentType) {
@@ -98,6 +112,7 @@ const validateDescriptionTab = (payload, errorSummary) => {
 
 const validateReporterTab = (payload, errorSummary) => {
   const fifty = 50
+  const sixty = 60
   // Validate reporter name length
   validateReporterName(payload, errorSummary)
 
@@ -106,6 +121,13 @@ const validateReporterTab = (payload, errorSummary) => {
 
   // Validate phone number
   validatePhone(payload, errorSummary)
+
+  if (payload.reporterReference?.length > fifty) {
+    errorSummary.errorList.push({
+      text: 'Reporter\'s reference must be 50 characters or less',
+      href: '#reporterReference'
+    })
+  }
 
   if (!payload.reporterType) {
     errorSummary.errorList.push({
@@ -123,11 +145,19 @@ const validateReporterTab = (payload, errorSummary) => {
         text: 'Enter an organisation name',
         href: '#reporterOtherName'
       })
-    }
-    if (payload.reporterLastName && payload.reporterOtherName.length > fifty) {
+    } else if (payload.reporterOtherName.length > fifty) {
       errorSummary.errorList.push({
         text: 'Organisation name must be 50 characters or less',
         href: '#reporterOtherName'
+      })
+    } else {
+      // do nothing
+    }
+
+    if (payload.reporterRole?.length > sixty) {
+      errorSummary.errorList.push({
+        text: 'Reporter role or job title must be 60 characters or less',
+        href: '#reporterRole'
       })
     }
   } else {
@@ -145,22 +175,40 @@ const validateLocationTab = (payload, errorSummary) => {
   }
 
   if (payload.locationOfIncident === 'gridReference') {
-    if (!payload.locationGridRef) {
-      errorSummary.errorList.push({
-        text: 'Enter a national grid reference',
-        href: '#locationGridRef'
-      })
-    } else if (!validateGridReference(payload.locationGridRef)) {
-      errorSummary.errorList.push({
-        text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
-        href: '#locationGridRef'
-      })
-    } else {
-      // do nothing
-    }
+    validateGridReferenceLocation(payload, errorSummary)
   }
 
-  if (payload.locationOfIncident === 'address' && !payload.addressChosen) {
+  if (payload.locationOfIncident === 'address') {
+    validateAddressLocation(payload, errorSummary)
+  }
+}
+
+const validateGridReferenceLocation = (payload, errorSummary) => {
+  const locationDescriptionMax = 150
+  if (!payload.locationGridRef) {
+    errorSummary.errorList.push({
+      text: 'Enter a national grid reference',
+      href: '#locationGridRef'
+    })
+  } else if (!validateGridReference(payload.locationGridRef)) {
+    errorSummary.errorList.push({
+      text: 'Enter a full, 12-character national grid reference, like SP 23916 82277',
+      href: '#locationGridRef'
+    })
+  } else {
+    // do nothing
+  }
+
+  if (getTextAreaLength(payload.locationDescription) > locationDescriptionMax) {
+    errorSummary.errorList.push({
+      text: 'Location description must be 150 characters or less',
+      href: '#locationDescription'
+    })
+  }
+}
+
+const validateAddressLocation = (payload, errorSummary) => {
+  if (!payload.addressChosen) {
     validateBuildingData(payload, errorSummary)
 
     if (payload.buildingDetails && payload.postcodeDetails && !payload.addressId) {
@@ -459,6 +507,15 @@ const formatGridReference = gridRef => {
   return gridRef
 }
 
+const formatTextarea = (payload) => {
+  for (const [key, value] of Object.entries(payload)) {
+    if (key === 'descriptionDescription' || key === 'locationDescription') {
+      payload[key] = value.replace(/\r\n/g, '&#13;&#10;')
+    }
+  }
+  return payload
+}
+
 export {
   getErrorSummary,
   validatePayload,
@@ -466,5 +523,6 @@ export {
   validateBuildingDataPayload,
   validateAddressSelectionPayload,
   validateGridReference,
-  formatGridReference
+  formatGridReference,
+  formatTextarea
 }

@@ -41,11 +41,14 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     if (typeof value === 'string') {
       payloadData[key] = value.trim()
     }
-    if (key === 'descriptionDescription') {
-      payloadData[key] = value.replace(/\n +/g, '\n')
-    }
   }
 }
+
+const errorDetected = errorSummary =>
+  errorSummary.description.errorList.length > 0 ||
+  errorSummary.reporter.errorList.length > 0 ||
+  errorSummary.location.errorList.length > 0 ||
+  errorSummary.date.errorList.length > 0
 
 function checkReport (h, request, payloadData) {
   let selectAddress = false
@@ -75,10 +78,7 @@ function checkReport (h, request, payloadData) {
   const errorSummary = validateReportPayload(payloadData)
 
   // Return view if errors
-  if (errorSummary.description.errorList.length > 0 ||
-        errorSummary.reporter.errorList.length > 0 ||
-        errorSummary.location.errorList.length > 0 ||
-        errorSummary.date.errorList.length > 0
+  if (errorDetected(errorSummary)
   ) {
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const dispName = request.auth.credentials.profile.displayName
@@ -101,6 +101,12 @@ function checkReport (h, request, payloadData) {
     if (payloadData[field]) {
       const formattedTime = formatTime24hr(payloadData[field])
       payloadData[field] = formattedTime
+    }
+  }
+
+  for (const [key, value] of Object.entries(payloadData)) {
+    if (key === 'descriptionDescription' || key === 'locationDescription') {
+      payloadData[key] = value.replace(/&#13;&#10;/g, '\r\n')
     }
   }
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
