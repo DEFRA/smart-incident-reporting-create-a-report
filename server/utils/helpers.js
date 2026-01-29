@@ -387,8 +387,7 @@ const validateTime = (dateparts, errorSummary, aOrThe, errorMsgPostfix, href) =>
   } else if (validDate) {
     const dateTimeString = `${dateparts.year}-${dateparts.month.padStart(2, '0')}-${dateparts.day.padStart(2, '0')} ${formattedTime}`
     const dateTime = moment(dateTimeString, 'YYYY-MM-DD HH:mm')
-    const maxAgeMinutes = 5
-    const isDateTimeInPast = dateTime.isBefore(moment().subtract(maxAgeMinutes, 'minutes'))
+    const isDateTimeInPast = dateTime.isBefore(moment())
     if (!isDateTimeInPast) {
       errorMsg('Time must be in the past', errorSummary, href)
     }
