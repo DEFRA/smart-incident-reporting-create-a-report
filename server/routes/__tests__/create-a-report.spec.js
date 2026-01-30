@@ -1134,6 +1134,20 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#dateObserved">The time of incident must be before 10 May 2025 08:00</a>')
     })
 
+    it('Sad: should fail validation and return error message if dateObserved is today and time is exactly current time + 5 minutes', async () => {
+      const payload = getPayload()
+      payload.dateObserved = 'today'
+      const nowPlusFive = moment().add(5, 'minutes').format('HH:mm')
+      payload.dateTimeToday = nowPlusFive
+
+      const options = {
+        url,
+        payload
+      }
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('<a href="#dateTimeToday">Time must be in the past</a>')
+    })
+
     it('Happy: accepts valid answer now and current time is stored', async () => {
       const payload = getPayload()
       const options = {
