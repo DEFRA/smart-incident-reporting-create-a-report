@@ -157,7 +157,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the date the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter the date the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email fields', async () => {
@@ -172,7 +172,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the date the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter the date the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - day field', async () => {
@@ -187,7 +187,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the day the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter the day the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - month field', async () => {
@@ -202,7 +202,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the month the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateMonth">Enter the month the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - year field', async () => {
@@ -217,7 +217,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the year the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateYear">Enter the year the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - month and year fields', async () => {
@@ -232,7 +232,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the month and year the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateMonth">Enter the month and year the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - day and year fields', async () => {
@@ -247,7 +247,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the day and year the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter the day and year the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message for missing date of email - day and month fields', async () => {
@@ -262,7 +262,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter the day and month the email was received</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter the day and month the email was received</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email is not in the past', async () => {
@@ -277,7 +277,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Date must be in the past</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Date must be in the past</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - day is invalid', async () => {
@@ -292,7 +292,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter a day from 1 to 31</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">Enter a day from 1 to 31</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - month is invalid', async () => {
@@ -307,7 +307,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter a month using numbers 1 to 12</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateMonth">Enter a month using numbers 1 to 12</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - year is invalid', async () => {
@@ -322,7 +322,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">Enter a full year, for example 2024</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateYear">Enter a full year, for example 2024</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - day and month is invalid', async () => {
@@ -337,7 +337,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">The date entered must be a real date</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">The date entered must be a real date</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - month and year is invalid', async () => {
@@ -352,7 +352,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">The date entered must be a real date</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">The date entered must be a real date</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - day and year is invalid', async () => {
@@ -367,7 +367,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">The date entered must be a real date</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">The date entered must be a real date</a>')
     })
 
     it('Sad: should fail validation and return error message if date of email - day, month and year values are invalid', async () => {
@@ -382,7 +382,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#descriptionEmailReportDate">The date entered must be a real date</a>')
+      expect(response.payload).toContain('<a href="#descriptionEmailReportDateDay">The date entered must be a real date</a>')
     })
 
     it('Sad: should fail validation and return error message for missing time of email fields', async () => {
@@ -895,7 +895,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a day</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">Enter a day</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but no year', async () => {
@@ -914,7 +914,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a year</a>')
+      expect(response.payload).toContain('<a href="#dateOtherYear">Enter a year</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but no month', async () => {
@@ -933,7 +933,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a month</a>')
+      expect(response.payload).toContain('<a href="#dateOtherMonth">Enter a month</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but bad day', async () => {
@@ -952,7 +952,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a day from 1 to 31</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">Enter a day from 1 to 31</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but bad month', async () => {
@@ -971,7 +971,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a month using numbers 1 to 12</a>')
+      expect(response.payload).toContain('<a href="#dateOtherMonth">Enter a month using numbers 1 to 12</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but bad year', async () => {
@@ -990,7 +990,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a full year, for example 2024</a>')
+      expect(response.payload).toContain('<a href="#dateOtherYear">Enter a full year, for example 2024</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before on date tab but bad date', async () => {
@@ -1009,7 +1009,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">The date entered must be a real date</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">The date entered must be a real date</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before but date is in future', async () => {
@@ -1028,7 +1028,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Date must be in the past</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">Date must be in the past</a>')
     })
 
     it('Sad: should fail validation if 2 date parts missing', async () => {
@@ -1046,7 +1046,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a day and month</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">Enter a day and month</a>')
     })
 
     it('Sad: should fail validation if 2 date parts missing', async () => {
@@ -1064,7 +1064,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a month and year</a>')
+      expect(response.payload).toContain('<a href="#dateOtherMonth">Enter a month and year</a>')
     })
 
     it('Sad: should fail validation if 2 date parts missing', async () => {
@@ -1082,7 +1082,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#dateOther">Enter a day and year</a>')
+      expect(response.payload).toContain('<a href="#dateOtherDay">Enter a day and year</a>')
     })
 
     it('Sad: should fail validation if dateobserved is before date/time reported by email', async () => {

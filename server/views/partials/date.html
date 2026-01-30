@@ -62,7 +62,7 @@
         classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
       }
     },
-    errorMessage: findErrorMessageById(errorSummary.date, "dateOther"),
+    errorMessage: findErrorMessageById(errorSummary.date, "dateOtherDay") or findErrorMessageById(errorSummary.date, "dateOtherMonth") or findErrorMessageById(errorSummary.date, "dateOtherYear"),
     items: [
       {
         name: "dateOtherDay",

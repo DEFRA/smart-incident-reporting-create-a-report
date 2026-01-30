@@ -15,7 +15,7 @@
         classes: "govuk-fieldset__legend--s govuk-!-padding-top-3"
       }
     },
-    errorMessage: findErrorMessageById(errorSummary.description, "descriptionEmailReportDate"),
+    errorMessage: findErrorMessageById(errorSummary.description, "descriptionEmailReportDateDay") or findErrorMessageById(errorSummary.description, "descriptionEmailReportDateMonth") or findErrorMessageById(errorSummary.description, "descriptionEmailReportDateYear"),
     items: [
       {
         name: "descriptionEmailReportDateDay",
