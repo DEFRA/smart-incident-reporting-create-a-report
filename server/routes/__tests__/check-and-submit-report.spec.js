@@ -58,9 +58,6 @@ const sessionData = {
   ]
 }
 
-const answerId = 2
-const answerDetails = 'Test reason for categorisation'
-
 describe(url, () => {
   describe('GET', () => {
     it(`Should return success response and correct view for ${url} if sessiondata is present and correct`, async () => {
@@ -112,11 +109,7 @@ describe(url, () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
       const sessionData = getSessionData()
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -133,8 +126,6 @@ describe(url, () => {
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           loggedByDisplayName: 'Smith, John',
           loggedByUserPrincipalName: 'test@test.com',
           data: expect.arrayContaining([
@@ -215,11 +206,7 @@ describe(url, () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].locationGridRef = 'SJ6708444110'
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -232,8 +219,6 @@ describe(url, () => {
         reportingAnEnvironmentalProblem: expect.objectContaining({
           reportType: 100,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 4100,
@@ -286,11 +271,7 @@ describe(url, () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].locationOfIncident = 'address'
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -307,8 +288,6 @@ describe(url, () => {
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           loggedByDisplayName: 'Smith, John',
           loggedByUserPrincipalName: 'test@test.com',
           data: expect.arrayContaining([
@@ -374,11 +353,7 @@ describe(url, () => {
       sessionData['create-a-report'].locationDescription = ''
       sessionData['create-a-report'].reporterPhotos = 'No'
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -395,8 +370,6 @@ describe(url, () => {
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 3800,
@@ -471,11 +444,7 @@ describe(url, () => {
       sessionData['create-a-report'].locationDescription = ''
       sessionData['create-a-report'].reporterPhotos = 'No'
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -492,8 +461,6 @@ describe(url, () => {
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 3800,
@@ -530,11 +497,7 @@ describe(url, () => {
       sessionData['create-a-report'].locationDescription = ''
       sessionData['create-a-report'].reporterPhotos = 'No'
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -551,8 +514,6 @@ describe(url, () => {
           reporterEmailAddress: '',
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 3800,
@@ -585,11 +546,7 @@ describe(url, () => {
       sessionData['create-a-report'].reporterOtherName = ''
       sessionData['create-a-report'].locationDescription = ''
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -606,8 +563,6 @@ describe(url, () => {
           reporterEmailAddress: sessionData['create-a-report'].reporterEmail,
           otherDetails: sessionData['create-a-report'].descriptionDescription,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           data: expect.arrayContaining([
             expect.objectContaining({
               questionId: 3800,
@@ -663,11 +618,7 @@ describe(url, () => {
     it('Should fail payload validation if invalid payload with 500 server error', async () => {
       const sessionData = getSessionData()
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       sessionData['create-a-report'].descriptionIncidentType = 'rwrewr'
@@ -687,11 +638,7 @@ describe(url, () => {
       sessionData['create-a-report'].descriptionEmailReportTime = '00:00'
 
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -704,8 +651,6 @@ describe(url, () => {
         reportingAnEnvironmentalProblem: expect.objectContaining({
           reportType: 100,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           datetimeObserved: today.toISOString(),
           datetimeReported: today.toISOString()
         })
@@ -726,11 +671,7 @@ describe(url, () => {
       // date.setDate(date.getDate() - 1)
 
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -743,8 +684,6 @@ describe(url, () => {
         reportingAnEnvironmentalProblem: expect.objectContaining({
           reportType: 100,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           datetimeObserved: yesterday.toISOString(),
           datetimeReported: yesterday.toISOString()
         })
@@ -768,11 +707,7 @@ describe(url, () => {
       // date.setDate(date.getDate() - 1)
 
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
@@ -785,24 +720,10 @@ describe(url, () => {
         reportingAnEnvironmentalProblem: expect.objectContaining({
           reportType: 100,
           questionSetId: 0,
-          incidentCategory: 2,
-          reasonForCategorisation: 'Test reason for categorisation',
           datetimeObserved: before.toISOString(),
           datetimeReported: before.toISOString()
         })
       }))
-    })
-
-    it('Sad: errors on no answerId', async () => {
-      const sessionData = getSessionData()
-      const options = {
-        url,
-        payload: {}
-      }
-      const response = await submitPostRequest(options, constants.statusCodes.OK, sessionData)
-      expect(response.payload).toContain('There is a problem')
-      expect(response.payload).toContain('Select an incident category')
-      expect(response.payload).toContain('Enter a reason for the selected categorisation')
     })
 
     it('Date of incident set to now', async () => {
@@ -822,11 +743,7 @@ describe(url, () => {
       sessionData['create-a-report'].nowTime = currentTime
 
       const options = {
-        url,
-        payload: {
-          answerId,
-          answerDetails
-        }
+        url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
