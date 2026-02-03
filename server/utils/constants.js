@@ -24,6 +24,11 @@ const CHOOSE_ADDRESS = 'choose-address'
 const SELECTED_ADDRESS = 'selected-address'
 const SELECTED_ADDRESS_DATA = 'selected-address-data'
 
+// Notices
+const ACCESSIBILITY = 'accessibility'
+const COOKIES = 'cookies'
+const PRIVACY_NOTICE = 'privacy-notice'
+
 const views = {
   ERROR,
   PUBLIC,
@@ -34,7 +39,10 @@ const views = {
   CREATE_A_REPORT,
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
-  REPORT_SUBMITTED
+  REPORT_SUBMITTED,
+  ACCESSIBILITY,
+  COOKIES,
+  PRIVACY_NOTICE
 }
 
 const routes = {}
