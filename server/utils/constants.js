@@ -18,6 +18,7 @@ const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
 
 // Meta data
+const GROUP_MEMBER = 'group-member'
 const POSTCODE_DETAILS = 'postcode-details'
 const BUILDING_DATA = 'building-data'
 const CHOOSE_ADDRESS = 'choose-address'
@@ -45,6 +46,7 @@ for (const [key, value] of Object.entries(views)) {
 
 const redisKeys = {
   ...views,
+  GROUP_MEMBER,
   POSTCODE_DETAILS,
   BUILDING_DATA,
   CHOOSE_ADDRESS,

@@ -113,7 +113,18 @@ const handlers = {
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
-    return h.redirect(constants.routes.REPORT_SUBMITTED)
+    // handle redirects
+    const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
+    console.log('Data for isMember', isMember)
+    if (isMember) {
+      const reportManagerUrl = config.rmUrl
+      const sessionGuid = request.yar.id
+      console.log('Data for sessionGuid', sessionGuid)
+      console.log(`RM redirected URL - ${reportManagerUrl}${sessionGuid}`)
+      return h.redirect(`${reportManagerUrl}${sessionGuid}`)
+    } else {
+      return h.redirect(constants.routes.REPORT_SUBMITTED)
+    }
   }
 }
 
