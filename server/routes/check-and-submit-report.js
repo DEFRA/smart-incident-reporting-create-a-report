@@ -117,11 +117,22 @@ const handlers = {
     const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
     console.log('Data for isMember', isMember)
     if (isMember) {
+      // clear out session data as no longer required
+      request.yar.reset()
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id
       console.log('Data for sessionGuid', sessionGuid)
       console.log(`RM redirected URL - ${reportManagerUrl}${sessionGuid}`)
-      return h.redirect(`${reportManagerUrl}${sessionGuid}`)
+      // return h.redirect(`${reportManagerUrl}${sessionGuid}`)
+      return h.response(`
+        <html>
+          <body>
+            <script>
+              window.location.href = "${reportManagerUrl}${sessionGuid}";
+            </script>
+          </body>
+        </html>
+      `).type('text/html')
     } else {
       return h.redirect(constants.routes.REPORT_SUBMITTED)
     }
