@@ -28,8 +28,7 @@ const handlers = {
       return Boom.unauthorized(`Authentication failed due to: ${request.auth.error.message}`)
     }
     request.cookieAuth.set({
-      profile: request.auth.credentials.profile,
-      token: request.auth.credentials.token
+      profile: request.auth.credentials.profile
     })
     return h.redirect(constants.views.CREATE_A_REPORT)
   }
