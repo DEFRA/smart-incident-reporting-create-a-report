@@ -12,6 +12,8 @@ const handlers = {
       json: true
     })
 
+    // console.log('Data for request.auth.credentials.token', request.auth.credentials.token)
+
     const entraGroupIds = response.payload.value.map(group => group.id)
     console.log('Entra group ids this user is a member of:', entraGroupIds)
     
@@ -22,12 +24,12 @@ const handlers = {
     console.log(`Is user a member of the group? ${isMember}`)
     request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
 
-
     if (!request.auth.isAuthenticated) {
       return Boom.unauthorized(`Authentication failed due to: ${request.auth.error.message}`)
     }
     request.cookieAuth.set({
-      profile: request.auth.credentials.profile
+      profile: request.auth.credentials.profile,
+      token: request.auth.credentials.token
     })
     return h.redirect(constants.views.CREATE_A_REPORT)
   }
