@@ -76,7 +76,6 @@ const formatTextBlocks = reportPayload => {
 
 const handlers = {
   get: async (request, h) => {
-    console.log('Data for request.auth', request.auth)
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const selectedAddress = constructAddress(request)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
@@ -116,15 +115,14 @@ const handlers = {
 
     // handle redirects
     const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
-    console.log('Data for isMember', isMember)
+
     if (isMember) {
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id
-      console.log('Data for sessionGuid 1', sessionGuid)
-      console.log(`RM redirected URL - ${reportManagerUrl}${sessionGuid}`)
-      // return h.redirect(`${reportManagerUrl}${sessionGuid}`)
+
       // clear out session data as no longer required
       request.yar.reset()
+
       request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
       return h.response(`
         <html>
@@ -142,7 +140,6 @@ const handlers = {
 }
 
 const buildPayload = (session, operatorDetails) => {
-  console.log('Data for sessionGuid 2', session.id)
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
   const selectedAddress = session.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
   let datetimeEmailReported

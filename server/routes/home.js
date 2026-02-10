@@ -11,17 +11,10 @@ const handlers = {
       },
       json: true
     })
-
-    // console.log('Data for request.auth.credentials.token', request.auth.credentials.token)
-
-    const entraGroupIds = response.payload.value.map(group => group.id)
-    console.log('Entra group ids this user is a member of:', entraGroupIds)
     
+    const entraGroupIds = response.payload.value.map(group => group.id)
     const targetGroupId = config.rmGroupId
-    console.log('Data for targetGroupId', targetGroupId)
     const isMember = entraGroupIds.includes(targetGroupId)
-    console.log('Data for isMember', isMember)
-    console.log(`Is user a member of the group? ${isMember}`)
     request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
 
     if (!request.auth.isAuthenticated) {
