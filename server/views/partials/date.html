@@ -109,6 +109,12 @@
     classes: "govuk-radios--small",
     name: "dateObserved",
     id: "dateObserved",
+    fieldset: {
+      legend: {
+        text: "Date of incident",
+        classes: "govuk-fieldset__legend--m govuk-visually-hidden"
+      }
+    },
     errorMessage: findErrorMessageById(errorSummary.date, "dateObserved"),
     items: [
       {
