@@ -35,7 +35,7 @@
     "url": "https://github.com/DEFRA/smart-incident-reporting-create-a-report.git"
   },
   "dependencies": {
-    "@azure/identity": "^4.13.0",
+    "@azure/identity": "^4.5.0",
     "@azure/service-bus": "^7.9.5",
     "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#develop",
     "@defra/sir-app-library": "git://github.com/DEFRA/sir-app-library.git#feat/validate-email",
