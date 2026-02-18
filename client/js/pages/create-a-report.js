@@ -64,3 +64,24 @@ accessibleAutocomplete.enhanceSelectElement({
   minLength: 2,
   displayMenu: 'overlay'
 })
+
+const buildingDetailsInput = document.querySelector('#buildingDetails')
+const postcodeDetailsInput = document.querySelector('#postcodeDetails')
+const findAddressButton = document.querySelector('button[value="find-address"]')
+
+const handleAddressSearchEnter = (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    if (findAddressButton) {
+      findAddressButton.click()
+    }
+  }
+}
+
+if (buildingDetailsInput) {
+  buildingDetailsInput.addEventListener('keydown', handleAddressSearchEnter)
+}
+
+if (postcodeDetailsInput) {
+  postcodeDetailsInput.addEventListener('keydown', handleAddressSearchEnter)
+}
