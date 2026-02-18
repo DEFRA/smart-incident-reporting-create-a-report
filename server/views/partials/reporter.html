@@ -123,10 +123,15 @@
       Double space in value for "Veolia Water  Central Ltd" and "Dwr Cymru  (Welsh Water)"
       required for NIRS, don't remove. 
     #}
-    <p class="govuk-hint">Start typing a water company name</p>  
     {{ govukSelect({
       name: "reporterWaterName",
       id: "reporterWaterName",
+      label: {
+        text: "Water company name"
+      },
+      hint: {
+        text: "Start typing a water company name"
+      },
       errorMessage: findErrorMessageById(errorSummary.reporter, "reporterWaterName"),
       items: [
         {
