@@ -143,7 +143,7 @@ const handlers = {
     const lat = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId)?.otherDetails
     const lng = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId)?.otherDetails
 
-    if (!ngr || ngr.trim() === '' || !lat || isNaN(Number(lat)) || !lng || isNaN(Number(lng))) {
+    if (!ngr || ngr.trim() === '' || !lat || Number.isNaN(Number(lat)) || !lng || Number.isNaN(Number(lng))) {
       const errorMessage = `Invalid value/s for ngr/lat/lng: ngr=${ngr}, lat=${lat}, lng=${lng}`
       throw new Error(errorMessage)
     }
