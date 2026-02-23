@@ -88,6 +88,7 @@ const handlers = {
     ) {
       return h.redirect(constants.routes.CREATE_A_REPORT)
     }
+
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
 
     formatTextBlocks(reportPayload)
@@ -135,6 +136,16 @@ const handlers = {
     // test the payload against the schema
     if (!validatePayload(payload)) {
       throw new Error('Invalid payload')
+    }
+
+    // Extra validation: make sure NGR is not an empty string and lat/lng are not NaN
+    const ngr = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === incidentLocationQuestion.INCIDENT_LOCATION.answers.nationalGridReference.answerId)?.otherDetails
+    const lat = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === incidentLocationQuestion.INCIDENT_LOCATION.answers.lat.answerId)?.otherDetails
+    const lng = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === incidentLocationQuestion.INCIDENT_LOCATION.answers.lng.answerId)?.otherDetails
+
+    if (!ngr || ngr.trim() === '' || !lat || isNaN(Number(lat)) || !lng || isNaN(Number(lng))) {
+      const errorMessage = `Invalid value/s for ngr/lat/lng: ngr=${ngr}, lat=${lat}, lng=${lng}`
+      throw new Error(errorMessage)
     }
 
     await sendMessage(request.logger, payload)

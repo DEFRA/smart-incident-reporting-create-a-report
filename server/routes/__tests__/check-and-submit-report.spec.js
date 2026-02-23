@@ -660,6 +660,7 @@ describe(url, () => {
         })
       }))
     })
+
     it('Should fail payload validation if invalid payload with 500 server error', async () => {
       const sessionData = getSessionData()
       const options = {
@@ -675,8 +676,23 @@ describe(url, () => {
       const response = await submitPostRequest(options, 500, sessionData)
       expect(response.payload).toContain('<h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>')
     })
-    // date edge cases
-    // other date
+
+    it('Should fail payload validation if NGR is empty string', async () => {
+      const sessionData = getSessionData()
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      sessionData['create-a-report'].locationGridRef = ''
+
+      const response = await submitPostRequest(options, 500, sessionData)
+      expect(response.payload).toContain('<h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>')
+    })
+
     it('Date set to today', async () => {
       const today = new Date(new Date().toDateString())
       sessionData['create-a-report'].dateObserved = 'today'
