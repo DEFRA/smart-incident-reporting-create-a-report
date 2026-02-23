@@ -693,6 +693,22 @@ describe(url, () => {
       expect(response.payload).toContain('<h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>')
     })
 
+    it('Should fail payload validation if NGR passes validation but generates invalid lat/lng', async () => {
+      const sessionData = getSessionData()
+      const options = {
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
+      }
+
+      sessionData['create-a-report'].locationGridRef = 'TT0000000000'
+
+      const response = await submitPostRequest(options, 500, sessionData)
+      expect(response.payload).toContain('<h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>')
+    })
+
     it('Date set to today', async () => {
       const today = new Date(new Date().toDateString())
       sessionData['create-a-report'].dateObserved = 'today'
