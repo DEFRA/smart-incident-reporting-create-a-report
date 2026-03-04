@@ -1,4 +1,4 @@
-import { Boom } from '@hapi/boom'
+import Boom from '@hapi/boom'
 import wreck from '@hapi/wreck'
 import constants from '../utils/constants.js'
 import config from '../utils/config.js'
@@ -32,7 +32,6 @@ const handlers = {
       })
 
       return h.redirect(constants.views.CREATE_A_REPORT)
-
     } catch (err) {
       console.error('Error calling Graph API:', err)
       return Boom.badGateway('Failed to contact Microsoft Graph API')
