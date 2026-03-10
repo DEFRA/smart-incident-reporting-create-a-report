@@ -149,11 +149,11 @@ function checkReport (h, request, payloadData) {
 async function findAddress (h, request, payloadData) {
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
   const errorSummary = validateBuildingDataPayload(payloadData)
+  const showMessage = config.showNonLiveMessage
 
   if (errorSummary.location.errorList.length > 0) {
     const selectAddress = true
     const dispName = request.auth.credentials.profile.displayName
-    const showMessage = config.showNonLiveMessage
 
     return h.view(constants.views.CREATE_A_REPORT, {
       selectAddress,
@@ -172,7 +172,6 @@ async function findAddress (h, request, payloadData) {
   request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcodeDetails })
 
   const showChooseAddress = true
-  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     showChooseAddress,
@@ -185,13 +184,13 @@ async function findAddress (h, request, payloadData) {
 
 function chooseAddress (h, request, payloadData) {
   const errorSummary = validateAddressSelectionPayload(payloadData)
+  const showMessage = config.showNonLiveMessage
 
   // Return view if errors
   if (errorSummary.location.errorList.length > 0) {
     const dispName = request.auth.credentials.profile.displayName
     const addressResult = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const showChooseAddress = true
-    const showMessage = config.showNonLiveMessage
 
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
@@ -216,7 +215,6 @@ function chooseAddress (h, request, payloadData) {
 
   const selectAddress = true
   const addressChosen = true
-  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectAddress,
