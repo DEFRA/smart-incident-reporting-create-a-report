@@ -1,9 +1,11 @@
 import constants from '../../utils/constants.js'
+import config from '../../utils/config.js'
 import { validateReportPayload, validateBuildingDataPayload, validateAddressSelectionPayload } from '../../utils/helpers.js'
 import moment from 'moment'
 import { reportTypes } from '../../utils/report-types.js'
 import helpers from '../../utils/address-picker-helpers.js'
 import { formatTime24hr } from '../../utils/time-helpers.js'
+import { isWaterCompanyEmail } from '../../utils/water-company-domains.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
@@ -71,6 +73,15 @@ function checkReport (h, request, payloadData) {
 
   checkReportFinalisePayloadData(payloadData, addressChosen)
 
+  // Clear reporter type-specific fields based on selection
+  if (payloadData.reporterType !== 'water') {
+    payloadData.reporterWaterName = ''
+  }
+  if (payloadData.reporterType !== 'other') {
+    payloadData.reporterOtherName = ''
+    payloadData.reporterRole = ''
+  }
+
   // Store data in redis cache
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
@@ -82,6 +93,7 @@ function checkReport (h, request, payloadData) {
   ) {
     const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const dispName = request.auth.credentials.profile.displayName
+    const showMessage = config.showNonLiveMessage
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
       ...payloadData,
@@ -91,7 +103,8 @@ function checkReport (h, request, payloadData) {
       ...result,
       selectAddress,
       selectGridReference,
-      addressChosen
+      addressChosen,
+      showMessage
     })
   }
 
@@ -111,8 +124,20 @@ function checkReport (h, request, payloadData) {
   }
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
-  // redirect to check answers page
-  return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
+  // Redirect based on reporter type and if email provided
+  if (!payloadData.reporterEmail) {
+    // No email provided - go directly to check and submit report
+    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
+  } else if (payloadData.reporterType === 'water') {
+    // Water company employee with any valid email - go to check and submit report
+    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
+  } else if ((payloadData.reporterType === 'public' || payloadData.reporterType === 'other') && !isWaterCompanyEmail(payloadData.reporterEmail)) {
+    // Public or other organisation with non-water company email - go to check and submit report
+    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
+  } else {
+    // Public/other selected but water company email provided - check reporter type
+    return h.redirect(constants.routes.CHECK_REPORTER_TYPE)
+  }
 }
 
 async function findAddress (h, request, payloadData) {
@@ -122,13 +147,15 @@ async function findAddress (h, request, payloadData) {
   if (errorSummary.location.errorList.length > 0) {
     const selectAddress = true
     const dispName = request.auth.credentials.profile.displayName
+    const showMessage = config.showNonLiveMessage
 
     return h.view(constants.views.CREATE_A_REPORT, {
       selectAddress,
       errorSummary,
       ...payloadData,
       reportTypes,
-      dispName
+      dispName,
+      showMessage
     })
   }
 
@@ -139,12 +166,14 @@ async function findAddress (h, request, payloadData) {
   request.yar.set(constants.redisKeys.BUILDING_DATA, { buildingDetails, postcodeDetails })
 
   const showChooseAddress = true
+  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     showChooseAddress,
     ...result,
     ...payloadData,
-    reportTypes
+    reportTypes,
+    showMessage
   })
 }
 
@@ -156,6 +185,7 @@ function chooseAddress (h, request, payloadData) {
     const dispName = request.auth.credentials.profile.displayName
     const addressResult = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
     const showChooseAddress = true
+    const showMessage = config.showNonLiveMessage
 
     return h.view(constants.views.CREATE_A_REPORT, {
       errorSummary,
@@ -163,7 +193,8 @@ function chooseAddress (h, request, payloadData) {
       ...addressResult,
       ...payloadData,
       reportTypes,
-      dispName
+      dispName,
+      showMessage
     })
   }
 
@@ -179,47 +210,55 @@ function chooseAddress (h, request, payloadData) {
 
   const selectAddress = true
   const addressChosen = true
+  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectAddress,
     addressChosen,
     ...payloadData,
     ...displayAddress,
-    reportTypes
+    reportTypes,
+    showMessage
   })
 }
 
 function differentAddress (h, payloadData) {
   const selectAddress = true
+  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectAddress,
     ...payloadData,
-    reportTypes
+    reportTypes,
+    showMessage
   })
 }
 
 function changeAddress (h, request, payloadData) {
   const buildingDetails = request.yar.get(constants.redisKeys.BUILDING_DATA)
   const selectAddress = true
+  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectAddress,
     ...payloadData,
     ...buildingDetails,
-    reportTypes
+    reportTypes,
+    showMessage
   })
 }
 
 function useGridReference (h, request, payloadData) {
   const buildingDetails = request.yar.get(constants.redisKeys.BUILDING_DATA)
   const selectGridReference = true
+  const showMessage = config.showNonLiveMessage
 
   return h.view(constants.views.CREATE_A_REPORT, {
     selectGridReference,
     ...payloadData,
     ...buildingDetails,
-    reportTypes
+    reportTypes,
+    showMessage
   })
 }
 
