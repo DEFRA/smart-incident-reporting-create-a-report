@@ -6,6 +6,8 @@ import config from '../../utils/config.js'
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
 const url = constants.routes.CHECK_AND_SUBMIT_REPORT
+const answerId = 2
+const answerDetails = 'Test reason for categorisation'
 
 const getSessionData = () => {
   return JSON.parse(JSON.stringify(sessionData))
@@ -110,7 +112,11 @@ describe(url, () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
       const sessionData = getSessionData()
       const options = {
-        url
+        url,
+        payload: {
+          answerId,
+          answerDetails
+        }
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
