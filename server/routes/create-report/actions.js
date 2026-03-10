@@ -69,28 +69,17 @@ const getRedirectRoute = (payloadData) => {
   return constants.routes.CHECK_REPORTER_TYPE
 }
 
-function checkReport (h, request, payloadData) {
-  let selectAddress = false
-  let selectGridReference = false
-  let addressChosen = false
-
+const setupAddressFlags = (request, payloadData) => {
   const displayAddress = request.yar.get(constants.redisKeys.SELECTED_ADDRESS)
-
-  if (displayAddress) {
-    addressChosen = true
+  return {
+    selectAddress: payloadData.locationOfIncident === 'address',
+    selectGridReference: payloadData.locationOfIncident === 'gridReference',
+    addressChosen: !!displayAddress,
+    displayAddress
   }
+}
 
-  if (payloadData.locationOfIncident === 'address') {
-    selectAddress = true
-  }
-
-  if (payloadData.locationOfIncident === 'gridReference') {
-    selectGridReference = true
-  }
-
-  checkReportFinalisePayloadData(payloadData, addressChosen)
-
-  // Clear reporter type-specific fields based on selection
+const clearReporterFields = (payloadData) => {
   if (payloadData.reporterType !== 'water') {
     payloadData.reporterWaterName = ''
   }
@@ -98,39 +87,13 @@ function checkReport (h, request, payloadData) {
     payloadData.reporterOtherName = ''
     payloadData.reporterRole = ''
   }
+}
 
-  // Store data in redis cache
-  request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
-
-  // Validate payload
-  const errorSummary = validateReportPayload(payloadData)
-
-  // Return view if errors
-  if (errorDetected(errorSummary)
-  ) {
-    const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
-    const dispName = request.auth.credentials.profile.displayName
-    const showMessage = config.showNonLiveMessage
-    return h.view(constants.views.CREATE_A_REPORT, {
-      errorSummary,
-      ...payloadData,
-      reportTypes,
-      dispName,
-      ...displayAddress,
-      ...result,
-      selectAddress,
-      selectGridReference,
-      addressChosen,
-      showMessage
-    })
-  }
-
-  // Format time and store before redirection
+const formatPayloadContent = (payloadData) => {
   const timeFields = ['dateTimeToday', 'dateTimeYesterday', 'dateOtherTime', 'descriptionEmailReportTime']
   for (const field of timeFields) {
     if (payloadData[field]) {
-      const formattedTime = formatTime24hr(payloadData[field])
-      payloadData[field] = formattedTime
+      payloadData[field] = formatTime24hr(payloadData[field])
     }
   }
 
@@ -139,9 +102,39 @@ function checkReport (h, request, payloadData) {
       payloadData[key] = value.replace(/&#13;&#10;/g, '\r\n')
     }
   }
+}
+
+function checkReport (h, request, payloadData) {
+  const flags = setupAddressFlags(request, payloadData)
+
+  checkReportFinalisePayloadData(payloadData, flags.addressChosen)
+  clearReporterFields(payloadData)
+
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
-  // Redirect based on reporter type and if email provided
+  const errorSummary = validateReportPayload(payloadData)
+
+  if (errorDetected(errorSummary)) {
+    const result = request.yar.get(constants.redisKeys.CHOOSE_ADDRESS)
+    const dispName = request.auth.credentials.profile.displayName
+    const showMessage = config.showNonLiveMessage
+    return h.view(constants.views.CREATE_A_REPORT, {
+      errorSummary,
+      ...payloadData,
+      reportTypes,
+      dispName,
+      ...flags.displayAddress,
+      ...result,
+      selectAddress: flags.selectAddress,
+      selectGridReference: flags.selectGridReference,
+      addressChosen: flags.addressChosen,
+      showMessage
+    })
+  }
+
+  formatPayloadContent(payloadData)
+  request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
+
   const redirectRoute = getRedirectRoute(payloadData)
   return h.redirect(redirectRoute)
 }
