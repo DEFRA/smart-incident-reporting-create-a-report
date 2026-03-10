@@ -10,7 +10,8 @@ const inDev = env === 'development'
 export default {
   entry: {
     core: './client/js/core.js',
-    createAReport: './client/js/pages/create-a-report.js'
+    createAReport: './client/js/pages/create-a-report.js',
+    checkReporterType: './client/js/pages/check-reporter-type.js'
   },
   output: {
     path: path.resolve(__dirname, 'server/public/build/js'),

@@ -14,6 +14,7 @@ const SIGNOUT = 'signout'
 const SIGNED_OUT = 'signed-out'
 const CREATE_REPORT_CANCEL = 'create-report/cancel'
 const CREATE_A_REPORT = 'create-a-report'
+const CHECK_REPORTER_TYPE = 'check-reporter-type'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
 
@@ -33,6 +34,7 @@ const views = {
   SIGNOUT,
   SIGNED_OUT,
   CREATE_A_REPORT,
+  CHECK_REPORTER_TYPE,
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
   REPORT_SUBMITTED

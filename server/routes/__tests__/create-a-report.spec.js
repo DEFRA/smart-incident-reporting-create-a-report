@@ -95,6 +95,93 @@ describe(url, () => {
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
     })
 
+    it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT when reporter email is empty', async () => {
+      const payload = getPayload()
+      payload.reporterEmail = ''
+      payload.reporterType = 'public'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+    })
+
+    it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT when reporter type is water with email', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'water'
+      payload.reporterEmail = 'someone@example.com'
+      payload.reporterWaterName = 'Thames Water Utilities Ltd'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+    })
+
+    it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT when reporter type is public and email is not a water company domain', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'public'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+    })
+
+    it('Happy: should redirect to CHECK_AND_SUBMIT_REPORT when reporter type is other and email is not a water company domain', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'other'
+      payload.reporterEmail = 'someone@example.com'
+      payload.reporterOtherName = 'Environment Agency'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+    })
+
+    it('Happy: should redirect to CHECK_REPORTER_TYPE when reporter type is public with water company email domain', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'public'
+      payload.reporterEmail = 'someone@thameswater.co.uk'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_REPORTER_TYPE)
+    })
+
+    it('Happy: should redirect to CHECK_REPORTER_TYPE when reporter type is other with water company email domain', async () => {
+      const payload = getPayload()
+      payload.reporterType = 'other'
+      payload.reporterEmail = 'someone@thameswater.co.uk'
+      payload.reporterOtherName = 'Environment Agency'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 302)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_REPORTER_TYPE)
+    })
+
     // Test for Incident description tab
     it('Sad: should fail validation and return error message for missing location details', async () => {
       const payload = getPayload()
