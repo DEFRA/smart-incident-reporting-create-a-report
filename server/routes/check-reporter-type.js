@@ -29,6 +29,8 @@ const validateReporterTypeFields = (payload) => {
     } else {
       // do nothing
     }
+  } else {
+    // do nothing
   }
 
   return errorSummary

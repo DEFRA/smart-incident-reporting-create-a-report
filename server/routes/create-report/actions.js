@@ -52,6 +52,23 @@ const errorDetected = errorSummary =>
   errorSummary.location.errorList.length > 0 ||
   errorSummary.date.errorList.length > 0
 
+const getRedirectRoute = (payloadData) => {
+  if (!payloadData.reporterEmail) {
+    return constants.routes.CHECK_AND_SUBMIT_REPORT
+  }
+
+  if (payloadData.reporterType === 'water') {
+    return constants.routes.CHECK_AND_SUBMIT_REPORT
+  }
+
+  const isPublicOrOther = payloadData.reporterType === 'public' || payloadData.reporterType === 'other'
+  if (isPublicOrOther && !isWaterCompanyEmail(payloadData.reporterEmail)) {
+    return constants.routes.CHECK_AND_SUBMIT_REPORT
+  }
+
+  return constants.routes.CHECK_REPORTER_TYPE
+}
+
 function checkReport (h, request, payloadData) {
   let selectAddress = false
   let selectGridReference = false
@@ -125,19 +142,8 @@ function checkReport (h, request, payloadData) {
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
 
   // Redirect based on reporter type and if email provided
-  if (!payloadData.reporterEmail) {
-    // No email provided - go directly to check and submit report
-    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
-  } else if (payloadData.reporterType === 'water') {
-    // Water company employee with any valid email - go to check and submit report
-    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
-  } else if ((payloadData.reporterType === 'public' || payloadData.reporterType === 'other') && !isWaterCompanyEmail(payloadData.reporterEmail)) {
-    // Public or other organisation with non-water company email - go to check and submit report
-    return h.redirect(constants.routes.CHECK_AND_SUBMIT_REPORT)
-  } else {
-    // Public/other selected but water company email provided - check reporter type
-    return h.redirect(constants.routes.CHECK_REPORTER_TYPE)
-  }
+  const redirectRoute = getRedirectRoute(payloadData)
+  return h.redirect(redirectRoute)
 }
 
 async function findAddress (h, request, payloadData) {
