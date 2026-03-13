@@ -29,7 +29,9 @@ const schema = Joi.object().keys({
   aadClientSecret: Joi.string().required(),
   aadTenant: Joi.string().required(),
   serviceUrl: Joi.string().uri().default('http://localhost:3000'),
-  showNonLiveMessage: Joi.bool().default(false)
+  showNonLiveMessage: Joi.bool().default(false),
+  rmGroupId: Joi.string(),
+  rmUrl: Joi.string()
 })
 
 // Build config
@@ -52,7 +54,9 @@ const config = {
   aadClientSecret: process.env.AAD_CLIENT_SECRET,
   aadTenant: process.env.AAD_TENANT,
   serviceUrl: process.env.SERVICE_URL,
-  showNonLiveMessage: process.env.SHOW_NON_LIVE_MESSAGE
+  showNonLiveMessage: process.env.SHOW_NON_LIVE_MESSAGE,
+  rmGroupId: process.env.RM_GROUP_ID,
+  rmUrl: process.env.RM_URL
 }
 
 // Validate config

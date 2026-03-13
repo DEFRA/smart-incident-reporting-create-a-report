@@ -1,12 +1,11 @@
 import constants from '../utils/constants.js'
 import config from '../utils/config.js'
-import { validatePayload, validateReportPayload, formatGridReference, getErrorSummary } from '../utils/helpers.js'
+import { validatePayload, validateReportPayload, formatGridReference } from '../utils/helpers.js'
 import { questionSets } from '@defra/smart-incident-reporting/server/utils/question-sets.js'
 import { reportTypes } from '../utils/report-types.js'
 import { ngrToEaNo, eaNoToLatLng } from '../utils/ngr-transform.js'
 import bngToNgr from '../utils/bng-to-ngr.js'
 import { oSGBToWGS84 } from '../utils/transform-point.js'
-import { incidentCategories } from '../utils/category-types.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import helpers from '../utils/address-picker-helpers.js'
 
@@ -98,38 +97,10 @@ const handlers = {
       ...reportPayload,
       reportTypes,
       ngrValue,
-      incidentCategories,
       selectedAddress
     })
   },
   post: async (request, h) => {
-    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
-    const ngrValue = formatGridReference(reportPayload.locationGridRef)
-    // get payload
-    let { answerId, answerDetails } = request.payload
-
-    // validate payload for errors
-    const errorSummary = validateIncidentCategory(answerId, answerDetails)
-    if (errorSummary.errorList.length > 0) {
-      const dispName = request.auth.credentials.profile.displayName
-      formatTextBlocks(reportPayload)
-      return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
-        dispName,
-        showMessage,
-        ...reportPayload,
-        errorSummary,
-        reportTypes,
-        ngrValue,
-        incidentCategories,
-        ...request.payload
-      })
-    }
-
-    // convert answerId to number
-    answerId = Number(answerId)
-
-    request.yar.set(constants.redisKeys.CHECK_AND_SUBMIT_REPORT, { answerId, answerDetails })
-
     // Post data to service bus queue
     const payload = buildPayload(request.yar, request.auth.credentials.profile)
 
@@ -153,32 +124,35 @@ const handlers = {
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
-    return h.redirect(constants.routes.REPORT_SUBMITTED)
-  }
-}
+    // handle redirects
+    const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
 
-const validateIncidentCategory = (answerId, answerDetails) => {
-  const errorSummary = getErrorSummary()
-  if (!answerId) {
-    errorSummary.errorList.push({
-      text: 'Select an incident category',
-      href: '#answerId'
-    })
-  }
+    if (isMember) {
+      const reportManagerUrl = config.rmUrl
+      const sessionGuid = request.yar.id
 
-  if (!answerDetails) {
-    errorSummary.errorList.push({
-      text: 'Enter a reason for the selected categorisation',
-      href: '#answerDetails'
-    })
+      // clear out session data as no longer required
+      request.yar.reset()
+
+      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
+      return h.response(`
+        <html>
+          <body>
+            <script>
+              window.location.href = "${reportManagerUrl}${sessionGuid}";
+            </script>
+          </body>
+        </html>
+      `).type('text/html')
+    } else {
+      return h.redirect(constants.routes.REPORT_SUBMITTED)
+    }
   }
-  return errorSummary
 }
 
 const buildPayload = (session, operatorDetails) => {
   const reportPayload = session.get(constants.redisKeys.CREATE_A_REPORT)
   const selectedAddress = session.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
-  const { answerId, answerDetails } = session.get(constants.redisKeys.CHECK_AND_SUBMIT_REPORT)
   let datetimeEmailReported
   if (reportPayload.descriptionReportedByEmail) {
     const dateTimeString = `${reportPayload.descriptionEmailReportDateYear}-${reportPayload.descriptionEmailReportDateMonth?.padStart(2, '0')}-${reportPayload.descriptionEmailReportDateDay?.padStart(2, '0')} ${reportPayload.descriptionEmailReportTime}`
@@ -222,8 +196,6 @@ const buildPayload = (session, operatorDetails) => {
       datetimeReported: datetimeEmailReported || (new Date()).toISOString(),
       otherDetails: reportPayload.descriptionDescription.replace(/\r/g, ''),
       questionSetId: questionSets.CREATE_A_REPORT.questionSetId,
-      incidentCategory: answerId,
-      reasonForCategorisation: answerDetails,
       loggedByDisplayName: operatorDetails.raw.displayName,
       loggedByUserPrincipalName: operatorDetails.raw.userPrincipalName,
       data: buildAnswersData(reportPayload, questionSets.CREATE_A_REPORT.questions, selectedAddress)

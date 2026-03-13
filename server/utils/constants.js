@@ -14,10 +14,12 @@ const SIGNOUT = 'signout'
 const SIGNED_OUT = 'signed-out'
 const CREATE_REPORT_CANCEL = 'create-report/cancel'
 const CREATE_A_REPORT = 'create-a-report'
+const CHECK_REPORTER_TYPE = 'check-reporter-type'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
 
 // Meta data
+const GROUP_MEMBER = 'group-member'
 const POSTCODE_DETAILS = 'postcode-details'
 const BUILDING_DATA = 'building-data'
 const CHOOSE_ADDRESS = 'choose-address'
@@ -32,6 +34,7 @@ const views = {
   SIGNOUT,
   SIGNED_OUT,
   CREATE_A_REPORT,
+  CHECK_REPORTER_TYPE,
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
   REPORT_SUBMITTED
@@ -45,6 +48,7 @@ for (const [key, value] of Object.entries(views)) {
 
 const redisKeys = {
   ...views,
+  GROUP_MEMBER,
   POSTCODE_DETAILS,
   BUILDING_DATA,
   CHOOSE_ADDRESS,
