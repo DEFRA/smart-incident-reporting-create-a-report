@@ -78,6 +78,13 @@ const mistypedWaterCompanyDomains = [
 ]
 
 describe('isWaterCompanyEmail', () => {
+  it('Should return false for non-string input values', () => {
+    expect(isWaterCompanyEmail(undefined)).toBe(false)
+    expect(isWaterCompanyEmail(null)).toBe(false)
+    expect(isWaterCompanyEmail(12345)).toBe(false)
+    expect(isWaterCompanyEmail({ email: 'someone@thameswater.co.uk' })).toBe(false)
+  })
+
   it('Should return true for list of actual water company domains', () => {
     actualWaterCompanyDomains.forEach(domain => {
       expect(isWaterCompanyEmail(`person@${domain}`)).toBe(true)
