@@ -35,9 +35,11 @@ const waterCompanyDomains = [
 
 const exactDomainSet = new Set(waterCompanyDomains)
 
+const FUZZY_MATCH_THRESHOLD = 0.4
+
 const domainMatcher = new Fuse(waterCompanyDomains, {
   includeScore: true,
-  threshold: 0.4,
+  threshold: FUZZY_MATCH_THRESHOLD,
   ignoreLocation: true,
   minMatchCharLength: 5
 })
@@ -64,7 +66,7 @@ export const isWaterCompanyEmail = (email) => {
   }
 
   const matches = domainMatcher.search(domain)
-  return matches.length > 0 && matches[0].score <= 0.4
+  return matches.length > 0 && matches[0].score <= FUZZY_MATCH_THRESHOLD
 }
 
 export default {
