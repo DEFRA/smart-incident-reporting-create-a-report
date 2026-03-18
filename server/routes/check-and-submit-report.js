@@ -127,6 +127,8 @@ const handlers = {
     // handle redirects
     const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
 
+    console.log('Group member value from session:', isMember)
+
     if (isMember) {
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id

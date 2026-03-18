@@ -12,6 +12,8 @@ const handlers = {
         )
       }
 
+      console.log(request.auth)
+
       const response = await wreck.get('https://graph.microsoft.com/v1.0/me/memberOf', {
         headers: {
           Authorization: `Bearer ${request.auth.credentials.token}`
@@ -22,6 +24,9 @@ const handlers = {
       const entraGroupIds = (response.payload?.value || []).map(group => group.id)
       const targetGroupId = config.rmGroupId
       const isMember = entraGroupIds.includes(targetGroupId)
+
+      console.log(entraGroupIds)
+      console.log(isMember)
 
       // Store membership result
       request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
