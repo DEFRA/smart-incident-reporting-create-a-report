@@ -10,7 +10,7 @@ const url = '/'
 describe(url, () => {
   beforeEach(() => {
     // Mock the Graph API call to return empty groups by default
-    wreck.get = jest.fn().mockResolvedValue({
+    wreck.post = jest.fn().mockResolvedValue({
       payload: { value: [] }
     })
   })
@@ -23,8 +23,8 @@ describe(url, () => {
     it(`Should return success response and correct view for ${url}`, async () => {
       const response = await submitGetRequest({ url }, '', constants.statusCodes.REDIRECT)
       expect(response.headers.location).toEqual(constants.views.CREATE_A_REPORT)
-      expect(wreck.get).toHaveBeenCalledWith(
-        'https://graph.microsoft.com/v1.0/me/memberOf',
+      expect(wreck.post).toHaveBeenCalledWith(
+        'https://graph.microsoft.com/v1.0/me/checkMemberGroups',
         expect.objectContaining({
           json: true
         })
@@ -32,7 +32,7 @@ describe(url, () => {
     })
 
     it('Should handle Graph API error gracefully', async () => {
-      wreck.get.mockRejectedValue(new Error('Graph API unavailable'))
+      wreck.post.mockRejectedValue(new Error('Graph API unavailable'))
 
       const response = await submitGetRequest({ url }, undefined, 502)
       // The error-pages plugin intercepts Boom errors and returns the 500 error view
@@ -44,13 +44,9 @@ describe(url, () => {
       const originalRmGroupId = config.rmGroupId
       config.rmGroupId = mockGroupId
 
-      wreck.get.mockResolvedValue({
+      wreck.post.mockResolvedValue({
         payload: {
-          value: [
-            { id: 'other-group' },
-            { id: mockGroupId },
-            { id: 'another-group' }
-          ]
+          value: [mockGroupId]
         }
       })
 
@@ -66,12 +62,9 @@ describe(url, () => {
       const originalRmGroupId = config.rmGroupId
       config.rmGroupId = mockGroupId
 
-      wreck.get.mockResolvedValue({
+      wreck.post.mockResolvedValue({
         payload: {
-          value: [
-            { id: 'other-group' },
-            { id: 'another-group' }
-          ]
+          value: []
         }
       })
 
@@ -83,7 +76,7 @@ describe(url, () => {
     })
 
     it('Should store group membership as false when Graph API returns no groups', async () => {
-      wreck.get.mockResolvedValue({
+      wreck.post.mockResolvedValue({
         payload: { value: [] }
       })
 
@@ -99,7 +92,7 @@ describe(url, () => {
     })
 
     it('Should handle missing Graph API response payload gracefully', async () => {
-      wreck.get.mockResolvedValue({
+      wreck.post.mockResolvedValue({
         payload: null
       })
 
