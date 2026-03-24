@@ -24,8 +24,6 @@ const handlers = {
 
       const isMember = (response.payload?.value || []).includes(targetGroupId)
 
-      console.log('isMember: ', isMember)
-
       // Store membership result
       request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
 
