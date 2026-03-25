@@ -12,7 +12,7 @@ export default {
     core: './client/js/core.js',
     createAReport: './client/js/pages/create-a-report.js',
     checkReporterType: './client/js/pages/check-reporter-type.js',
-    incidentLocationMap: './client/js/map.js'
+    incidentLocationMap: './node_modules/@defra/smart-incident-reporting/client/js/map.js'
   },
   output: {
     path: path.resolve(__dirname, 'server/public/build/js'),
