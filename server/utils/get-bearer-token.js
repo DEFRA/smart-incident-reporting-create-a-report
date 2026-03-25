@@ -1,27 +1,26 @@
-const getBearerToken = async ({ url, clientId, clientSecret, scope }) => {
+import axios from 'axios'
+
+const getBearerToken = async config => {
   const params = new URLSearchParams()
   params.append('grant_type', 'client_credentials')
 
-  if (scope) {
-    params.append('scope', scope)
+  if (config.scope) {
+    params.append('scope', config.scope)
   }
 
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
-  const response = await fetch(url, {
+  const options = {
     method: 'POST',
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      'content-type': 'application/x-www-form-urlencoded'
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    auth: {
+      username: config.clientId,
+      password: config.clientSecret
     },
-    body: params.toString()
-  })
-
-  if (!response.ok) {
-    const errorBody = await response.text()
-    throw new Error(`Failed to fetch bearer token: ${response.status} ${errorBody}`)
+    data: params.toString(),
+    url: config.url
   }
 
-  return response.json()
+  const response = await axios.request(options)
+  return response.data
 }
 
 export default getBearerToken

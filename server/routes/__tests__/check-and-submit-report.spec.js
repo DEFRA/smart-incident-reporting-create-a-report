@@ -107,6 +107,36 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).toContain('<br>Foxcote Avenue, Bristol Business Park, Peasedown St. John')
     })
+
+    it('Should render map initialisation script when locationOfIncident is gridReference', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'gridReference'
+      sessionData['create-a-report'].locationGridRef = 'SJ 67084 44110'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('incidentLocationMap.initialiseMap')
+    })
+
+    it('Should render map initialisation script when locationOfIncident is address', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '10'
+      sessionData['create-a-report'].postcodeDetails = 'SG143LB'
+      sessionData['create-a-report'].addressId = '1'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('incidentLocationMap.initialiseMap')
+    })
+
+    it('Should not render map initialisation script when address has no selected-address-data', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '10'
+      sessionData['create-a-report'].postcodeDetails = 'SG143LB'
+      sessionData['create-a-report'].addressId = '1'
+      sessionData['selected-address-data'] = []
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
+    })
+
   })
   describe('POST', () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {

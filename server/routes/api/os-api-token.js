@@ -8,9 +8,8 @@ const bearerConfig = {
   clientSecret: config.osSecret
 }
 
-const getToken = async (_request, h) => {
-  const token = await getBearerToken(bearerConfig)
-  return h.response(token)
+const getToken = async () => {
+  return getBearerToken(bearerConfig)
 }
 
 export default {
