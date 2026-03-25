@@ -245,7 +245,15 @@
           value: {
             html: reporterHomeAddress
           }
-        } if (locationOfIncident == "address")
+        } if (locationOfIncident == "address"),
+        {
+          key: {
+            text: ""
+          },
+          value: {
+            html: '<div><span class="govuk-visually-hidden">Map showing a pin marking the location of the incident</span><div id="map" class="map map--check-and-submit" aria-hidden="true"></div></div>'
+          }
+        }
       ]
     }) }}
   
@@ -354,4 +362,15 @@
   
   </div>
   </div>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  {% if mapCoordinates.point %}
+    <script src="{{ assetPath }}/js/incidentLocationMap.js"></script>
+    <script>
+      const safeMapConfig = {{ mapCoordinates | dump | safe }}
+      incidentLocationMap.initialiseMap(safeMapConfig)
+    </script>
+  {% endif %}
 {% endblock %}
