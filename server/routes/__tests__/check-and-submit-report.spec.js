@@ -136,7 +136,6 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
     })
-
   })
   describe('POST', () => {
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
