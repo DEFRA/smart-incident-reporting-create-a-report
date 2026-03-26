@@ -125,7 +125,7 @@ const handlers = {
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
     // handle redirects
-    const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
+    const isMember = request.auth.credentials.isMember
 
     if (isMember) {
       const reportManagerUrl = config.rmUrl
@@ -134,7 +134,6 @@ const handlers = {
       // clear out session data as no longer required
       request.yar.reset()
 
-      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
       return h.response(`
         <html>
           <body>

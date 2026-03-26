@@ -24,12 +24,10 @@ const handlers = {
 
       const isMember = (response.payload?.value || []).includes(targetGroupId)
 
-      // Store membership result
-      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
-
-      // Set session cookie
+      // Set session cookie with profile and membership result
       request.cookieAuth.set({
-        profile: request.auth.credentials.profile
+        profile: request.auth.credentials.profile,
+        isMember
       })
 
       return h.redirect(constants.views.CREATE_A_REPORT)
