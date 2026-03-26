@@ -6,7 +6,15 @@ import config from '../utils/config.js'
 const handlers = {
   get: async (request, h) => {
     try {
+      const userPrincipalName = request.auth?.credentials?.profile?.raw?.userPrincipalName
+
       if (!request.auth.isAuthenticated) {
+        console.log('[RM_REDIRECT_DEBUG] Unauthenticated request on home route', {
+          path: request.path,
+          method: request.method,
+          authError: request.auth.error?.message
+        })
+
         return Boom.unauthorized(
           `Authentication failed due to: ${request.auth.error?.message}`
         )
@@ -24,6 +32,15 @@ const handlers = {
 
       const isMember = (response.payload?.value || []).includes(targetGroupId)
 
+      console.log('[RM_REDIRECT_DEBUG] Membership check complete', {
+        path: request.path,
+        method: request.method,
+        userPrincipalName,
+        targetGroupId,
+        returnedGroupCount: response.payload?.value?.length || 0,
+        isMember
+      })
+
       // Set session cookie with profile and membership result
       request.cookieAuth.set({
         profile: request.auth.credentials.profile,
@@ -32,6 +49,14 @@ const handlers = {
 
       return h.redirect(constants.views.CREATE_A_REPORT)
     } catch (err) {
+      console.log('[RM_REDIRECT_DEBUG] Membership check failed', {
+        path: request.path,
+        method: request.method,
+        userPrincipalName,
+        targetGroupId: config.rmGroupId,
+        errorMessage: err?.message
+      })
+
       console.error('Error calling Graph API:', err)
       return Boom.badGateway('Failed to contact Microsoft Graph API')
     }
