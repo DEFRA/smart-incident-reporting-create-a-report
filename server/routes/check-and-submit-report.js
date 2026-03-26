@@ -125,16 +125,31 @@ const handlers = {
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
     // handle redirects
-    const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
+    const isMember = request.auth.credentials.isMember
+
+    console.log('[RM_REDIRECT_DEBUG] Post-submit redirect decision', {
+      path: request.path,
+      method: request.method,
+      sessionGuid: request.yar.id,
+      userPrincipalName: request.auth?.credentials?.profile?.raw?.userPrincipalName,
+      isMember,
+      hasRmUrl: Boolean(config.rmUrl),
+      rmUrlEndsWithSlash: typeof config.rmUrl === 'string' ? config.rmUrl.endsWith('/') : false
+    })
 
     if (isMember) {
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id
 
+      console.log('[RM_REDIRECT_DEBUG] Redirecting to report manager', {
+        sessionGuid,
+        reportManagerUrl,
+        redirectTarget: `${reportManagerUrl}${sessionGuid}`
+      })
+
       // clear out session data as no longer required
       request.yar.reset()
 
-      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
       return h.response(`
         <html>
           <body>
@@ -145,6 +160,10 @@ const handlers = {
         </html>
       `).type('text/html')
     } else {
+      console.log('[RM_REDIRECT_DEBUG] Redirecting to local report submitted page', {
+        target: constants.routes.REPORT_SUBMITTED
+      })
+
       return h.redirect(constants.routes.REPORT_SUBMITTED)
     }
   }
