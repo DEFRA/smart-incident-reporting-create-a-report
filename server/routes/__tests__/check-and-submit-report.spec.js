@@ -652,7 +652,7 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3904
+              answerId: 3903
             }),
             expect.objectContaining({
               questionId: 4100,
