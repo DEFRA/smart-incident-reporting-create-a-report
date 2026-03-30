@@ -38,7 +38,8 @@ const mockPayload = {
   dateOtherYear: '',
   dateOtherTime: '',
   addressChosen: false,
-  reporterPhotos: 'No'
+  reporterPhotos: 'No',
+  reporterVideos: 'No'
 }
 
 const getPayload = () => ({ ...mockPayload })
@@ -538,7 +539,7 @@ describe(url, () => {
     })
 
     // Test for Reporter tab
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
+    it('Sad: should fail validation and return return error message if photos is selected and email is empty', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = ''
@@ -551,20 +552,20 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if video is selected and email is empty', async () => {
       const payload = getPayload()
-      payload.reporterPhotos = 'Yes'
-      payload.reporterEmail = 'testmail'
+      payload.reporterVideos = 'Yes'
+      payload.reporterEmail = ''
       const options = {
         url,
         payload
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if photos is selected with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = 'testmail@'
@@ -577,9 +578,9 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if videos is selected with an invalid email', async () => {
       const payload = getPayload()
-      payload.reporterPhotos = 'Yes'
+      payload.reporterVideos = 'Yes'
       payload.reporterEmail = 'testmail@com'
       const options = {
         url,
@@ -590,7 +591,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for photos or videos available with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = ''
       payload.reporterEmail = 'testmail'
@@ -603,7 +604,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for photos or videos available with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'No'
       payload.reporterEmail = 'testmail'

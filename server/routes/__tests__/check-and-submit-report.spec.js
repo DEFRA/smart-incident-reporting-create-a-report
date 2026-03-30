@@ -41,6 +41,7 @@ const sessionData = {
     reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes',
+    reporterVideos: 'No',
     reporterHomeAddress: 'Yes',
     reporterRole: 'Jam'
   },
@@ -144,9 +145,15 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Has photos or videos of problem',
+              questionAsked: 'Photos or videos available',
               questionResponse: true,
               answerId: 3901
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3903
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -386,7 +393,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Has photos or videos of problem',
+              questionAsked: 'Photos or videos available',
               questionResponse: true,
               answerId: 3902
             }),
@@ -477,7 +484,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Has photos or videos of problem',
+              questionAsked: 'Photos or videos available',
               questionResponse: true,
               answerId: 3902
             }),
@@ -530,7 +537,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Has photos or videos of problem',
+              questionAsked: 'Photos or videos available',
               questionResponse: true,
               answerId: 3902
             }),
@@ -540,6 +547,70 @@ describe(url, () => {
               questionResponse: true,
               answerId: 4006,
               otherDetails: 'Anonymous'
+            })
+          ])
+        })
+      }))
+    })
+
+    it('Should send answerId 3901 (yes) and 3904 (video) when video is selected', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterPhotos = 'No'
+      sessionData['create-a-report'].reporterVideos = 'Yes'
+      const options = {
+        url
+      }
+
+      await submitPostRequest(options, 302, sessionData)
+      expect(sendMessage.mock.calls.at(-1)?.[1]).toEqual(expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3901
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3904
+            })
+          ])
+        })
+      }))
+    })
+
+    it('Should send answerId 3901 (yes), 3903 (photos) and 3904 (video) when both are selected', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterPhotos = 'Yes'
+      sessionData['create-a-report'].reporterVideos = 'Yes'
+      const options = {
+        url
+      }
+
+      await submitPostRequest(options, 302, sessionData)
+      expect(sendMessage.mock.calls.at(-1)?.[1]).toEqual(expect.objectContaining({
+        reportingAnEnvironmentalProblem: expect.objectContaining({
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3901
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3903
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 3904
             })
           ])
         })
@@ -579,9 +650,9 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Has photos or videos of problem',
+              questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3901
+              answerId: 3904
             }),
             expect.objectContaining({
               questionId: 4100,

@@ -8,10 +8,19 @@ import { formatTime24hr } from '../../utils/time-helpers.js'
 import { isWaterCompanyEmail } from '../../utils/water-company-domains.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
-  // Set default value for photos or videos checkbox
-  if (!payloadData.reporterPhotos) {
-    payloadData.reporterPhotos = 'No'
+  // Map media checkbox to individual flags
+  const mediaSelections = payloadData.reporterMediaAvailable
+    ? (Array.isArray(payloadData.reporterMediaAvailable) ? payloadData.reporterMediaAvailable : [payloadData.reporterMediaAvailable])
+    : []
+
+  if (mediaSelections.length > 0) {
+    payloadData.reporterPhotos = mediaSelections.includes('Photos') ? 'Yes' : 'No'
+    payloadData.reporterVideos = mediaSelections.includes('Video') ? 'Yes' : 'No'
+  } else {
+    payloadData.reporterPhotos = payloadData.reporterPhotos || 'No'
+    payloadData.reporterVideos = payloadData.reporterVideos || 'No'
   }
+  delete payloadData.reporterMediaAvailable
 
   // Set default value for reporter's home address checkbox
   if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {

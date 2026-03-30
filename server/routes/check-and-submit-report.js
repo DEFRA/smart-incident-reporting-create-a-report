@@ -227,13 +227,49 @@ const buildReportedByEmailAnswer = (reportPayload, questions) => {
 
 const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
   const question = questions.REPORTED_PHOTOS_OR_VIDEOS
+  const hasPhotos = reportPayload.reporterPhotos === 'Yes'
+  const hasVideos = reportPayload.reporterVideos === 'Yes'
+  const results = []
 
-  return [{
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true,
-    answerId: reportPayload.reporterPhotos === 'Yes' ? question.answers.yes.answerId : question.answers.no.answerId
-  }]
+  if (hasPhotos || hasVideos) {
+    // Send general yes answer first
+    results.push({
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: question.answers.yes.answerId
+    })
+  } else {
+    // Neither selected
+    results.push({
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: question.answers.no.answerId
+    })
+  }
+
+  if (hasPhotos) {
+    // Send specific photos answer
+    results.push({
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: question.answers.photos.answerId
+    })
+  }
+
+  if (hasVideos) {
+    // Send specific video answer
+    results.push({
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: question.answers.video.answerId
+    })
+  }
+
+  return results
 }
 
 const buildReporterTypeAnswers = (reportPayload, questions) => {
