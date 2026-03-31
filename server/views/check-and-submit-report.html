@@ -368,9 +368,12 @@
   {{ super() }}
   {% if mapCoordinates and mapCoordinates.point %}
     <script src="{{ assetPath }}/js/incidentLocationMap.js"></script>
+    <script id="map-config" type="application/json">{{ mapCoordinates | dump | safe }}</script>
     <script>
-      const safeMapConfig = {{ mapCoordinates | dump | safe }}
-      if (window.incidentLocationMap && window.incidentLocationMap.initialiseMap) {
+      const safeMapConfigElement = document.getElementById('map-config')
+      const safeMapConfig = safeMapConfigElement ? JSON.parse(safeMapConfigElement.textContent) : null
+
+      if (safeMapConfig && window.incidentLocationMap && window.incidentLocationMap.initialiseMap) {
         window.incidentLocationMap.initialiseMap(safeMapConfig)
       }
     </script>
