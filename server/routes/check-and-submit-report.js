@@ -74,7 +74,7 @@ const formatTextBlocks = reportPayload => {
   }
 }
 
-const incidentLocationMapConfig = (request, reportPayload) => {
+export const incidentLocationMapConfig = (request, reportPayload) => {
   if (!reportPayload) {
     return undefined
   }
