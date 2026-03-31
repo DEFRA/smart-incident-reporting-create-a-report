@@ -92,7 +92,7 @@ const incidentLocationMapConfig = (request, reportPayload) => {
 
   if (reportPayload.locationOfIncident === 'address') {
     const selectedAddressData = request.yar.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
-    const addressPoint = selectedAddressData && selectedAddressData[0] ? [selectedAddressData[0].x, selectedAddressData[0].y] : null
+    const addressPoint = selectedAddressData?.[0] ? [selectedAddressData[0].x, selectedAddressData[0].y] : null
 
     if (!addressPoint) {
       return undefined

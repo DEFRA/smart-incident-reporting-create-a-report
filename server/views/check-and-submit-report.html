@@ -366,11 +366,13 @@
 
 {% block bodyEnd %}
   {{ super() }}
-  {% if mapCoordinates.point %}
+  {% if mapCoordinates and mapCoordinates.point %}
     <script src="{{ assetPath }}/js/incidentLocationMap.js"></script>
     <script>
       const safeMapConfig = {{ mapCoordinates | dump | safe }}
-      incidentLocationMap.initialiseMap(safeMapConfig)
+      if (window.incidentLocationMap && window.incidentLocationMap.initialiseMap) {
+        window.incidentLocationMap.initialiseMap(safeMapConfig)
+      }
     </script>
   {% endif %}
 {% endblock %}
