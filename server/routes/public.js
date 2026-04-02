@@ -26,6 +26,7 @@ export default [{
         'server/public/static',
         'server/public/build',
         'server/public/js',
+        'node_modules/@defra/smart-incident-reporting/client/static',
         'node_modules/govuk-frontend/dist/govuk',
         'node_modules/govuk-frontend/dist/govuk/assets/rebrand',
         'node_modules/govuk-frontend/dist/govuk/assets',
