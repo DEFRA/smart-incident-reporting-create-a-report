@@ -18,6 +18,7 @@ const CHECK_REPORTER_TYPE = 'check-reporter-type'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
 const ACCESSIBILITY = 'accessibility'
+const PRIVACY_NOTICE = 'privacy-notice'
 
 // API
 const API_OS_API_TOKEN = 'api/os-api-token'
@@ -43,7 +44,8 @@ const views = {
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
   REPORT_SUBMITTED,
-  ACCESSIBILITY
+  ACCESSIBILITY,
+  PRIVACY_NOTICE
 }
 
 const routes = {}
