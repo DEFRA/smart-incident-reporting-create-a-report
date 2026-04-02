@@ -3,6 +3,7 @@ import constants from '../../utils/constants.js'
 import moment from 'moment'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import config from '../../utils/config.js'
+import { incidentLocationMapConfig } from '../check-and-submit-report.js'
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
 const url = constants.routes.CHECK_AND_SUBMIT_REPORT
@@ -62,6 +63,76 @@ const sessionData = {
 }
 
 describe(url, () => {
+  describe('incidentLocationMapConfig', () => {
+    it('Should return undefined when reportPayload is undefined', () => {
+      const request = { yar: { get: jest.fn() } }
+
+      expect(incidentLocationMapConfig(request, undefined)).toBeUndefined()
+    })
+
+    it('Should return map config for gridReference payload', () => {
+      const request = { yar: { get: jest.fn() } }
+      const reportPayload = {
+        locationOfIncident: 'gridReference',
+        locationGridRef: 'SJ 67084 44110'
+      }
+
+      expect(incidentLocationMapConfig(request, reportPayload)).toEqual({
+        point: [367084, 344110],
+        disableControls: true,
+        zoom: 10
+      })
+    })
+
+    it('Should return undefined when gridReference payload has no locationGridRef', () => {
+      const request = { yar: { get: jest.fn() } }
+      const reportPayload = {
+        locationOfIncident: 'gridReference'
+      }
+
+      expect(incidentLocationMapConfig(request, reportPayload)).toBeUndefined()
+    })
+
+    it('Should return map config for address payload when selected address has coordinates', () => {
+      const request = {
+        yar: {
+          get: jest.fn().mockReturnValue([{ x: 100001, y: 100001 }])
+        }
+      }
+      const reportPayload = {
+        locationOfIncident: 'address'
+      }
+
+      expect(incidentLocationMapConfig(request, reportPayload)).toEqual({
+        point: [100001, 100001],
+        disableControls: true,
+        zoom: 10
+      })
+    })
+
+    it('Should return undefined for address payload when selected address has no coordinates', () => {
+      const request = {
+        yar: {
+          get: jest.fn().mockReturnValue([])
+        }
+      }
+      const reportPayload = {
+        locationOfIncident: 'address'
+      }
+
+      expect(incidentLocationMapConfig(request, reportPayload)).toBeUndefined()
+    })
+
+    it('Should return undefined for unsupported locationOfIncident value', () => {
+      const request = { yar: { get: jest.fn() } }
+      const reportPayload = {
+        locationOfIncident: 'unknown'
+      }
+
+      expect(incidentLocationMapConfig(request, reportPayload)).toBeUndefined()
+    })
+  })
+
   describe('GET', () => {
     it(`Should return success response and correct view for ${url} if sessiondata is present and correct`, async () => {
       await submitGetRequest({ url }, 'Check and submit report', 200, getSessionData())
@@ -106,6 +177,35 @@ describe(url, () => {
       sessionData['selected-address'].postcode = 'BS2 7EB'
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).toContain('<br>Foxcote Avenue, Bristol Business Park, Peasedown St. John')
+    })
+
+    it('Should render map initialisation script when locationOfIncident is gridReference', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'gridReference'
+      sessionData['create-a-report'].locationGridRef = 'SJ 67084 44110'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('incidentLocationMap.initialiseMap')
+    })
+
+    it('Should render map initialisation script when locationOfIncident is address', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '10'
+      sessionData['create-a-report'].postcodeDetails = 'SG143LB'
+      sessionData['create-a-report'].addressId = '1'
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('incidentLocationMap.initialiseMap')
+    })
+
+    it('Should not render map initialisation script when address has no selected-address-data', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'address'
+      sessionData['create-a-report'].buildingDetails = '10'
+      sessionData['create-a-report'].postcodeDetails = 'SG143LB'
+      sessionData['create-a-report'].addressId = '1'
+      sessionData['selected-address-data'] = []
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
     })
   })
   describe('POST', () => {
