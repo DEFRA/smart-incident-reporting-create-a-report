@@ -12,16 +12,17 @@ const handlers = {
         )
       }
 
-      const response = await wreck.get('https://graph.microsoft.com/v1.0/me/memberOf', {
+      const targetGroupId = config.rmGroupId
+      const response = await wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
         headers: {
-          Authorization: `Bearer ${request.auth.credentials.token}`
+          Authorization: `Bearer ${request.auth.credentials.token}`,
+          'Content-Type': 'application/json'
         },
+        payload: JSON.stringify({ groupIds: [targetGroupId] }),
         json: true
       })
 
-      const entraGroupIds = (response.payload?.value || []).map(group => group.id)
-      const targetGroupId = config.rmGroupId
-      const isMember = entraGroupIds.includes(targetGroupId)
+      const isMember = (response.payload?.value || []).includes(targetGroupId)
 
       // Store membership result
       request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
