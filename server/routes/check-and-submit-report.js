@@ -123,8 +123,7 @@ const handlers = {
       throw new Error(errorMessage)
     }
 
-    // FIXME
-    // await sendMessage(request.logger, payload)
+    await sendMessage(request.logger, payload)
 
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
