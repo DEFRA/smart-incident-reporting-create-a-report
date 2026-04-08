@@ -2,6 +2,7 @@ import Boom from '@hapi/boom'
 import wreck from '@hapi/wreck'
 import constants from '../utils/constants.js'
 import config from '../utils/config.js'
+import { getSessionIdFromToken } from '../utils/auth.js'
 
 const handlers = {
   get: async (request, h) => {
@@ -12,28 +13,24 @@ const handlers = {
         )
       }
 
-      const targetGroupId = config.rmGroupId
-      const response = await wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
-        headers: {
-          Authorization: `Bearer ${request.auth.credentials.token}`,
-          'Content-Type': 'application/json'
-        },
-        payload: JSON.stringify({ groupIds: [targetGroupId] }),
-        json: true
-      })
-
-      const isMember = (response.payload?.value || []).includes(targetGroupId)
-
-      // Store membership result
-      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
+      const { profile, token, refreshToken } = request.auth.credentials
+      const sessionId = getSessionIdFromToken(token)
 
       // Set session cookie
       request.cookieAuth.set({
-        profile: request.auth.credentials.profile
+        sessionId,
+        profile
+      })
+
+      await request.server.app.tokenCache.set(sessionId, {
+        profile,
+        token,
+        refreshToken
       })
 
       return h.redirect(constants.views.CREATE_A_REPORT)
     } catch (err) {
+      // FIXME: won't be calling graph from here anymore
       console.error('Error calling Graph API:', err)
       return Boom.badGateway('Failed to contact Microsoft Graph API')
     }
