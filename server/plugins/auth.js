@@ -32,7 +32,7 @@ const auth = {
       },
       validate: async (request, session) => validateToken(request, session),
       keepAlive: false,
-      redirectTo: '/'      
+      redirectTo: '/'
     })
     server.auth.default('session-auth')
   }
@@ -43,6 +43,7 @@ async function validateToken (request, session) {
 
   // If session does not exist, return an invalid session
   if (!userSession) {
+    // FIXME: is there a way we can retain the yar session data?
     return { isValid: false }
   }
 
@@ -51,11 +52,11 @@ async function validateToken (request, session) {
     const decoded = Jwt.token.decode(userSession.token)
     // Jwt.token.verifyTime(decoded, {}, 2000000000)
     Jwt.token.verifyTime(decoded)
-  } catch (err) {    
+  } catch (err) {
     console.log('Refreshing token for session:', {
       sessionId: session.sessionId,
       profileId: session.profile.id,
-      profileEmail: session.profile.email,
+      profileEmail: session.profile.email
     }) // Debug log to check session ID being validated
 
     // FIXME: handle non 200 responses from token refresh

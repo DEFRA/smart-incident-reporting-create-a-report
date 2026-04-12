@@ -5,17 +5,22 @@ import config from './config.js'
 async function isMemberOfRMGroup (request) {
   const targetGroupId = config.rmGroupId
   const { token } = await request.server.app.tokenCache.get(request.auth.credentials.sessionId)
-    
-  const response = await Wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    payload: JSON.stringify({ groupIds: [targetGroupId] }),
-    json: true
-  })
+  try {
+    const response = await Wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      payload: JSON.stringify({ groupIds: [targetGroupId] }),
+      json: true
+    })
 
-  return (response.payload?.value || []).includes(targetGroupId)
+    console.log(response.payload) // Debug log to check group membership response
+    return (response.payload?.value || []).includes(targetGroupId)
+  } catch (err) {
+    console.error('Error checking group membership:', err)
+    return false
+  }
 }
 
 async function refreshTokens (refreshToken) {
@@ -25,7 +30,7 @@ async function refreshTokens (refreshToken) {
     `client_id=${config.aadClientId}`,
     `client_secret=${config.aadClientSecret}`,
     'grant_type=refresh_token',
-    `scope=offline_access user.read openid profile`, // Request same scopes as initial auth + offline_access for refresh token
+    'scope=offline_access user.read openid profile', // Request same scopes as initial auth + offline_access for refresh token
     `refresh_token=${refreshToken}`
   ].join('&')
 

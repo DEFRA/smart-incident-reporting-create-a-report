@@ -37,9 +37,9 @@ const init = async server => {
 
   // FIXME: reused values from session plugin, should be in config
   server.app.tokenCache = server.cache({
-    cache: 'redis_cache', 
+    cache: 'redis_cache',
     segment: 'tokens', // FIXME: this should be in config
-    expiresIn:  24 * 60 * 60 * 1000 // FIXME: want this to be longer and/or match the cookie ttl?
+    expiresIn: 24 * 60 * 60 * 1000 // FIXME: want this to be longer?
   })
 
   await server.start()
