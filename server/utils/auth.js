@@ -15,15 +15,17 @@ async function isMemberOfRMGroup (request) {
       json: true
     })
 
-    console.log(response.payload) // Debug log to check group membership response
-    return (response.payload?.value || []).includes(targetGroupId)
+    const isMember = (response.payload?.value || []).includes(targetGroupId)
+    console.log(`${request.auth.credentials.profile.email} isMember of RM group: ${isMember}`) // Debug log to check group membership response
+
+    return isMember
   } catch (err) {
-    console.error('Error checking group membership:', err)
+    console.error(`Error checking group membership for ${request.auth.credentials.profile.email}:`, err)
     return false
   }
 }
 
-async function refreshTokens (refreshToken) {
+async function refreshTokens (userSession) {
   const tokenEndpoint = `https://login.microsoftonline.com/${config.aadTenant}/oauth2/v2.0/token`
 
   const query = [
@@ -31,18 +33,23 @@ async function refreshTokens (refreshToken) {
     `client_secret=${config.aadClientSecret}`,
     'grant_type=refresh_token',
     'scope=offline_access user.read openid profile', // Request same scopes as initial auth + offline_access for refresh token
-    `refresh_token=${refreshToken}`
+    `refresh_token=${userSession.refreshToken}`
   ].join('&')
 
-  const { payload } = await Wreck.post(tokenEndpoint, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    payload: query,
-    json: true
-  })
+  try {
+    const response = await Wreck.post(tokenEndpoint, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      payload: query,
+      json: true
+    })
 
-  return payload
+    return response.payload
+  } catch (err) {
+    console.error(`Token refresh failed for ${userSession.profile.email}:`, err)
+    throw err
+  }
 }
 
 function getSessionIdFromToken (token) {

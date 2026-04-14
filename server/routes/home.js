@@ -24,8 +24,6 @@ const handlers = {
       refreshToken
     })
 
-    await request.server.app.tokenCache.set('test123', { qqq: 'hello paul, how are you' })
-
     return h.redirect(constants.routes.CREATE_A_REPORT)
   }
 }

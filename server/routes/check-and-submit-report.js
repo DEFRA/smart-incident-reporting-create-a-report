@@ -104,7 +104,6 @@ const handlers = {
   post: async (request, h) => {
     // Check to see if member of RM group
     const isMember = await isMemberOfRMGroup(request)
-    console.log('isMember of RM group:', isMember) // Debug log to check group membership result
 
     // Post data to service bus queue
     const payload = buildPayload(request.yar, request.auth.credentials.profile)

@@ -38,35 +38,24 @@ const auth = {
   }
 }
 
+// Following validate function based on example here: https://github.com/DEFRA/fcp-entra-example
 async function validateToken (request, session) {
   const userSession = await request.server.app.tokenCache.get(session.sessionId)
 
-  // If session does not exist, return an invalid session
   if (!userSession) {
-    // FIXME: is there a way we can retain the yar session data?
     return { isValid: false }
   }
 
-  // Verify Entra token has not expired
   try {
     const decoded = Jwt.token.decode(userSession.token)
-    // Jwt.token.verifyTime(decoded, {}, 2000000000)
     Jwt.token.verifyTime(decoded)
+    throw new Error('Token expired')
   } catch (err) {
-    console.log('Refreshing token for session:', {
-      sessionId: session.sessionId,
-      profileId: session.profile.id,
-      profileEmail: session.profile.email
-    }) // Debug log to check session ID being validated
-
-    // FIXME: handle non 200 responses from token refresh
-    const { access_token: token, refresh_token: refreshToken } = await refreshTokens(userSession.refreshToken)
+    const { access_token: token, refresh_token: refreshToken } = await refreshTokens(userSession)
     userSession.token = token
     userSession.refreshToken = refreshToken
     await request.server.app.tokenCache.set(session.sessionId, userSession)
   }
-
-  // FIXME: handle clearing up session cache on sign out
 
   return { isValid: true }
 }
