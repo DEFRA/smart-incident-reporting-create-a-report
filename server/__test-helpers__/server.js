@@ -31,6 +31,7 @@ const submitRequest = async (options, expectedResponseCode) => {
     options.auth = {
       strategy: 'session-auth',
       credentials: {
+        sessionId: '1234',
         profile: {
           id: 1,
           displayName: 'Smith, John',
