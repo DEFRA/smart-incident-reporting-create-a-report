@@ -37,6 +37,10 @@ const handlers = {
       actionResult = actions.findAddress(h, request, payloadData)
     }
 
+    if (action === 'find-name') {
+      actionResult = actions.findName(h, request, payloadData)
+    }
+
     if (action === 'select-address') {
       actionResult = actions.chooseAddress(h, request, payloadData)
     }

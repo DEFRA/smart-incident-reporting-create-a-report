@@ -6,6 +6,7 @@ import { reportTypes } from '../../utils/report-types.js'
 import helpers from '../../utils/address-picker-helpers.js'
 import { formatTime24hr } from '../../utils/time-helpers.js'
 import { isWaterCompanyEmail } from '../../utils/water-company-domains.js'
+import { findByName } from '../../services/find-location.js'
 
 function checkReportFinalisePayloadData (payloadData, addressChosen) {
   // Set default value for photos or videos checkbox
@@ -175,6 +176,50 @@ async function findAddress (h, request, payloadData) {
   })
 }
 
+async function findName (h, request, payloadData) {
+  request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
+
+  const nameQuery = request.payload.nameQuery?.trim() || ''
+  const showMessage = config.showNonLiveMessage
+  const selectAddress = true
+
+  let nameSearchResults = []
+  if (nameQuery.length > 0) {
+    const apiResult = await findByName(nameQuery)
+    console.log('[Names Search Action] raw API response', {
+      totalresults: apiResult?.payload?.header?.totalresults,
+      returned: apiResult?.payload?.results?.length ?? 0
+    })
+
+    nameSearchResults = (apiResult.payload.results || []).slice(0, 20).map(item => {
+      const entry = item.GAZETTEER_ENTRY || item
+      return {
+        id: entry.ID,
+        name: entry.NAME1,
+        localType: entry.LOCAL_TYPE,
+        populatedPlace: entry.POPULATED_PLACE,
+        countyOrUnitary: entry.COUNTY_UNITARY,
+        region: entry.REGION,
+        country: entry.COUNTRY,
+        x: entry.GEOMETRY_X,
+        y: entry.GEOMETRY_Y
+      }
+    })
+  } else {
+    console.log('[Names Search Action] empty name query received')
+  }
+
+  return h.view(constants.views.CREATE_A_REPORT, {
+    selectAddress,
+    nameQuery,
+    nameSearchResults,
+    nameSearchSearched: true,
+    ...payloadData,
+    reportTypes,
+    showMessage
+  })
+}
+
 function chooseAddress (h, request, payloadData) {
   const errorSummary = validateAddressSelectionPayload(payloadData)
   const showMessage = config.showNonLiveMessage
@@ -262,6 +307,7 @@ function useGridReference (h, request, payloadData) {
 export default {
   checkReport,
   findAddress,
+  findName,
   chooseAddress,
   differentAddress,
   changeAddress,
