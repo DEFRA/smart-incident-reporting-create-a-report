@@ -111,6 +111,12 @@ describe('isWaterCompanyEmail', () => {
     expect(isWaterCompanyEmail('person@southwestwatr.co.uk')).toBe(true)
   })
 
+  it('Should return true when domain mistakenly uses .com instead of .co.uk', () => {
+    expect(isWaterCompanyEmail('person@affinitywater.com')).toBe(true)
+    expect(isWaterCompanyEmail('person@wessexwater.com')).toBe(true)
+    expect(isWaterCompanyEmail('person@severntrent.com')).toBe(true)
+  })
+
   it('Should not apply fuzzy matching when first domain label is 4 characters or fewer', () => {
     expect(isWaterCompanyEmail('person@test.co.uk')).toBe(false)
     expect(isWaterCompanyEmail('person@mail.com')).toBe(false)

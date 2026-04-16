@@ -1,6 +1,24 @@
 import Fuse from 'fuse.js'
 
 /**
+ * Water company email validation module.
+ *
+ * The isWaterCompanyEmail() function performs a 4-layer validation strategy to identify
+ * water company emails and redirect users to the check-reporter-type page:
+ *
+ * 1. Exact match: Checks against the list of valid water company domains.
+ * 2. Known misspellings: Checks against an explicit allow-list of common mistyped domains.
+ * 3. TLD correction: Detects if a user mistakenly used .com instead of .co.uk
+ *    (e.g. 'wessexwater.com' → 'wessexwater.co.uk').
+ * 4. Fuzzy fallback: Uses Fuse.js for close typo detection, but only when the domain
+ *    name label (first part before the dot) exceeds 4 characters to avoid false positives
+ *    on short/generic domains (e.g. 'test.co.uk').
+ *
+ * The fuzzy matching threshold is tight (0.2) to minimize false positives while still
+ * catching legitimate spelling mistakes.
+ */
+
+/**
  * List of valid water company email domains
  */
 const waterCompanyDomains = [
@@ -134,7 +152,15 @@ export const isWaterCompanyEmail = (email) => {
     return true
   }
 
-  // 3. Fuzzy match — only applied when the domain name label exceeds 4 characters
+  // 3. Check if domain mistakenly uses .com instead of .co.uk
+  if (domain.endsWith('.com')) {
+    const coUkVariant = domain.slice(0, -4) + '.co.uk'
+    if (exactDomainSet.has(coUkVariant)) {
+      return true
+    }
+  }
+
+  // 4. Fuzzy match — only applied when the domain name label exceeds 4 characters
   const nameLabel = getDomainNameLabel(domain)
   if (nameLabel.length <= 4) {
     return false
