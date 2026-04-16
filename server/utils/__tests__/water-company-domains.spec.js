@@ -99,7 +99,21 @@ describe('isWaterCompanyEmail', () => {
 
   it('Should return false for unrelated domains and invalid emails', () => {
     expect(isWaterCompanyEmail('someone@example.com')).toBe(false)
+    expect(isWaterCompanyEmail('testing@test.com')).toBe(false)
+    expect(isWaterCompanyEmail('test@hotmail.co.uk')).toBe(false)
+    expect(isWaterCompanyEmail('person@test.co.uk')).toBe(false)
     expect(isWaterCompanyEmail('not-an-email')).toBe(false)
     expect(isWaterCompanyEmail('someone@com')).toBe(false)
+  })
+
+  it('Should return true for close typo domains via fuzzy matching when label is longer than 4 characters', () => {
+    expect(isWaterCompanyEmail('person@anglianwate.co.uk')).toBe(true)
+    expect(isWaterCompanyEmail('person@southwestwatr.co.uk')).toBe(true)
+  })
+
+  it('Should not apply fuzzy matching when first domain label is 4 characters or fewer', () => {
+    expect(isWaterCompanyEmail('person@test.co.uk')).toBe(false)
+    expect(isWaterCompanyEmail('person@mail.com')).toBe(false)
+    expect(isWaterCompanyEmail('person@abcd.co.uk')).toBe(false)
   })
 })

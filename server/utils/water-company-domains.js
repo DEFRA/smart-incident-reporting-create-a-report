@@ -33,9 +33,59 @@ const waterCompanyDomains = [
   'yorkshirewater.co.uk'
 ]
 
-const exactDomainSet = new Set(waterCompanyDomains)
+/**
+ * Known mistyped/misspelled water company domains that should still be
+ * identified as water company emails and redirect to check-reporter-type
+ */
+const mistypedWaterCompanyDomains = [
+  'affinity.co.uk',
+  'angilanwater.co.uk',
+  'anglainwater.co.uk',
+  'anglian.co.uk',
+  'anglianwaters.co.uk',
+  'anglianwter.co.uk',
+  'anglianwater.com',
+  'nwo.co.uk',
+  'nwul.co.uk',
+  '7trent.co.uk',
+  '7trent.gov.uk',
+  'serverntrent.co.uk',
+  'severtrent.co.uk',
+  'seventrent.co.uk',
+  'severn.co.uk',
+  'severnt.co.uk',
+  'severntent.co.uk',
+  'severntent.com',
+  'severntrentwaters.co.uk',
+  'severntrnet.co.uk',
+  'severnttrent.co.uk',
+  'sevthertrent.co.uk',
+  'soouthwestwater.co.uk',
+  'southerenwater.co.uk',
+  'sothernwater.co.uk',
+  'southernwater.com.uk',
+  'southwest.co.uk',
+  'soutwestwater.co.uk',
+  'uupl.co.uk',
+  'uuplc.uk',
+  'uplco.uk',
+  'uu.co.uk',
+  'uupcl.co.uk',
+  'uupk.co.uk',
+  'uuplac.co.uk',
+  'uuplc.co',
+  'uuplc.gov.uk',
+  'uutlc.co.uk',
+  'uulplc.co.uk',
+  'wesseswater.co.uk',
+  'wessex.co.uk',
+  'wessexswater.co.uk',
+  'wessexwater.co.uyk'
+]
 
-const FUZZY_MATCH_THRESHOLD = 0.4
+const exactDomainSet = new Set(waterCompanyDomains)
+const mistypedDomainSet = new Set(mistypedWaterCompanyDomains.map(d => d.toLowerCase()))
+const FUZZY_MATCH_THRESHOLD = 0.2
 
 const domainMatcher = new Fuse(waterCompanyDomains, {
   includeScore: true,
@@ -54,6 +104,15 @@ const getEmailDomain = (email) => {
   return email.slice(atIndex + 1)
 }
 
+/**
+ * Returns the first label of a domain (the part before the first dot).
+ * e.g. 'test.co.uk' -> 'test', 'anglianwater.co.uk' -> 'anglianwater'
+ */
+const getDomainNameLabel = (domain) => {
+  const dotIndex = domain.indexOf('.')
+  return dotIndex === -1 ? domain : domain.slice(0, dotIndex)
+}
+
 export const isWaterCompanyEmail = (email) => {
   if (typeof email !== 'string') {
     return false
@@ -61,8 +120,24 @@ export const isWaterCompanyEmail = (email) => {
 
   const domain = getEmailDomain(email.toLowerCase().trim())
 
+  if (!domain) {
+    return false
+  }
+
+  // 1. Exact match against valid water company domains
   if (exactDomainSet.has(domain)) {
     return true
+  }
+
+  // 2. Exact match against known mistyped water company domains
+  if (mistypedDomainSet.has(domain)) {
+    return true
+  }
+
+  // 3. Fuzzy match — only applied when the domain name label exceeds 4 characters
+  const nameLabel = getDomainNameLabel(domain)
+  if (nameLabel.length <= 4) {
+    return false
   }
 
   const matches = domainMatcher.search(domain)
