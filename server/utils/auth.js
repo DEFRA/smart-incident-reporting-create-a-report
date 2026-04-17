@@ -14,7 +14,6 @@ async function validateToken (request, session) {
     const decoded = Jwt.token.decode(userSession.token)
     Jwt.token.verifyTime(decoded)
   } catch (err) {
-    console.log('REFRESHING TOKEN')
     const { access_token: token, refresh_token: refreshToken } = await refreshTokens(userSession)
     userSession.token = token
     userSession.refreshToken = refreshToken
