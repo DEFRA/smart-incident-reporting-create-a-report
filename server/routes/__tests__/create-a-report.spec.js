@@ -1280,7 +1280,6 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options)
-      console.log(response.payload)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })

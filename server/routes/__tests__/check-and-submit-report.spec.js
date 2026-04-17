@@ -3,6 +3,8 @@ import constants from '../../utils/constants.js'
 import moment from 'moment'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import config from '../../utils/config.js'
+import { afterEach } from 'node:test'
+
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
 const url = constants.routes.CHECK_AND_SUBMIT_REPORT
@@ -109,6 +111,20 @@ describe(url, () => {
     })
   })
   describe('POST', () => {
+    const mockIsMemberOfRMGroup = jest.fn()
+
+    jest.mock('../../utils/auth.js', () => ({
+      isMemberOfRMGroup: mockIsMemberOfRMGroup
+    }))
+
+    beforeEach(() => {
+      mockIsMemberOfRMGroup.mockReturnValue(false)
+    })
+
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
       const sessionData = getSessionData()
       const options = {
@@ -799,56 +815,23 @@ describe(url, () => {
     })
 
     it('Should redirect to report manager when isMember is true', async () => {
+      mockIsMemberOfRMGroup.mockReturnValue(true)
       const sessionData = getSessionData()
-      sessionData[constants.redisKeys.GROUP_MEMBER] = true
-      const options = {
-        url
-      }
-
-      const response = await submitPostRequest(options, 200, sessionData)
-      expect(sendMessage).toHaveBeenCalledTimes(1)
-      expect(response.headers['content-type']).toContain('text/html')
-      expect(response.payload).toContain('<script>')
-      expect(response.payload).toContain('window.location.href')
-      // Check that payload contains rmUrl if configured, or just check for UUID pattern
-      if (config.rmUrl) {
-        expect(response.payload).toContain(config.rmUrl)
-      }
-      // Check that payload contains a session guid (UUID format)
-      expect(response.payload).toMatch(/[a-f0-9-]{36}/)
-    })
-
-    it('Should reset session but preserve GROUP_MEMBER flag when isMember is true', async () => {
-      const sessionData = getSessionData()
-      sessionData[constants.redisKeys.GROUP_MEMBER] = true
-      const options = {
-        url
-      }
-
-      const response = await submitPostRequest(options, 200, sessionData)
-      // GROUP_MEMBER should still be set after reset
-      expect(response.request.yar.get(constants.redisKeys.GROUP_MEMBER)).toEqual(true)
-      // Other session data should be cleared (CREATE_A_REPORT and REPORT_SUBMITTED should not exist after reset)
-      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toBeNull()
-      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toBeNull()
-    })
-
-    it('Should redirect to report-submitted page when isMember is false', async () => {
-      const sessionData = getSessionData()
-      sessionData[constants.redisKeys.GROUP_MEMBER] = false
       const options = {
         url
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
-      expect(response.request.yar.get(constants.redisKeys.REPORT_SUBMITTED)).toEqual(true)
       expect(sendMessage).toHaveBeenCalledTimes(1)
-      expect(response.headers.location).toEqual(constants.routes.REPORT_SUBMITTED)
+      // Redirect to report manager URL
+      expect(response.headers.location).toContain(config.rmUrl)
+      // Check that payload contains a session guid (UUID format)
+      expect(response.headers.location).toMatch(/[a-f0-9-]{36}/)
     })
 
-    it('Should redirect to report-submitted page when isMember is not set', async () => {
+    it('Should redirect to report-submitted page when isMember is false', async () => {
+      mockIsMemberOfRMGroup.mockReturnValue(false)
       const sessionData = getSessionData()
-      // Explicitly not setting GROUP_MEMBER
       const options = {
         url
       }

@@ -1,12 +1,12 @@
 import Jwt from '@hapi/jwt'
-import Wreck from '@hapi/wreck'
+import wreck from '@hapi/wreck'
 import config from './config.js'
 
 async function isMemberOfRMGroup (request) {
   const targetGroupId = config.rmGroupId
   const { token } = await request.server.app.tokenCache.get(request.auth.credentials.sessionId)
   try {
-    const response = await Wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
+    const response = await wreck.post('https://graph.microsoft.com/v1.0/me/checkMemberGroups', {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ async function refreshTokens (userSession) {
   ].join('&')
 
   try {
-    const response = await Wreck.post(tokenEndpoint, {
+    const response = await wreck.post(tokenEndpoint, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
