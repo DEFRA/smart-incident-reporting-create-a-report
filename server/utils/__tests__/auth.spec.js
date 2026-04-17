@@ -1,5 +1,6 @@
 import wreck from '@hapi/wreck'
-import { getSessionIdFromToken, refreshTokens, isMemberOfRMGroup } from '../auth.js'
+import { getSessionIdFromToken, refreshTokens, isMemberOfRMGroup, validateToken } from '../auth.js'
+import Jwt from '@hapi/jwt'
 
 describe('auth', () => {
   describe('getSessionIdFromToken', () => {
@@ -136,6 +137,88 @@ describe('auth', () => {
       expect(logSpy).toHaveBeenCalled()
       expect(logSpy).toHaveBeenCalledWith('Error checking group membership for mock-email@example.com:', new Error('Error checking group membership'))
       logSpy.mockRestore()
+    })
+  })
+
+  describe('validateToken', () => {
+    jest.mock('@hapi/wreck')
+
+    const jwtVerifyTimeSpy = jest.spyOn(Jwt.token, 'verifyTime')
+
+    const mockWreckPost = jest.fn()
+    const mockCacheGet = jest.fn()
+    const mockCacheSet = jest.fn()
+    const encodedToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30'
+
+    const mockTokenPayload = {
+      access_token: 'mock-access-token-123',
+      refresh_token: 'mock-refresh-token-123'
+    }
+
+    const mockSession = {
+      sessionId: 'test-session-id-123'
+    }
+
+    const mockGoodUserSession = {
+      profile: {
+        email: 'mock-email@example.com'
+      },
+      token: encodedToken,
+      refreshToken: 'mock-refresh-token-123'
+    }
+
+    const mockRequest = {
+      auth: {
+        credentials: {
+          sessionId: 'test-session-id-123',
+          profile: {
+            email: 'mock-email@example.com'
+          }
+        }
+      },
+      server: {
+        app: {
+          tokenCache: {
+            get: mockCacheGet,
+            set: mockCacheSet
+          }
+        }
+      }
+    }
+
+    beforeEach(() => {
+      wreck.post = mockWreckPost
+    })
+
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should return isValid true for valid session and tokens', async () => {
+      mockCacheGet.mockResolvedValue(mockGoodUserSession)
+      const result = await validateToken(mockRequest, mockSession)
+      expect(result).toEqual({ isValid: true })
+    })
+
+    it('should refresh token and return isValid true for expired token', async () => {
+      jwtVerifyTimeSpy.mockImplementationOnce(() => {
+        throw new Error('Token has expired')
+      })
+
+      mockCacheGet.mockResolvedValue(mockGoodUserSession)
+      mockWreckPost.mockResolvedValueOnce({
+        payload: mockTokenPayload
+      })
+
+      const result = await validateToken(mockRequest, mockSession)
+      expect(result).toEqual({ isValid: true })
+      expect(mockCacheSet).toHaveBeenCalledWith(mockSession.sessionId, mockGoodUserSession)
+    })
+
+    it('should return isValid false when no session is found in the cache', async () => {
+      mockCacheGet.mockResolvedValue(null)
+      const result = await validateToken(mockRequest, mockSession)
+      expect(result).toEqual({ isValid: false })
     })
   })
 })

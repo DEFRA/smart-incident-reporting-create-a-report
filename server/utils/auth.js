@@ -2,6 +2,28 @@ import Jwt from '@hapi/jwt'
 import wreck from '@hapi/wreck'
 import config from './config.js'
 
+// Following validate function based on example here: https://github.com/DEFRA/fcp-entra-example
+async function validateToken (request, session) {
+  const userSession = await request.server.app.tokenCache.get(session.sessionId)
+
+  if (!userSession) {
+    return { isValid: false }
+  }
+
+  try {
+    const decoded = Jwt.token.decode(userSession.token)
+    Jwt.token.verifyTime(decoded)
+  } catch (err) {
+    console.log('REFRESHING TOKEN')
+    const { access_token: token, refresh_token: refreshToken } = await refreshTokens(userSession)
+    userSession.token = token
+    userSession.refreshToken = refreshToken
+    await request.server.app.tokenCache.set(session.sessionId, userSession)
+  }
+
+  return { isValid: true }
+}
+
 async function isMemberOfRMGroup (request) {
   const targetGroupId = config.rmGroupId
   const { token } = await request.server.app.tokenCache.get(request.auth.credentials.sessionId)
@@ -62,4 +84,4 @@ function getSessionIdFromToken (token) {
   }
 }
 
-export { getSessionIdFromToken, refreshTokens, isMemberOfRMGroup }
+export { getSessionIdFromToken, refreshTokens, isMemberOfRMGroup, validateToken }
