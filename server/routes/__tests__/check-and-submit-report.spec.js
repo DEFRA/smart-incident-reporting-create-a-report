@@ -3,7 +3,6 @@ import constants from '../../utils/constants.js'
 import moment from 'moment'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import config from '../../utils/config.js'
-import { afterEach } from 'node:test'
 
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
