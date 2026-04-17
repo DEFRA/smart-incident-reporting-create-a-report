@@ -17,6 +17,11 @@ const CREATE_A_REPORT = 'create-a-report'
 const CHECK_REPORTER_TYPE = 'check-reporter-type'
 const CHECK_AND_SUBMIT_REPORT = 'check-and-submit-report'
 const REPORT_SUBMITTED = 'report-submitted'
+const ACCESSIBILITY = 'accessibility'
+const PRIVACY_NOTICE = 'privacy-notice'
+
+// API
+const API_OS_API_TOKEN = 'api/os-api-token'
 
 // Meta data
 const POSTCODE_DETAILS = 'postcode-details'
@@ -26,6 +31,7 @@ const SELECTED_ADDRESS = 'selected-address'
 const SELECTED_ADDRESS_DATA = 'selected-address-data'
 
 const views = {
+  API_OS_API_TOKEN,
   ERROR,
   PUBLIC,
   HOME,
@@ -36,7 +42,9 @@ const views = {
   CHECK_REPORTER_TYPE,
   CHECK_AND_SUBMIT_REPORT,
   CREATE_REPORT_CANCEL,
-  REPORT_SUBMITTED
+  REPORT_SUBMITTED,
+  ACCESSIBILITY,
+  PRIVACY_NOTICE
 }
 
 const routes = {}

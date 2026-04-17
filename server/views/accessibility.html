@@ -1,0 +1,95 @@
+{% extends 'form-layout.html' %}
+{% set pageTitle = 'Accessibility statement for the Report an environmental problem service' %}
+
+{% block formContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: "#",
+        attributes: {
+            id: "back-link",
+            onclick: "window.history.go(-1); return false;"
+        }
+    }) }}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl govuk-!-padding-top-4">{{ pageTitle }}</h1>
+        <p class="govuk-body">
+            This page only contains information about the report an environmental problem service.</p>
+        <h2 class="govuk-heading-l">
+            Using this service
+        </h2>
+        <p class="govuk-body">
+            This service is provided by the Environment Agency. We want as many people as possible to be able to use this service. This means you should, for example, be able to:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>change colours, contrast levels and fonts</li>
+            <li>zoom in up to 300% without the text spilling off the screen</li>
+            <li>get from the start of the service to the end using just a keyboard</li>
+            <li>get from the start of the service to the end using speech recognition software</li>
+            <li>listen to the service using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)</li>
+        </ul>
+        <p class="govuk-body">
+            We’ve also made the text in the service as simple as possible to understand.
+        </p>
+        <p class="govuk-body">
+            <a href="https://mcmw.abilitynet.org.uk/" rel="noopener noreferrer" target="_blank" aria-describedby="new-window-0" class="govuk-link">AbilityNet</a> has advice on making your device easier to use if you have a disability.
+        </p>
+        <h2 class="govuk-heading-l">
+            How accessible this service is
+        </h2>
+        <p class="govuk-body">
+            Users of specific technology may experience the following issues when using the service:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>if you do not have JavaScript enabled in your browser, you may not be able to use some features of the service</li>
+        </ul>
+        <p>Additionally, we know some parts of this service are not fully accessible. For example:</p>
+        <ul class="govuk-list govuk-list--bullet">
+        <li>there is no 'dark' or 'light' theme</li>
+        <li>using the enter key in some circumstances submits the form, which results in unexpected behaviour</li>
+        </ul>
+        <h2 class="govuk-heading-l">
+            What to do if you have difficulty using this service
+        </h2>
+        <p class="govuk-body">We want to solve any issues with accessibility as quickly as possible, and work to improve the accessibility of this service wherever we can.</p>
+        <p class="govuk-body">If you find any problems not listed on this page or think we're not meeting accessibility requirements, contact your supervisor.</p>
+        <h2 class="govuk-heading-m">
+            Enforcement procedure
+        </h2>
+        <p class="govuk-body">The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’).</p>
+        <p class="govuk-body">If you're not happy with how we respond to a complaint, contact the <a href="https://www.equalityadvisoryservice.com/" rel="noopener noreferrer" target="_blank" class="govuk-link" aria-describedby="new-window-0">Equality Advisory and Support Service (EASS)</a>.</p>
+        <h2 class="govuk-heading-l">
+            Technical information about this service’s accessibility
+        </h2>
+        <p class="govuk-body">
+            The Environment Agency is committed to making this service accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.
+        </p>
+        <p class="govuk-body">
+            This service is partially compliant with the <a href="https://www.w3.org/TR/WCAG22/" rel="noopener noreferrer" target="_blank" aria-describedby="new-window-0" class="govuk-link">Web Content Accessibility Guidelines version 2.2 AA standard</a>.
+        </p>
+        <h2 class="govuk-heading-m">
+            Non-compliant content
+        </h2>
+        <p>The following content does not meet accessibility requirements:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>some elements do not have semantically linked labels, which does not meet requirement for WCAG 3.3.2 Plain English</li>
+            <li>the site's stylesheet does not respect the CSS value 'prefers-color-scheme'</li>
+        </ul>
+        <p>We plan to fix these problems in the following ways:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>add any missing labels and semantically link them to inputs</li>
+            <li>creating a 'dark' and 'light' theme for the site</li>
+        </ul>
+        <h2 class="govuk-heading-l">
+            How we tested this service
+        </h2>
+        <p class="govuk-body">
+            The service was last tested on 3 December 2025. It was checked for compliance with WCAG 2.2 AA using both automated and manual testing. The tests were carried out by the Defra Accessibility Team.
+        </p>
+        <p class="govuk-body">
+            This statement was last updated on 30 January 2026.
+        </p>
+    </div>
+  </div>
+{% endblock %}

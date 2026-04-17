@@ -75,6 +75,40 @@ const formatTextBlocks = reportPayload => {
   }
 }
 
+export const incidentLocationMapConfig = (request, reportPayload) => {
+  if (!reportPayload) {
+    return undefined
+  }
+
+  if (reportPayload.locationOfIncident === 'gridReference' && reportPayload.locationGridRef) {
+    const gridref = formatGridReference(reportPayload.locationGridRef)
+    const { ea, no } = ngrToEaNo(gridref)
+
+    return {
+      point: [Number(ea), Number(no)],
+      disableControls: true,
+      zoom: 10
+    }
+  }
+
+  if (reportPayload.locationOfIncident === 'address') {
+    const selectedAddressData = request.yar.get(constants.redisKeys.SELECTED_ADDRESS_DATA)
+    const addressPoint = selectedAddressData?.[0] ? [selectedAddressData[0].x, selectedAddressData[0].y] : null
+
+    if (!addressPoint) {
+      return undefined
+    }
+
+    return {
+      point: [Number(addressPoint[0]), Number(addressPoint[1])],
+      disableControls: true,
+      zoom: 10
+    }
+  }
+
+  return undefined
+}
+
 const handlers = {
   get: async (request, h) => {
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
@@ -90,6 +124,7 @@ const handlers = {
     }
 
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
+    const mapCoordinates = incidentLocationMapConfig(request, reportPayload)
 
     formatTextBlocks(reportPayload)
 
@@ -98,7 +133,8 @@ const handlers = {
       ...reportPayload,
       reportTypes,
       ngrValue,
-      selectedAddress
+      selectedAddress,
+      mapCoordinates
     })
   },
   post: async (request, h) => {
