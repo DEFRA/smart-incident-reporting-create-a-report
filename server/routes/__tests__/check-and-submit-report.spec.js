@@ -3,11 +3,7 @@ import constants from '../../utils/constants.js'
 import moment from 'moment'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import config from '../../utils/config.js'
-<<<<<<< HEAD
-
-=======
 import { incidentLocationMapConfig } from '../check-and-submit-report.js'
->>>>>>> origin/develop
 jest.mock('@defra/smart-incident-reporting/server/services/service-bus.js')
 
 const url = constants.routes.CHECK_AND_SUBMIT_REPORT
