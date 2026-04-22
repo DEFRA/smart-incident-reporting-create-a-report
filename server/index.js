@@ -29,12 +29,18 @@ const createServer = async options => {
     },
     ...options
   }
-
   return new Hapi.Server(options)
 }
 
 const init = async server => {
   await _registerPlugins(server)
+
+  server.app.tokenCache = server.cache({
+    cache: 'redis_cache',
+    segment: 'tokens',
+    expiresIn: 24 * 60 * 60 * 1000
+  })
+
   await server.start()
 }
 

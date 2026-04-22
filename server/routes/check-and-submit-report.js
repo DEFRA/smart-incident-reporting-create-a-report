@@ -8,6 +8,7 @@ import bngToNgr from '../utils/bng-to-ngr.js'
 import { oSGBToWGS84 } from '../utils/transform-point.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import helpers from '../utils/address-picker-helpers.js'
+import { isMemberOfRMGroup } from '../utils/auth.js'
 
 // Incident location question
 const incidentLocationQuestion = {
@@ -137,6 +138,9 @@ const handlers = {
     })
   },
   post: async (request, h) => {
+    // Check to see if member of RM group
+    const isMember = await isMemberOfRMGroup(request)
+
     // Post data to service bus queue
     const payload = buildPayload(request.yar, request.auth.credentials.profile)
 
@@ -160,9 +164,6 @@ const handlers = {
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
-    // handle redirects
-    const isMember = request.yar.get(constants.redisKeys.GROUP_MEMBER)
-
     if (isMember) {
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id
@@ -170,16 +171,7 @@ const handlers = {
       // clear out session data as no longer required
       request.yar.reset()
 
-      request.yar.set(constants.redisKeys.GROUP_MEMBER, isMember)
-      return h.response(`
-        <html>
-          <body>
-            <script>
-              window.location.href = "${reportManagerUrl}${sessionGuid}";
-            </script>
-          </body>
-        </html>
-      `).type('text/html')
+      return h.redirect(`${reportManagerUrl}${sessionGuid}#`)
     } else {
       return h.redirect(constants.routes.REPORT_SUBMITTED)
     }

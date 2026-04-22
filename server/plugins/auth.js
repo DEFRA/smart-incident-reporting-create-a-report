@@ -1,6 +1,7 @@
 import Cookie from '@hapi/cookie'
 import Bell from '@hapi/bell'
 import config from '../utils/config.js'
+import { validateToken } from '../utils/auth.js'
 
 const auth = {
   name: 'auth',
@@ -28,7 +29,8 @@ const auth = {
         isSameSite: 'Lax',
         ttl: 24 * 60 * 60 * 1000
       },
-      keepAlive: true,
+      validate: async (request, session) => validateToken(request, session),
+      keepAlive: false,
       redirectTo: '/'
     })
     server.auth.default('session-auth')
