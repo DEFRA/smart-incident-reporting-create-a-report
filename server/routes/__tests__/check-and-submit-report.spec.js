@@ -190,13 +190,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3901
+              answerId: 2801
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3903
+              answerId: 2803
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2806
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -438,7 +444,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3902
+              answerId: 2802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2804
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2806
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -529,7 +547,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3902
+              answerId: 2802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2804
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2806
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -582,7 +612,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3902
+              answerId: 2802
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2804
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2806
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -596,7 +638,7 @@ describe(url, () => {
       }))
     })
 
-    it('Should send answerId 3901 (yes) and 3904 (video) when video is selected', async () => {
+    it('Should send answerId 2801 (yes), 2804 (noPhotos) and 2805 (yesVideo) when only video is selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'No'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -612,20 +654,26 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3901
+              answerId: 2801
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3904
+              answerId: 2804
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2805
             })
           ])
         })
       }))
     })
 
-    it('Should send answerId 3901 (yes), 3903 (photos) and 3904 (video) when both are selected', async () => {
+    it('Should send answerId 2801 (yes), 2803 (yesPhotos) and 2805 (yesVideo) when both photos and video are selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'Yes'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -641,19 +689,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3901
+              answerId: 2801
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3903
+              answerId: 2803
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3904
+              answerId: 2805
             })
           ])
         })
@@ -695,7 +743,19 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 3903
+              answerId: 2801
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2803
+            }),
+            expect.objectContaining({
+              questionId: 3900,
+              questionAsked: 'Photos or videos available',
+              questionResponse: true,
+              answerId: 2806
             }),
             expect.objectContaining({
               questionId: 4100,

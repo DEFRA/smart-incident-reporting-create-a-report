@@ -259,43 +259,32 @@ const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
   const hasVideos = reportPayload.reporterVideos === 'Yes'
   const results = []
 
-  if (hasPhotos || hasVideos) {
-    // Send general yes answer first
-    results.push({
-      questionId: question.questionId,
-      questionAsked: question.text,
-      questionResponse: true,
-      answerId: question.answers.yes.answerId
-    })
-  } else {
-    // Neither selected
-    results.push({
-      questionId: question.questionId,
-      questionAsked: question.text,
-      questionResponse: true,
-      answerId: question.answers.no.answerId
-    })
-  }
+  results.push({
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true,
+    answerId: hasPhotos || hasVideos
+      ? question.answers.yes.answerId
+      : question.answers.no.answerId
+  })
 
-  if (hasPhotos) {
-    // Send specific photos answer
-    results.push({
-      questionId: question.questionId,
-      questionAsked: question.text,
-      questionResponse: true,
-      answerId: question.answers.photos.answerId
-    })
-  }
+  results.push({
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true,
+    answerId: hasPhotos
+      ? question.answers.yesPhotos.answerId
+      : question.answers.noPhotos.answerId
+  })
 
-  if (hasVideos) {
-    // Send specific video answer
-    results.push({
-      questionId: question.questionId,
-      questionAsked: question.text,
-      questionResponse: true,
-      answerId: question.answers.video.answerId
-    })
-  }
+  results.push({
+    questionId: question.questionId,
+    questionAsked: question.text,
+    questionResponse: true,
+    answerId: hasVideos
+      ? question.answers.yesVideo.answerId
+      : question.answers.noVideo.answerId
+  })
 
   return results
 }
