@@ -263,15 +263,6 @@ const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
     questionId: question.questionId,
     questionAsked: question.text,
     questionResponse: true,
-    answerId: hasPhotos || hasVideos
-      ? question.answers.yes.answerId
-      : question.answers.no.answerId
-  })
-
-  results.push({
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true,
     answerId: hasPhotos
       ? question.answers.yesPhotos.answerId
       : question.answers.noPhotos.answerId

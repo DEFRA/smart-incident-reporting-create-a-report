@@ -190,12 +190,6 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2801
-            }),
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
               answerId: 2803
             }),
             expect.objectContaining({
@@ -444,12 +438,6 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2802
-            }),
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
               answerId: 2804
             }),
             expect.objectContaining({
@@ -547,12 +535,6 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2802
-            }),
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
               answerId: 2804
             }),
             expect.objectContaining({
@@ -612,12 +594,6 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2802
-            }),
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
               answerId: 2804
             }),
             expect.objectContaining({
@@ -638,7 +614,7 @@ describe(url, () => {
       }))
     })
 
-    it('Should send answerId 2801 (yes), 2804 (noPhotos) and 2805 (yesVideo) when only video is selected', async () => {
+    it('Should send answerId 2804 (noPhotos) and 2805 (yesVideo) when only video is selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'No'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -650,12 +626,6 @@ describe(url, () => {
       expect(sendMessage.mock.calls.at(-1)?.[1]).toEqual(expect.objectContaining({
         reportingAnEnvironmentalProblem: expect.objectContaining({
           data: expect.arrayContaining([
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
-              answerId: 2801
-            }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
@@ -673,7 +643,7 @@ describe(url, () => {
       }))
     })
 
-    it('Should send answerId 2801 (yes), 2803 (yesPhotos) and 2805 (yesVideo) when both photos and video are selected', async () => {
+    it('Should send answerId 2803 (yesPhotos) and 2805 (yesVideo) when both photos and video are selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'Yes'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -685,12 +655,6 @@ describe(url, () => {
       expect(sendMessage.mock.calls.at(-1)?.[1]).toEqual(expect.objectContaining({
         reportingAnEnvironmentalProblem: expect.objectContaining({
           data: expect.arrayContaining([
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
-              answerId: 2801
-            }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
@@ -738,12 +702,6 @@ describe(url, () => {
               questionAsked: 'Reported by email?',
               questionResponse: true,
               answerId: 3802
-            }),
-            expect.objectContaining({
-              questionId: 3900,
-              questionAsked: 'Photos or videos available',
-              questionResponse: true,
-              answerId: 2801
             }),
             expect.objectContaining({
               questionId: 3900,
