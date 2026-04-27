@@ -938,7 +938,7 @@ describe(url, () => {
       expect(response.payload).toContain('id="postcodeDetails" name="postcodeDetails" type="text" value="SG143LB"')
     })
 
-    it('Sad: should fail validation and return error message for missing building number and postcode', async () => {
+    it('Sad: should fail validation and return error message for missing postcode', async () => {
       const payload = getPayload()
       payload.locationOfIncident = 'address'
       payload.action = 'find-address'
@@ -948,7 +948,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('Enter a building number or name')
+      expect(response.payload).not.toContain('Enter a building number or name')
       expect(response.payload).toContain('Enter a postcode')
     })
 

@@ -222,13 +222,6 @@ const validateAddressLocation = (payload, errorSummary) => {
 
 const validateBuildingData = (payload, errorSummary) => {
   if (payload.locationOfIncident === 'address') {
-    if (!payload.buildingDetails) {
-      errorSummary.errorList.push({
-        text: 'Enter a building number or name',
-        href: '#buildingDetails'
-      })
-    }
-
     const postcodeDetails = '#postcodeDetails'
 
     if (!payload.postcodeDetails) {
