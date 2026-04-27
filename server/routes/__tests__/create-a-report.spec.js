@@ -847,6 +847,48 @@ describe(url, () => {
       await submitPostRequest(options, 200)
     })
 
+    it('Happy: should show postcode-only search content when building details are empty', async () => {
+      util.getJson.mockResolvedValue({
+        header: {
+          totalresults: 2
+        },
+        results: [
+          {
+            DPA: {
+              UPRN: '8',
+              ADDRESS: '100, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
+            }
+          },
+          {
+            DPA: {
+              UPRN: '9',
+              ADDRESS: '102, OAK AVENUE, ABERDEEN, AB12 3DE',
+              POSTCODE: 'AB12 3DE',
+              X_COORDINATE: 3,
+              Y_COORDINATE: 8
+            }
+          }
+        ]
+      })
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.action = 'find-address'
+      payload.buildingDetails = ''
+      payload.postcodeDetails = 'AB123DE'
+      const options = {
+        url,
+        payload
+      }
+
+      const response = await submitPostRequest(options, 200)
+      expect(response.payload).toContain('We could not find an address that matches <strong>AB123DE</strong>.')
+      expect(response.payload).not.toContain('</strong> and <strong>AB123DE</strong>')
+    })
+
     it('Happy: should select chosen address', async () => {
       const sessionData = {
         'choose-address': {

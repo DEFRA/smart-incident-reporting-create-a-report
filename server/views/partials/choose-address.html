@@ -8,12 +8,22 @@
   </p>
 {% endset %}
 
+{% set hasBuildingDetails = buildingDetails and (buildingDetails | trim) %}
+
+{% set searchCriteriaHtml %}
+  {% if hasBuildingDetails %}
+    <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>
+  {% else %}
+    <strong>{{ postcodeDetails }}</strong>
+  {% endif %}
+{% endset %}
+
 {% set noAddressFoundHtml %}  
   <h1 class="govuk-heading-l">
     No address found
   </h1>  
   <p class="govuk-body">
-    We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+    We could not find an address that matches {{ searchCriteriaHtml | safe }}.
   </p>
   <p class="govuk-body">
     Check you have entered the correct postcode.
@@ -27,14 +37,14 @@
     
   {% if showFullResults %}
     <p class="govuk-body">
-      We could not find an address that matches <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+      We could not find an address that matches {{ searchCriteriaHtml | safe }}.
     </p>
     <p class="govuk-body">
       {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ postcodeDetails }}</strong>.
     </p>
   {% else %}    
     <p class="govuk-body">
-      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ buildingDetails }}</strong> and <strong>{{ postcodeDetails }}</strong>.
+      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for {{ searchCriteriaHtml | safe }}.
     </p>
   {% endif %}
 {% endset %}
