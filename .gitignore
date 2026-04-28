@@ -4,3 +4,8 @@
 coverage
 server/public
 .env
+.github/prompts
+.github/instructions
+.github/skills
+.github/agents
+.github/copilot-instructions.md
