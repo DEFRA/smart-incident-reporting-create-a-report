@@ -885,7 +885,7 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('We could not find an address that matches <strong>AB123DE</strong>.')
+      expect(response.payload).toContain('2 addresses found for <strong>AB123DE</strong>.')
       expect(response.payload).not.toContain('</strong> and <strong>AB123DE</strong>')
     })
 

@@ -40,11 +40,11 @@
       We could not find an address that matches {{ searchCriteriaHtml | safe }}.
     </p>
     <p class="govuk-body">
-      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for <strong>{{ postcodeDetails }}</strong>.
+      {{ resultlength }} {%- if resultlength === 1 %} address{% else %} addresses{% endif %} found for <strong>{{ postcodeDetails }}</strong>.
     </p>
   {% else %}    
     <p class="govuk-body">
-      {{ resultlength }} {% if resultlength === 1 %} address {% else %} addresses {% endif %} found for {{ searchCriteriaHtml | safe }}.
+      {{ resultlength }} {%- if resultlength === 1 %} address{% else %} addresses{% endif %} found for {{ searchCriteriaHtml | safe }}.
     </p>
   {% endif %}
 {% endset %}
