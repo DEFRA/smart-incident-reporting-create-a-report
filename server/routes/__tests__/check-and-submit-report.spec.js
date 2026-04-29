@@ -137,6 +137,15 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
     })
+
+    it('Should show images or photos as Yes when videos are selected even if photos are No', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterPhotos = 'No'
+      sessionData['create-a-report'].reporterVideos = 'Yes'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toMatch(/Images or photos[\s\S]*?<dd class="govuk-summary-list__value">\s*Yes\s*<\/dd>/)
+    })
   })
   describe('POST', () => {
     const mockIsMemberOfRMGroup = jest.fn()
@@ -190,13 +199,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2803
+              answerId: 3903
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2806
+              answerId: 3906
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -438,13 +447,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2804
+              answerId: 3904
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2806
+              answerId: 3906
             }),
             expect.objectContaining({
               questionId: 4100,
@@ -535,13 +544,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2804
+              answerId: 3904
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2806
+              answerId: 3906
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -594,13 +603,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2804
+              answerId: 3904
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2806
+              answerId: 3906
             }),
             expect.objectContaining({
               questionId: 4000,
@@ -614,7 +623,7 @@ describe(url, () => {
       }))
     })
 
-    it('Should send answerId 2804 (noPhotos) and 2805 (yesVideo) when only video is selected', async () => {
+    it('Should send answerId 3904 (noPhotos) and 3905 (yesVideo) when only video is selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'No'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -630,20 +639,20 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2804
+              answerId: 3904
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2805
+              answerId: 3905
             })
           ])
         })
       }))
     })
 
-    it('Should send answerId 2803 (yesPhotos) and 2805 (yesVideo) when both photos and video are selected', async () => {
+    it('Should send answerId 3903 (yesPhotos) and 3905 (yesVideo) when both photos and video are selected', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].reporterPhotos = 'Yes'
       sessionData['create-a-report'].reporterVideos = 'Yes'
@@ -659,13 +668,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2803
+              answerId: 3903
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2805
+              answerId: 3905
             })
           ])
         })
@@ -707,13 +716,13 @@ describe(url, () => {
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2803
+              answerId: 3903
             }),
             expect.objectContaining({
               questionId: 3900,
               questionAsked: 'Photos or videos available',
               questionResponse: true,
-              answerId: 2806
+              answerId: 3906
             }),
             expect.objectContaining({
               questionId: 4100,
