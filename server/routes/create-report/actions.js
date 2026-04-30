@@ -7,11 +7,18 @@ import helpers from '../../utils/address-picker-helpers.js'
 import { formatTime24hr } from '../../utils/time-helpers.js'
 import { isWaterCompanyEmail } from '../../utils/water-company-domains.js'
 
-function checkReportFinalisePayloadData (payloadData, addressChosen) {
-  // Map media checkbox to individual flags
-  const mediaSelections = payloadData.reporterMediaAvailable
-    ? (Array.isArray(payloadData.reporterMediaAvailable) ? payloadData.reporterMediaAvailable : [payloadData.reporterMediaAvailable])
-    : []
+const getMediaSelections = (payloadData) => {
+  if (!payloadData.reporterMediaAvailable) {
+    return []
+  }
+
+  return Array.isArray(payloadData.reporterMediaAvailable)
+    ? payloadData.reporterMediaAvailable
+    : [payloadData.reporterMediaAvailable]
+}
+
+const mapReporterMediaFlags = (payloadData) => {
+  const mediaSelections = getMediaSelections(payloadData)
 
   if (mediaSelections.length > 0) {
     payloadData.reporterPhotos = mediaSelections.includes('Photos') ? 'Yes' : 'No'
@@ -20,39 +27,53 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
     payloadData.reporterPhotos = payloadData.reporterPhotos || 'No'
     payloadData.reporterVideos = payloadData.reporterVideos || 'No'
   }
-  delete payloadData.reporterMediaAvailable
 
-  // Set default value for reporter's home address checkbox
+  delete payloadData.reporterMediaAvailable
+}
+
+const setReporterHomeAddressDefault = (payloadData) => {
   if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {
     payloadData.reporterHomeAddress = 'No'
-  } else if (payloadData.locationOfIncident === 'gridReference') {
+    return
+  }
+
+  if (payloadData.locationOfIncident === 'gridReference') {
     payloadData.reporterHomeAddress = ''
-  } else {
-    // do nothing
+  }
+}
+
+const setNowDateDefaults = (payloadData) => {
+  if (payloadData.dateObserved !== 'now') {
+    return
   }
 
-  payloadData.addressChosen = !!addressChosen
+  const currentTime = moment().format('HH:mm')
+  payloadData.nowTime = currentTime
 
-  // Set time for date of incident - now
-  if (payloadData.dateObserved === 'now') {
-    const currentTime = moment().format('HH:mm')
-    payloadData.nowTime = currentTime
+  // Clear other payload time/date data when date observed is now.
+  payloadData.dateTimeToday = ''
+  payloadData.dateTimeYesterday = ''
+  payloadData.dateOtherDay = ''
+  payloadData.dateOtherMonth = ''
+  payloadData.dateOtherYear = ''
+  payloadData.dateOtherTime = ''
+}
 
-    // clear other payload time/date data
-    payloadData.dateTimeToday = ''
-    payloadData.dateTimeYesterday = ''
-    payloadData.dateOtherDay = ''
-    payloadData.dateOtherMonth = ''
-    payloadData.dateOtherYear = ''
-    payloadData.dateOtherTime = ''
-  }
-
-  // Trim whitespaces for string inputs in payload
+const trimStringFields = (payloadData) => {
   for (const [key, value] of Object.entries(payloadData)) {
     if (typeof value === 'string') {
       payloadData[key] = value.trim()
     }
   }
+}
+
+function checkReportFinalisePayloadData (payloadData, addressChosen) {
+  mapReporterMediaFlags(payloadData)
+  setReporterHomeAddressDefault(payloadData)
+
+  payloadData.addressChosen = !!addressChosen
+  setNowDateDefaults(payloadData)
+  trimStringFields(payloadData)
 }
 
 const errorDetected = errorSummary =>
