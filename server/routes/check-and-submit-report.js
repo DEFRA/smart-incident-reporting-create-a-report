@@ -257,27 +257,25 @@ const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
   const question = questions.REPORTED_PHOTOS_OR_VIDEOS
   const hasPhotos = reportPayload.reporterPhotos === 'Yes'
   const hasVideos = reportPayload.reporterVideos === 'Yes'
-  const results = []
 
-  results.push({
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true,
-    answerId: hasPhotos
-      ? question.answers.yesPhotos.answerId
-      : question.answers.noPhotos.answerId
-  })
-
-  results.push({
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true,
-    answerId: hasVideos
-      ? question.answers.yesVideo.answerId
-      : question.answers.noVideo.answerId
-  })
-
-  return results
+  return [
+    {
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: hasPhotos
+        ? question.answers.yesPhotos.answerId
+        : question.answers.noPhotos.answerId
+    },
+    {
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: hasVideos
+        ? question.answers.yesVideo.answerId
+        : question.answers.noVideo.answerId
+    }
+  ]
 }
 
 const buildReporterTypeAnswers = (reportPayload, questions) => {
