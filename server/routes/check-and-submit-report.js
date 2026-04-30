@@ -125,10 +125,6 @@ const handlers = {
 
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
     const mapCoordinates = incidentLocationMapConfig(request, reportPayload)
-    const hasPhotos = reportPayload.reporterPhotos === 'Yes'
-    const hasVideos = reportPayload.reporterVideos === 'Yes'
-
-    reportPayload.reporterPhotos = hasPhotos || hasVideos ? 'Yes' : 'No'
 
     formatTextBlocks(reportPayload)
 

@@ -138,13 +138,18 @@ describe(url, () => {
       expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
     })
 
-    it('Should show images or photos as Yes when videos are selected even if photos are No', async () => {
+    it.each([
+      ['Yes', 'Yes', 'Yes - photos<br>Yes - video'],
+      ['No', 'No', 'No - photos<br>No - video'],
+      ['Yes', 'No', 'Yes - photos<br>No - video'],
+      ['No', 'Yes', 'No - photos<br>Yes - video']
+    ])('Should show media summary as %s photos and %s video', async (photos, videos, expected) => {
       const sessionData = getSessionData()
-      sessionData['create-a-report'].reporterPhotos = 'No'
-      sessionData['create-a-report'].reporterVideos = 'Yes'
+      sessionData['create-a-report'].reporterPhotos = photos
+      sessionData['create-a-report'].reporterVideos = videos
 
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
-      expect(response.payload).toMatch(/Images or photos[\s\S]*?<dd class="govuk-summary-list__value">\s*Yes\s*<\/dd>/)
+      expect(response.payload).toContain(expected)
     })
   })
   describe('POST', () => {

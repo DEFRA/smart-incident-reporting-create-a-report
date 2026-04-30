@@ -187,12 +187,12 @@
         
         {
           key: {
-            text: "Images or photos"
+            text: "Images or video"
           },
           value: {
-            text: reporterPhotos
+            html: reporterPhotos + " - photos<br>" + reporterVideos + " - video"
           } 
-        } if reporterPhotos
+        } if (reporterPhotos or reporterVideos)
       ]
     }) }}
   
