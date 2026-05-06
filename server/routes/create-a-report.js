@@ -6,6 +6,15 @@ import actions from './create-report/actions.js'
 
 const handlers = {
   get: async (request, h) => {
+    const payloadRecoveryData = request.yar.get(constants.redisKeys.POST_DATA_RECOVERY)
+
+    if (payloadRecoveryData) {
+      console.log('----> create a report GET handler, found payload recovery data:')
+      console.log(payloadRecoveryData)
+      request.yar.set(constants.redisKeys.CREATE_A_REPORT, formatTextarea(payloadRecoveryData?.payload))
+      request.yar.clear(constants.redisKeys.POST_DATA_RECOVERY)
+    }
+
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
     if (errorSummary?.description.errorList.length > 0 ||
@@ -96,6 +105,12 @@ export default [
   }, {
     method: 'POST',
     path: constants.routes.CREATE_A_REPORT,
-    handler: handlers.post
+    handler: handlers.post,
+    options: {
+      auth: {
+        mode: 'try',
+        strategy: 'session-auth'
+      }
+    }
   }
 ]

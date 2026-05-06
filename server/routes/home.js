@@ -24,6 +24,15 @@ const handlers = {
       refreshToken
     })
 
+    const payloadRecoveryData = request.yar.get(constants.redisKeys.POST_DATA_RECOVERY)
+
+    if (payloadRecoveryData && constants.postPayloadDataPaths.has(payloadRecoveryData.path)) {
+      console.log('----> Redirecting to path with recovered payload:')
+      console.log(payloadRecoveryData.path)
+      return h.redirect(payloadRecoveryData.path)
+    }
+
+    request.yar.clear(constants.redisKeys.POST_DATA_RECOVERY)
     return h.redirect(constants.routes.CREATE_A_REPORT)
   }
 }
