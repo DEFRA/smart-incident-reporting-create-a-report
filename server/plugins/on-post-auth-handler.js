@@ -17,29 +17,18 @@ const onPostAuthHandler = {
 
         // Only for paths where we want to recover the
         // posted payload
-        console.log('---------------')
-        console.log(request.path)
-        console.log(constants.postPayloadDataPaths)
-        console.log('---------------')
-
         if (!constants.postPayloadDataPaths.has(request.path)) {
           return h.continue
         }
 
-        console.log('----> In POST AUTH')
         const routeAuth = request.route.settings.auth
         if (!routeAuth || routeAuth.mode !== 'try') {
-          console.log('----> Not a try mode route, doing nothing')
           return h.continue
         }
 
         if (request.auth.isAuthenticated) {
-          console.log('----> Authenticated, doing nothing')
           return h.continue
         }
-
-        console.log('----> here is the payload to capture:')
-        console.log(request.payload)
 
         const payload = request.payload
         request.yar.set(constants.redisKeys.POST_DATA_RECOVERY, {

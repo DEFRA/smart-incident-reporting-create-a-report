@@ -61,8 +61,6 @@ const handlers = {
     const payloadRecoveryData = request.yar.get(constants.redisKeys.POST_DATA_RECOVERY)
 
     if (payloadRecoveryData) {
-      console.log('----> check reporter type GET handler, found payload recovery data:')
-      console.log(payloadRecoveryData)
       request.yar.clear(constants.redisKeys.POST_DATA_RECOVERY)
     }
 

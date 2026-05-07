@@ -27,8 +27,6 @@ const handlers = {
     const payloadRecoveryData = request.yar.get(constants.redisKeys.POST_DATA_RECOVERY)
 
     if (payloadRecoveryData && constants.postPayloadDataPaths.has(payloadRecoveryData.path)) {
-      console.log('----> Redirecting to path with recovered payload:')
-      console.log(payloadRecoveryData.path)
       return h.redirect(payloadRecoveryData.path)
     }
 
