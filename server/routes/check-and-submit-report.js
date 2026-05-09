@@ -131,13 +131,16 @@ const handlers = {
 
     formatTextBlocks(reportPayload)
 
+    const backLinkHref = `/${request.headers.referer.split('/').slice(-1)[0]}`
+
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       showMessage,
       ...reportPayload,
       reportTypes,
       ngrValue,
       selectedAddress,
-      mapCoordinates
+      mapCoordinates,
+      backLinkHref
     })
   },
   post: async (request, h) => {
