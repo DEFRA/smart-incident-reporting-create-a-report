@@ -10,7 +10,6 @@ const handlers = {
     request.yar.reset()
 
     // redirect to create a report
-    // FIXME: check this
     return h.redirect('/')
   }
 }

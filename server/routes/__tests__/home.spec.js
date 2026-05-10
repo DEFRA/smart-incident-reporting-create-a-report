@@ -44,5 +44,16 @@ describe(url, () => {
         refreshToken: 'mock-refresh-token-123'
       })
     })
+
+    it('Should redirect to post recovery path if payload recovery data exists in session', async () => {
+      const payloadRecoveryData = { path: constants.routes.CHECK_REPORTER_TYPE, payload: { reporterType: 'other' } }
+
+      const sessionData = {}
+      sessionData[constants.redisKeys.POST_DATA_RECOVERY] = payloadRecoveryData
+
+      mockGetSessionIdFromToken.mockReturnValueOnce('test-session-id-123')
+      const response = await submitGetRequest({ url }, '', constants.statusCodes.REDIRECT, sessionData)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_REPORTER_TYPE)
+    })
   })
 })

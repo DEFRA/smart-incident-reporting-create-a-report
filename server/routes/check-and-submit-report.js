@@ -111,7 +111,6 @@ export const incidentLocationMapConfig = (request, reportPayload) => {
 
 const handlers = {
   get: async (request, h) => {
-    // FIXME: think about the need to do this here and in cancel report
     request.yar.clear(constants.redisKeys.POST_DATA_RECOVERY)
 
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)

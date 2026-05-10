@@ -22,7 +22,7 @@ const onPostAuthHandler = {
         }
 
         const routeAuth = request.route.settings.auth
-        if (!routeAuth || routeAuth.mode !== 'try') {
+        if (routeAuth?.mode !== 'try') {
           return h.continue
         }
 

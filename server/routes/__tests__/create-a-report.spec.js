@@ -76,6 +76,22 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, null, 200, sessionData)
       expect(response.payload).toContain('There is a problem')
     })
+
+    it('Should add post recovery payload to session and prepopulate fields', async () => {
+      const payloadRecoveryData = {
+        path: constants.routes.CHECK_AND_SUBMIT_REPORT,
+        payload: {
+          locationOfIncident: 'gridReference',
+          locationGridRef: 'tt1234567890'
+        }
+      }
+
+      const sessionData = {}
+      sessionData[constants.redisKeys.POST_DATA_RECOVERY] = payloadRecoveryData
+
+      const response = await submitGetRequest({ url }, null, 200, sessionData)
+      expect(response.payload).toContain('tt1234567890')
+    })
   })
 
   describe('POST', () => {
