@@ -49,6 +49,18 @@ describe(url, () => {
       expect(response.payload).toContain('value="Test Role"')
       expect(response.payload).toMatch(/id="other"[^>]*checked/)
     })
+
+    it('Should handle empty payload on post recovery payload to session', async () => {
+      const payloadRecoveryData = {
+        payload: {}
+      }
+
+      const sessionData = getSessionData()
+      sessionData[constants.redisKeys.POST_DATA_RECOVERY] = payloadRecoveryData
+
+      const response = await submitGetRequest({ url }, 'Check reporter type', 200, sessionData)
+      expect(response.payload).toMatch(/id="water"[^>]*checked/)
+    })
   })
 
   describe('POST', () => {

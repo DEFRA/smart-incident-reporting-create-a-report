@@ -9,12 +9,6 @@ const onPostAuthHandler = {
           return h.continue
         }
 
-        // HOME route handles azure auth, this handler is for
-        // capturing session state lost by cookie auth
-        if (request.path === constants.routes.HOME) {
-          return h.continue
-        }
-
         // Only for paths where we want to recover the
         // posted payload
         if (!constants.postPayloadDataPaths.has(request.path)) {
