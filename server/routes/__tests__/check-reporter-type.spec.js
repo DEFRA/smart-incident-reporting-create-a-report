@@ -52,7 +52,7 @@ describe(url, () => {
 
     it('Should handle empty payload on post recovery payload to session', async () => {
       const payloadRecoveryData = {
-        payload: {}
+        payload: undefined
       }
 
       const sessionData = getSessionData()
