@@ -130,7 +130,7 @@ const handlers = {
 
     formatTextBlocks(reportPayload)
 
-    const backLinkHref = `/${request.headers.referer.split('/').slice(-1)[0]}`
+    const backLinkHref = request.headers.referer ? `/${request.headers.referer.split('/').slice(-1)[0]}` : '/create-a-report'
 
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       showMessage,

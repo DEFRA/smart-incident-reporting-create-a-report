@@ -136,6 +136,18 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).not.toContain('incidentLocationMap.initialiseMap')
     })
+
+    it('Should set back link href to referer header if it exists', async () => {
+      const sessionData = getSessionData()
+      const response = await submitGetRequest({ url, headers: { referer: '/some-page' } }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('<a href="/some-page" class="govuk-back-link"')
+    })
+
+    it('Should set back link href to create-a-report if referer header does not exist', async () => {
+      const sessionData = getSessionData()
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('<a href="/create-a-report" class="govuk-back-link"')
+    })
   })
   describe('POST', () => {
     const mockIsMemberOfRMGroup = jest.fn()
