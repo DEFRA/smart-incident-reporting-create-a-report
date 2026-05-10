@@ -39,7 +39,7 @@ const validateReporterTypeFields = (payload) => {
 const updatePayload = (reportPayload, payload) => {
   const updatedPayload = {
     ...reportPayload,
-    ...payload || {},
+    ...payload,
     reporterType: payload?.reporterType || 'water',
     reporterOtherName: payload?.reporterOtherName?.trim()
   }
