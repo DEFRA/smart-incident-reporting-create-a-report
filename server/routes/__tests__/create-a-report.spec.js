@@ -1303,7 +1303,8 @@ describe(url, () => {
       const currentTime = moment().format('HH:mm')
       const expectedPayload = {
         ...payload,
-        nowTime: currentTime
+        nowTime: currentTime,
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
@@ -1334,7 +1335,8 @@ describe(url, () => {
       }
 
       const expectedPayload = {
-        ...payload
+        ...payload,
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
@@ -1370,14 +1372,15 @@ describe(url, () => {
 
       const expectedPayload = {
         ...payload,
-        dateTimeYesterday: '10:00'
+        dateTimeYesterday: '10:00',
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })
-    it('Happy: accepts and stores unchecked value of reporterHomeAddress as empty if gridReference is selected', async () => {
+    it('Happy: accepts and stores unchecked value of reporterHomeAddress as No if gridReference is selected', async () => {
       const payload = getPayload()
       const options = {
         url,
@@ -1388,7 +1391,27 @@ describe(url, () => {
       const expectedPayload = {
         ...payload,
         nowTime: currentTime,
-        reporterHomeAddress: ''
+        reporterHomeAddress: 'No'
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts and stores checked value of reporterHomeAddress as Yes if gridReference is selected', async () => {
+      const payload = getPayload()
+      payload.reporterHomeAddress = 'Yes'
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'Yes'
       }
 
       const response = await submitPostRequest(options)

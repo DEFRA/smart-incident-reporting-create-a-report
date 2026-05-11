@@ -14,10 +14,8 @@ function checkReportFinalisePayloadData (payloadData, addressChosen) {
   }
 
   // Set default value for reporter's home address checkbox
-  if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {
+  if ((payloadData.locationOfIncident === 'address' || payloadData.locationOfIncident === 'gridReference') && !payloadData.reporterHomeAddress) {
     payloadData.reporterHomeAddress = 'No'
-  } else if (payloadData.locationOfIncident === 'gridReference') {
-    payloadData.reporterHomeAddress = ''
   } else {
     // do nothing
   }
