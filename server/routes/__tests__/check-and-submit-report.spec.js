@@ -208,7 +208,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Photos or videos available',
+              questionAsked: 'Has photos or videos of problem',
               questionResponse: true,
               answerId: 3901
             }),
@@ -450,7 +450,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Photos or videos available',
+              questionAsked: 'Has photos or videos of problem',
               questionResponse: true,
               answerId: 3902
             }),
@@ -541,7 +541,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Photos or videos available',
+              questionAsked: 'Has photos or videos of problem',
               questionResponse: true,
               answerId: 3902
             }),
@@ -594,7 +594,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Photos or videos available',
+              questionAsked: 'Has photos or videos of problem',
               questionResponse: true,
               answerId: 3902
             }),
@@ -643,7 +643,7 @@ describe(url, () => {
             }),
             expect.objectContaining({
               questionId: 3900,
-              questionAsked: 'Photos or videos available',
+              questionAsked: 'Has photos or videos of problem',
               questionResponse: true,
               answerId: 3901
             }),
