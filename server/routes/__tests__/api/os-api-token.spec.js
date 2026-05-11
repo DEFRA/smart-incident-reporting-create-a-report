@@ -12,7 +12,6 @@ describe(url, () => {
   describe('GET', () => {
     it(`Should return top result from England ${url}`, async () => {
       axios.request.mockImplementation(() => {
-        console.log('IN MOCK')
         return {
           data: 'TOKEN'
         }

@@ -29,6 +29,7 @@ const BUILDING_DATA = 'building-data'
 const CHOOSE_ADDRESS = 'choose-address'
 const SELECTED_ADDRESS = 'selected-address'
 const SELECTED_ADDRESS_DATA = 'selected-address-data'
+const POST_DATA_RECOVERY = 'post-data-recovery'
 
 const views = {
   API_OS_API_TOKEN,
@@ -59,8 +60,16 @@ const redisKeys = {
   BUILDING_DATA,
   CHOOSE_ADDRESS,
   SELECTED_ADDRESS,
-  SELECTED_ADDRESS_DATA
+  SELECTED_ADDRESS_DATA,
+  POST_DATA_RECOVERY
 }
+
+const postPayloadDataPaths = new Set([
+  routes.CREATE_A_REPORT,
+  routes.CHECK_REPORTER_TYPE,
+  routes.CREATE_REPORT_CANCEL,
+  routes.CHECK_AND_SUBMIT_REPORT
+])
 
 const statusCodes = {
   OK: 200,
@@ -83,6 +92,7 @@ const errorSummary = {
 export default Object.freeze({
   routes,
   views,
+  postPayloadDataPaths,
   statusCodes,
   urls,
   redisKeys,
