@@ -32,13 +32,8 @@ const mapReporterMediaFlags = (payloadData) => {
 }
 
 const setReporterHomeAddressDefault = (payloadData) => {
-  if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {
+  if ((payloadData.locationOfIncident === 'address' || payloadData.locationOfIncident === 'gridReference') && !payloadData.reporterHomeAddress) {
     payloadData.reporterHomeAddress = 'No'
-    return
-  }
-
-  if (payloadData.locationOfIncident === 'gridReference') {
-    payloadData.reporterHomeAddress = ''
   }
 }
 

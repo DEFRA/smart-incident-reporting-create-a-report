@@ -127,6 +127,15 @@ describe(url, () => {
       expect(response.payload).toContain('incidentLocationMap.initialiseMap')
     })
 
+    it('Should show home address answer for grid reference location', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationOfIncident = 'gridReference'
+      sessionData['create-a-report'].reporterHomeAddress = 'Yes'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toMatch(/This is the home address[\s\S]*?<dd class="govuk-summary-list__value">\s*Yes\s*<\/dd>/)
+    })
+
     it('Should not render map initialisation script when address has no selected-address-data', async () => {
       const sessionData = getSessionData()
       sessionData['create-a-report'].locationOfIncident = 'address'
