@@ -32,6 +32,19 @@
       value: locationDescription | safe,
       errorMessage: findErrorMessageById(errorSummary.location, "locationDescription")
     }) }}
+
+    {{ govukCheckboxes({
+      classes: "govuk-checkboxes--small",
+      name: "reporterHomeAddress",
+      id: "reporterHomeAddressGridReference",
+      items: [
+        {
+          value: "Yes",
+          checked: reporterHomeAddress === 'Yes' and selectGridReference,
+          text: "This is the reporter's home address"
+        }
+      ]
+    }) }}
   </div>
 {% endset %}
 
@@ -56,11 +69,11 @@
     {{ govukCheckboxes({
       classes: "govuk-checkboxes--small govuk-!-padding-top-6",
       name: "reporterHomeAddress",
-      id: "reporterHomeAddress",
+      id: "reporterHomeAddressAddress",
       items: [
         {
           value: "Yes",
-          checked: reporterHomeAddress === 'Yes',
+          checked: reporterHomeAddress === 'Yes' and selectAddress,
           text: "This is the reporter's home address"
         }
       ]
