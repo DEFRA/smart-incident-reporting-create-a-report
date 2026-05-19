@@ -8,13 +8,17 @@ import { formatTime24hr } from '../../utils/time-helpers.js'
 import { isWaterCompanyEmail } from '../../utils/water-company-domains.js'
 
 const getMediaSelections = (payloadData) => {
-  if (!payloadData.reporterMediaAvailable) {
+  const reporterMediaAvailable = payloadData.reporterMediaAvailable || payloadData['reporterMediaAvailable[]']
+
+  if (!reporterMediaAvailable) {
     return []
   }
 
-  return Array.isArray(payloadData.reporterMediaAvailable)
-    ? payloadData.reporterMediaAvailable
-    : [payloadData.reporterMediaAvailable]
+  if (Array.isArray(reporterMediaAvailable)) {
+    return reporterMediaAvailable
+  }
+
+  return [reporterMediaAvailable]
 }
 
 const mapReporterMediaFlags = (payloadData) => {
@@ -29,6 +33,7 @@ const mapReporterMediaFlags = (payloadData) => {
   }
 
   delete payloadData.reporterMediaAvailable
+  delete payloadData['reporterMediaAvailable[]']
 }
 
 const setReporterHomeAddressDefault = (payloadData) => {

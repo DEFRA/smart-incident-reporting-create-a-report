@@ -1503,6 +1503,32 @@ describe(url, () => {
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })
 
+    it('Happy: maps reporterMediaAvailable[] payload key to photos/video flags', async () => {
+      const payload = getPayload()
+      delete payload.reporterMediaAvailable
+      payload['reporterMediaAvailable[]'] = ['Photos']
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterPhotos: 'Yes',
+        reporterVideos: 'No',
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+      delete expectedPayload['reporterMediaAvailable[]']
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
     it('Happy: keeps existing photos/video flags when reporterMediaAvailable is not provided', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
