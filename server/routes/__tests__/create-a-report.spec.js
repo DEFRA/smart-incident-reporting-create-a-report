@@ -1550,7 +1550,6 @@ describe(url, () => {
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })
 
-    // Direct form submission tests (new form behavior where checkboxes submit as reporterPhotos/reporterVideos)
     it('Happy: direct form submission with both photos and video selected', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
