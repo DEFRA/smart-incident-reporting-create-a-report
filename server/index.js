@@ -40,7 +40,7 @@ const init = async server => {
   server.app.tokenCache = server.cache({
     cache: 'redis_cache',
     segment: 'tokens',
-    expiresIn: expire
+    expiresIn: 24 * 60 * 60 * 1000
   })
 
   server.app.mediaUploadCache = server.cache({
