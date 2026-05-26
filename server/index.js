@@ -11,6 +11,8 @@ import session from './plugins/session.js'
 import auth from './plugins/auth.js'
 import onPostHandler from './plugins/on-post-handler.js'
 
+const expire = 168 * 60 * 60 * 1000
+
 const createServer = async options => {
   // Create the hapi server
   options = {
@@ -38,7 +40,13 @@ const init = async server => {
   server.app.tokenCache = server.cache({
     cache: 'redis_cache',
     segment: 'tokens',
-    expiresIn: 24 * 60 * 60 * 1000
+    expiresIn: expire
+  })
+
+  server.app.mediaUploadCache = server.cache({
+    cache: 'redis_cache',
+    segment: 'media-upload',
+    expiresIn: expire
   })
 
   await server.start()

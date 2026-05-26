@@ -141,6 +141,13 @@ const handlers = {
     // Check to see if member of RM group
     const isMember = await isMemberOfRMGroup(request)
 
+    const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
+    if (reportPayload?.reporterPhotos === 'Yes') {
+      await request.server.app.mediaUploadCache.set(request.yar.id, {
+        hasPhotos: true
+      })
+    }
+
     // Post data to service bus queue
     const payload = buildPayload(request.yar, request.auth.credentials.profile)
 

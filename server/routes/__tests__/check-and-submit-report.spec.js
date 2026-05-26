@@ -176,6 +176,30 @@ describe(url, () => {
       jest.clearAllMocks()
     })
 
+    it('Should set mediaUploadCache when reporterPhotos is Yes', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterPhotos = 'Yes'
+      const options = {
+        url
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+
+      await expect(response.request.server.app.mediaUploadCache.get(response.request.yar.id)).resolves.toEqual({ hasPhotos: true })
+    })
+
+    it('Should not set mediaUploadCache when reporterPhotos is No', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].reporterPhotos = 'No'
+      const options = {
+        url
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+
+      await expect(response.request.server.app.mediaUploadCache.get(response.request.yar.id)).resolves.toBeNull()
+    })
+
     it('Should post payload to service bus and set REPORT_SUBMITTED to true', async () => {
       const sessionData = getSessionData()
       const options = {
