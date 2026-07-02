@@ -10,6 +10,7 @@ import logging from './plugins/logging.js'
 import session from './plugins/session.js'
 import auth from './plugins/auth.js'
 import onPostHandler from './plugins/on-post-handler.js'
+import onPostAuthHandler from './plugins/on-post-auth-handler.js'
 
 const createServer = async options => {
   // Create the hapi server
@@ -54,6 +55,7 @@ const _registerPlugins = async server => {
   await server.register(views)
   await server.register(Blipp)
   await server.register(onPostHandler)
+  await server.register(onPostAuthHandler)
 }
 
 export { createServer, init }

@@ -31,6 +31,36 @@ describe(url, () => {
       const response = await submitGetRequest({ url }, 'Check reporter type', 200, getSessionData())
       expect(response.payload).toMatch(/id="water"[^>]*checked/)
     })
+
+    it('Should add post recovery payload to session and prepopulate fields', async () => {
+      const payloadRecoveryData = {
+        payload: {
+          reporterType: 'other',
+          reporterOtherName: 'Test Organisation',
+          reporterRole: 'Test Role'
+        }
+      }
+
+      const sessionData = getSessionData()
+      sessionData[constants.redisKeys.POST_DATA_RECOVERY] = payloadRecoveryData
+
+      const response = await submitGetRequest({ url }, 'Check reporter type', 200, sessionData)
+      expect(response.payload).toContain('value="Test Organisation"')
+      expect(response.payload).toContain('value="Test Role"')
+      expect(response.payload).toMatch(/id="other"[^>]*checked/)
+    })
+
+    it('Should handle empty payload on post recovery payload to session', async () => {
+      const payloadRecoveryData = {
+        payload: undefined
+      }
+
+      const sessionData = getSessionData()
+      sessionData[constants.redisKeys.POST_DATA_RECOVERY] = payloadRecoveryData
+
+      const response = await submitGetRequest({ url }, 'Check reporter type', 200, sessionData)
+      expect(response.payload).toMatch(/id="water"[^>]*checked/)
+    })
   })
 
   describe('POST', () => {

@@ -159,6 +159,29 @@ describe(url, () => {
 
       const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
       expect(response.payload).toContain(expected)
+    it('Should set back link href to referer header if it exists', async () => {
+      const sessionData = getSessionData()
+      const response = await submitGetRequest({ url, headers: { referer: '/some-page' } }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('<a href="/some-page" class="govuk-back-link"')
+    })
+
+    it('Should set back link href to create-a-report if referer header does not exist', async () => {
+      const sessionData = getSessionData()
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+      expect(response.payload).toContain('<a href="/create-a-report" class="govuk-back-link"')
+    })
+
+    it('Should not mutate session text fields when rendering line breaks on check and submit', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].descriptionDescription = 'Line 1\r\nLine 2'
+      sessionData['create-a-report'].locationDescription = 'Location 1\r\nLocation 2'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+
+      expect(response.payload).toContain('Line 1<br>Line 2')
+      expect(response.payload).toContain('Location 1<br>Location 2')
+      expect(sessionData['create-a-report'].descriptionDescription).toEqual('Line 1\r\nLine 2')
+      expect(sessionData['create-a-report'].locationDescription).toEqual('Location 1\r\nLocation 2')
     })
   })
   describe('POST', () => {

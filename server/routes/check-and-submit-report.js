@@ -68,11 +68,15 @@ const incidentLocationQuestion = {
 const showMessage = config.showNonLiveMessage
 
 const formatTextBlocks = reportPayload => {
+  const formattedTextBlocks = {}
+
   for (const [key, value] of Object.entries(reportPayload)) {
     if (key === 'descriptionDescription' || key === 'locationDescription') {
-      reportPayload[key] = value.replace(/\r\n/g, '<br>')
+      formattedTextBlocks[key] = value.replace(/\r\n/g, '<br>')
     }
   }
+
+  return formattedTextBlocks
 }
 
 export const incidentLocationMapConfig = (request, reportPayload) => {
@@ -111,6 +115,8 @@ export const incidentLocationMapConfig = (request, reportPayload) => {
 
 const handlers = {
   get: async (request, h) => {
+    request.yar.clear(constants.redisKeys.POST_DATA_RECOVERY)
+
     const reportPayload = request.yar.get(constants.redisKeys.CREATE_A_REPORT)
     const selectedAddress = constructAddress(request)
     const errorSummary = reportPayload && validateReportPayload(reportPayload)
@@ -125,16 +131,19 @@ const handlers = {
 
     const ngrValue = formatGridReference(reportPayload.locationGridRef)
     const mapCoordinates = incidentLocationMapConfig(request, reportPayload)
+    const formattedTextBlocks = formatTextBlocks(reportPayload)
 
-    formatTextBlocks(reportPayload)
+    const backLinkHref = request.headers.referer ? `/${request.headers.referer.split('/').slice(-1)[0]}` : '/create-a-report'
 
     return h.view(constants.views.CHECK_AND_SUBMIT_REPORT, {
       showMessage,
       ...reportPayload,
+      ...formattedTextBlocks,
       reportTypes,
       ngrValue,
       selectedAddress,
-      mapCoordinates
+      mapCoordinates,
+      backLinkHref
     })
   },
   post: async (request, h) => {
@@ -497,6 +506,12 @@ export default [
   }, {
     method: 'POST',
     path: constants.routes.CHECK_AND_SUBMIT_REPORT,
-    handler: handlers.post
+    handler: handlers.post,
+    options: {
+      auth: {
+        mode: 'try',
+        strategy: 'session-auth'
+      }
+    }
   }
 ]
