@@ -42,6 +42,12 @@ const init = async server => {
     expiresIn: 24 * 60 * 60 * 1000
   })
 
+  server.app.mediaUploadCache = server.cache({
+    cache: 'redis_cache',
+    segment: 'media-upload',
+    expiresIn: 168 * 60 * 60 * 1000
+  })
+
   await server.start()
 }
 

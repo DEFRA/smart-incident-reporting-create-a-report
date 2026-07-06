@@ -38,7 +38,7 @@
     "@azure/identity": "^4.13.0",
     "@azure/service-bus": "^7.9.5",
     "@defra/sir-app-library": "git://github.com/DEFRA/sir-app-library.git#feat/validate-email",
-    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#media-uploads",
+    "@defra/smart-incident-reporting": "git://github.com/DEFRA/smart-incident-reporting.git#develop",
     "@hapi/bell": "13.1.0",
     "@hapi/boom": "^10.0.1",
     "@hapi/catbox-redis": "^7.0.2",

@@ -9,6 +9,7 @@ import { oSGBToWGS84 } from '../utils/transform-point.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import helpers from '../utils/address-picker-helpers.js'
 import { isMemberOfRMGroup } from '../utils/auth.js'
+import moment from 'moment'
 
 // Incident location question
 const incidentLocationQuestion = {
@@ -172,6 +173,18 @@ const handlers = {
 
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
+
+    const userAgreedForImages = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === 3903) !== undefined
+
+    if (userAgreedForImages) {
+      const journeyValue = payload.reportingAnEnvironmentalProblem.reportType
+      const journey = Object.values(reportTypes).find(item => item.value === journeyValue)?.text || 'an environmental problem'
+
+      await request.server.app.mediaUploadCache.set(request.yar.id, {
+        dateTime: moment().toISOString(),
+        journey
+      }, 168 * 60 * 60 * 1000)
+    }
 
     if (isMember) {
       const reportManagerUrl = config.rmUrl
