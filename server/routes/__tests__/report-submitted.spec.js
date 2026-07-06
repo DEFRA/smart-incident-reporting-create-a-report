@@ -26,6 +26,7 @@ const sessionData = {
     reporterType: 'water',
     reporterWaterName: 'Water Services Ltd',
     reporterPhotos: 'Yes',
+    reporterVideos: 'No',
     reporterHomeAddress: 'Yes'
   },
   'report-submitted': true

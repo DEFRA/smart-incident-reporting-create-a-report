@@ -9,6 +9,7 @@ import { oSGBToWGS84 } from '../utils/transform-point.js'
 import { sendMessage } from '@defra/smart-incident-reporting/server/services/service-bus.js'
 import helpers from '../utils/address-picker-helpers.js'
 import { isMemberOfRMGroup } from '../utils/auth.js'
+import moment from 'moment'
 
 // Incident location question
 const incidentLocationQuestion = {
@@ -173,6 +174,18 @@ const handlers = {
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
 
+    const userAgreedForImages = payload.reportingAnEnvironmentalProblem.data.find(answer => answer.answerId === 3903) !== undefined
+
+    if (userAgreedForImages) {
+      const journeyValue = payload.reportingAnEnvironmentalProblem.reportType
+      const journey = Object.values(reportTypes).find(item => item.value === journeyValue)?.text || 'an environmental problem'
+
+      await request.server.app.mediaUploadCache.set(request.yar.id, {
+        dateTime: moment().toISOString(),
+        journey
+      }, 168 * 60 * 60 * 1000)
+    }
+
     if (isMember) {
       const reportManagerUrl = config.rmUrl
       const sessionGuid = request.yar.id
@@ -264,13 +277,27 @@ const buildReportedByEmailAnswer = (reportPayload, questions) => {
 
 const buildPhotosOrVideosAnswer = (reportPayload, questions) => {
   const question = questions.REPORTED_PHOTOS_OR_VIDEOS
+  const hasPhotos = reportPayload.reporterPhotos === 'Yes'
+  const hasVideos = reportPayload.reporterVideos === 'Yes'
 
-  return [{
-    questionId: question.questionId,
-    questionAsked: question.text,
-    questionResponse: true,
-    answerId: reportPayload.reporterPhotos === 'Yes' ? question.answers.yes.answerId : question.answers.no.answerId
-  }]
+  return [
+    {
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: hasPhotos
+        ? question.answers.yesPhotos.answerId
+        : question.answers.noPhotos.answerId
+    },
+    {
+      questionId: question.questionId,
+      questionAsked: question.text,
+      questionResponse: true,
+      answerId: hasVideos
+        ? question.answers.yesVideo.answerId
+        : question.answers.noVideo.answerId
+    }
+  ]
 }
 
 const buildReporterTypeAnswers = (reportPayload, questions) => {

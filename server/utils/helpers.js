@@ -419,8 +419,9 @@ const validateReporterName = (payload, errorSummary) => {
 const validateReporterEmail = (payload, errorSummary) => {
   const validEmail = validateEmail(payload.reporterEmail)
   const invalidEmail = Boolean(payload.reporterEmail) && !validEmail
+  const hasMediaSelection = payload.reporterPhotos === 'Yes' || payload.reporterVideos === 'Yes'
   const emailId = '#reporterEmail'
-  if (payload.reporterPhotos === 'Yes') {
+  if (hasMediaSelection) {
     if (!payload.reporterEmail) {
       errorSummary.errorList.push({
         text: 'Enter an email address',
@@ -434,7 +435,7 @@ const validateReporterEmail = (payload, errorSummary) => {
     } else {
       // do nothing
     }
-  } else if ((!payload.reporterPhotos || payload.reporterPhotos === 'No') && invalidEmail) {
+  } else if (invalidEmail) {
     errorSummary.errorList.push({
       text: 'Enter an email address in the correct format, like name@example.com',
       href: emailId

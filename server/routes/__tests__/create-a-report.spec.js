@@ -38,7 +38,8 @@ const mockPayload = {
   dateOtherYear: '',
   dateOtherTime: '',
   addressChosen: false,
-  reporterPhotos: 'No'
+  reporterPhotos: 'No',
+  reporterVideos: 'No'
 }
 
 const getPayload = () => ({ ...mockPayload })
@@ -554,7 +555,7 @@ describe(url, () => {
     })
 
     // Test for Reporter tab
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an empty email field', async () => {
+    it('Sad: should fail validation and return return error message if photos is selected and email is empty', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = ''
@@ -567,20 +568,20 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if video is selected and email is empty', async () => {
       const payload = getPayload()
-      payload.reporterPhotos = 'Yes'
-      payload.reporterEmail = 'testmail'
+      payload.reporterVideos = 'Yes'
+      payload.reporterEmail = ''
       const options = {
         url,
         payload
       }
 
       const response = await submitPostRequest(options, 200)
-      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
+      expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if photos is selected with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'Yes'
       payload.reporterEmail = 'testmail@'
@@ -593,9 +594,9 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if yes is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if videos is selected with an invalid email', async () => {
       const payload = getPayload()
-      payload.reporterPhotos = 'Yes'
+      payload.reporterVideos = 'Yes'
       payload.reporterEmail = 'testmail@com'
       const options = {
         url,
@@ -606,7 +607,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for photos or videos available with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = ''
       payload.reporterEmail = 'testmail'
@@ -619,7 +620,7 @@ describe(url, () => {
       expect(response.payload).toContain('<a href="#reporterEmail">Enter an email address in the correct format, like name@example.com</a>')
     })
 
-    it('Sad: should fail validation and return error message if no answer is selected for Has photos or videos of problem with an invalid email', async () => {
+    it('Sad: should fail validation and return error message if no answer is selected for photos or videos available with an invalid email', async () => {
       const payload = getPayload()
       payload.reporterPhotos = 'No'
       payload.reporterEmail = 'testmail'
@@ -1303,7 +1304,8 @@ describe(url, () => {
       const currentTime = moment().format('HH:mm')
       const expectedPayload = {
         ...payload,
-        nowTime: currentTime
+        nowTime: currentTime,
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
@@ -1334,7 +1336,8 @@ describe(url, () => {
       }
 
       const expectedPayload = {
-        ...payload
+        ...payload,
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
@@ -1370,14 +1373,15 @@ describe(url, () => {
 
       const expectedPayload = {
         ...payload,
-        dateTimeYesterday: '10:00'
+        dateTimeYesterday: '10:00',
+        reporterHomeAddress: 'No'
       }
 
       const response = await submitPostRequest(options)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })
-    it('Happy: accepts and stores unchecked value of reporterHomeAddress as empty if gridReference is selected', async () => {
+    it('Happy: accepts and stores unchecked value of reporterHomeAddress as No if gridReference is selected', async () => {
       const payload = getPayload()
       const options = {
         url,
@@ -1388,7 +1392,27 @@ describe(url, () => {
       const expectedPayload = {
         ...payload,
         nowTime: currentTime,
-        reporterHomeAddress: ''
+        reporterHomeAddress: 'No'
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: accepts and stores checked value of reporterHomeAddress as Yes if gridReference is selected', async () => {
+      const payload = getPayload()
+      payload.reporterHomeAddress = 'Yes'
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'Yes'
       }
 
       const response = await submitPostRequest(options)
@@ -1416,6 +1440,219 @@ describe(url, () => {
       }
 
       const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: maps single reporterMediaAvailable value to photos/video flags', async () => {
+      const payload = getPayload()
+      payload.reporterMediaAvailable = 'Photos'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterPhotos: 'Yes',
+        reporterVideos: 'No',
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+      delete expectedPayload.reporterMediaAvailable
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: maps reporterMediaAvailable array to photos/video flags', async () => {
+      const payload = getPayload()
+      payload.reporterMediaAvailable = ['Photos', 'Video']
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterPhotos: 'Yes',
+        reporterVideos: 'Yes',
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+      delete expectedPayload.reporterMediaAvailable
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: maps video-only reporterMediaAvailable value to photos/video flags', async () => {
+      const payload = getPayload()
+      payload.reporterMediaAvailable = 'Video'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterPhotos: 'No',
+        reporterVideos: 'Yes',
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+      delete expectedPayload.reporterMediaAvailable
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: keeps existing photos/video flags when reporterMediaAvailable is not provided', async () => {
+      const payload = getPayload()
+      payload.reporterPhotos = 'Yes'
+      payload.reporterVideos = 'No'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: defaults photos/video flags to No when reporterMediaAvailable and flags are missing', async () => {
+      const payload = getPayload()
+      delete payload.reporterPhotos
+      delete payload.reporterVideos
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterPhotos: 'No',
+        reporterVideos: 'No',
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: direct form submission with both photos and video selected', async () => {
+      const payload = getPayload()
+      payload.reporterPhotos = 'Yes'
+      payload.reporterVideos = 'Yes'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: direct form submission with only photos selected', async () => {
+      const payload = getPayload()
+      payload.reporterPhotos = 'Yes'
+      payload.reporterVideos = 'No'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: direct form submission with only video selected', async () => {
+      const payload = getPayload()
+      payload.reporterPhotos = 'No'
+      payload.reporterVideos = 'Yes'
+      payload.reporterEmail = 'someone@example.com'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: direct form submission with neither photos nor video selected', async () => {
+      const payload = getPayload()
+      payload.reporterPhotos = 'No'
+      payload.reporterVideos = 'No'
+
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        reporterHomeAddress: 'No',
+        nowTime: currentTime
+      }
+
+      const response = await submitPostRequest(options)
       expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })

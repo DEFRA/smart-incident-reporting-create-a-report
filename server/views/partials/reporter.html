@@ -96,20 +96,30 @@
       }) }}
 
       {{ govukCheckboxes({
-        id: "reporterPhotos",
-        name: "reporterPhotos",
+        idPrefix: "reporterMediaAvailable",
+        name: "reporterMediaAvailable",
         classes: "govuk-checkboxes--small",
         fieldset: {
           legend: {
-            text: "Photos or videos of the problem",
+            text: "Photos or videos available",
             classes: "govuk-fieldset__legend--m govuk-!-padding-top-6"
           }
+        },
+        hint: {
+          text: "Reporters must give their email if they want to send photos or video."
         },
         items: [
           {
             checked: reporterPhotos === 'Yes',
+            name: "reporterPhotos",
             value: "Yes",
-            text: "Yes - reporter must give their email"
+            text: "Photos"
+          },
+          {
+            checked: reporterVideos === 'Yes',
+            name: "reporterVideos",
+            value: "Yes",
+            text: "Video"
           }
         ]
       }) }}

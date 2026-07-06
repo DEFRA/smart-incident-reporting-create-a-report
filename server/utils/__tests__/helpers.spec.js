@@ -39,7 +39,8 @@ describe('helpers', () => {
       locationOfIncident: 'gridReference',
       locationGridRef: 'SP 23916 82277',
       dateObserved: 'now',
-      reporterPhotos: 'No'
+      reporterPhotos: 'No',
+      reporterVideos: 'No'
     })
 
     describe('email report date validation', () => {
@@ -447,6 +448,21 @@ describe('helpers', () => {
         const payload = {
           ...getBasePayload(),
           reporterPhotos: 'Yes',
+          reporterEmail: ''
+        }
+
+        const result = validateReportPayload(payload)
+
+        expect(result.reporter.errorList).toContainEqual({
+          text: 'Enter an email address',
+          href: '#reporterEmail'
+        })
+      })
+
+      it('should error when video is Yes but email is missing', () => {
+        const payload = {
+          ...getBasePayload(),
+          reporterVideos: 'Yes',
           reporterEmail: ''
         }
 

@@ -186,12 +186,12 @@
         
         {
           key: {
-            text: "Images or photos"
+            text: "Images or video"
           },
           value: {
-            html: reporterPhotos
+            html: reporterPhotos + " - photos<br>" + reporterVideos + " - video"
           } 
-        } if reporterPhotos
+        } if (reporterPhotos or reporterVideos)
       ]
     }) }}
   
@@ -244,7 +244,7 @@
           value: {
             html: reporterHomeAddress
           }
-        } if (locationOfIncident == "address"),
+        } if ((locationOfIncident == "address") or (locationOfIncident == "gridReference")),
         {
           key: {
             text: ""
