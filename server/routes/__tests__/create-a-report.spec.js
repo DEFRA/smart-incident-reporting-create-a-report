@@ -1472,6 +1472,80 @@ describe(url, () => {
       expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
     })
 
+    it('Happy: defaults reporterHomeAddress to No in gridReference mode when reporterHomeAddressGridRef is not set', async () => {
+      const payload = getPayload()
+      payload.locationOfIncident = 'gridReference'
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'No'
+      }
+
+      const response = await submitPostRequest(options)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: preserves reporterHomeAddress Yes in address mode when checkbox is checked', async () => {
+      const sessionData = {
+        'selected-address': 'test123'
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.addressChosen = true
+      payload.reporterHomeAddress = 'Yes'
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'Yes'
+      }
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
+    it('Happy: address mode with Yes ignores stale gridRef checkbox field', async () => {
+      const sessionData = {
+        'selected-address': 'test123'
+      }
+
+      const payload = getPayload()
+      payload.locationOfIncident = 'address'
+      payload.addressChosen = true
+      payload.reporterHomeAddress = 'Yes'
+      payload.reporterHomeAddressGridRef = 'Yes'
+      const options = {
+        url,
+        payload
+      }
+
+      const currentTime = moment().format('HH:mm')
+      const expectedPayload = {
+        ...payload,
+        nowTime: currentTime,
+        reporterHomeAddress: 'Yes'
+      }
+      delete expectedPayload.reporterHomeAddressGridRef
+
+      const response = await submitPostRequest(options, 302, sessionData)
+      expect(response.headers.location).toEqual(constants.routes.CHECK_AND_SUBMIT_REPORT)
+      expect(response.request.yar.get(constants.redisKeys.CREATE_A_REPORT)).toEqual(expectedPayload)
+    })
+
     it('Happy: maps single reporterMediaAvailable value to photos/video flags', async () => {
       const payload = getPayload()
       payload.reporterMediaAvailable = 'Photos'

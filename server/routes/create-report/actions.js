@@ -36,6 +36,8 @@ const setReporterHomeAddressDefault = (payloadData) => {
     payloadData.reporterHomeAddress = payloadData.reporterHomeAddressGridRef || 'No'
   } else if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {
     payloadData.reporterHomeAddress = 'No'
+  } else {
+    payloadData.reporterHomeAddress = payloadData.reporterHomeAddress || 'No'
   }
   delete payloadData.reporterHomeAddressGridRef
 }
