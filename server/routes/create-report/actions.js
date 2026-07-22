@@ -34,8 +34,6 @@ const mapReporterMediaFlags = (payloadData) => {
 const setReporterHomeAddressDefault = (payloadData) => {
   if (payloadData.locationOfIncident === 'gridReference') {
     payloadData.reporterHomeAddress = payloadData.reporterHomeAddressGridRef || 'No'
-  } else if (payloadData.locationOfIncident === 'address' && !payloadData.reporterHomeAddress) {
-    payloadData.reporterHomeAddress = 'No'
   } else {
     payloadData.reporterHomeAddress = payloadData.reporterHomeAddress || 'No'
   }
@@ -170,8 +168,6 @@ function checkReport (h, request, payloadData) {
 }
 
 async function findAddress (h, request, payloadData) {
-  // The grid-reference home-address checkbox is not visible in address mode.
-  // Remove it so a stale checked value cannot be persisted to the session.
   delete payloadData.reporterHomeAddressGridRef
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
   const errorSummary = validateBuildingDataPayload(payloadData)
