@@ -32,9 +32,12 @@ const mapReporterMediaFlags = (payloadData) => {
 }
 
 const setReporterHomeAddressDefault = (payloadData) => {
-  if ((payloadData.locationOfIncident === 'address' || payloadData.locationOfIncident === 'gridReference') && !payloadData.reporterHomeAddress) {
-    payloadData.reporterHomeAddress = 'No'
+  if (payloadData.locationOfIncident === 'gridReference') {
+    payloadData.reporterHomeAddress = payloadData.reporterHomeAddressGridRef || 'No'
+  } else {
+    payloadData.reporterHomeAddress = payloadData.reporterHomeAddress || 'No'
   }
+  delete payloadData.reporterHomeAddressGridRef
 }
 
 const setNowDateDefaults = (payloadData) => {
@@ -165,6 +168,7 @@ function checkReport (h, request, payloadData) {
 }
 
 async function findAddress (h, request, payloadData) {
+  delete payloadData.reporterHomeAddressGridRef
   request.yar.set(constants.redisKeys.CREATE_A_REPORT, payloadData)
   const errorSummary = validateBuildingDataPayload(payloadData)
   const showMessage = config.showNonLiveMessage
