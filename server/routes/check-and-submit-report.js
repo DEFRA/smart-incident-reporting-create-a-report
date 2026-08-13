@@ -73,7 +73,11 @@ const formatTextBlocks = reportPayload => {
 
   for (const [key, value] of Object.entries(reportPayload)) {
     if (key === 'descriptionDescription' || key === 'locationDescription') {
-      formattedTextBlocks[key] = value.replace(/\r\n/g, '<br>')
+      formattedTextBlocks[key] = value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\r\n/g, '<br>')
     }
   }
 
