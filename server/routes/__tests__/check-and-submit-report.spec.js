@@ -185,6 +185,47 @@ describe(url, () => {
       expect(sessionData['create-a-report'].descriptionDescription).toEqual('Line 1\r\nLine 2')
       expect(sessionData['create-a-report'].locationDescription).toEqual('Location 1\r\nLocation 2')
     })
+
+    it('Should HTML-escape angle brackets in descriptionDescription so they display as text', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].descriptionDescription = '<NO>1\r\n<A. CLASSIFICATION>CONFIRMED'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+
+      expect(response.payload).toContain('&lt;NO&gt;1<br>&lt;A. CLASSIFICATION&gt;CONFIRMED')
+      expect(sessionData['create-a-report'].descriptionDescription).toEqual('<NO>1\r\n<A. CLASSIFICATION>CONFIRMED')
+    })
+
+    it('Should HTML-escape angle brackets in locationDescription so they display as text', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].locationDescription = '<GRID>SJ 67084 44110'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+
+      expect(response.payload).toContain('&lt;GRID&gt;SJ 67084 44110')
+      expect(sessionData['create-a-report'].locationDescription).toEqual('<GRID>SJ 67084 44110')
+    })
+
+    it('Should HTML-escape ampersands in text fields so they display as text', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].descriptionDescription = 'Pollution & waste near <river>'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+
+      expect(response.payload).toContain('Pollution &amp; waste near &lt;river&gt;')
+    })
+
+    it('Should display POLREP angle bracket field labels when pasted into incident description', async () => {
+      const sessionData = getSessionData()
+      sessionData['create-a-report'].descriptionDescription =
+        '<NO>1\r\n<A. CLASSIFICATION>CONFIRMED\r\n<B. DATE AND TIME>17/07/2026 - 06:27'
+
+      const response = await submitGetRequest({ url }, 'Check and submit report', constants.statusCodes.OK, sessionData)
+
+      expect(response.payload).toContain('&lt;NO&gt;1')
+      expect(response.payload).toContain('&lt;A. CLASSIFICATION&gt;CONFIRMED')
+      expect(response.payload).toContain('&lt;B. DATE AND TIME&gt;17/07/2026 - 06:27')
+    })
   })
   describe('POST', () => {
     const mockIsMemberOfRMGroup = jest.fn()
