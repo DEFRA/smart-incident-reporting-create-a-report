@@ -1,7 +1,8 @@
 import {
   validateReportPayload,
   validateGridReference,
-  formatGridReference
+  formatGridReference,
+  normaliseSpaceCharacters
 } from '../helpers.js'
 
 describe('helpers', () => {
@@ -519,6 +520,18 @@ describe('helpers', () => {
           href: '#locationGridRef'
         })
       })
+    })
+  })
+
+  describe('normaliseSpaceCharacters', () => {
+    it('should replace non-breaking space with regular space', () => {
+      const input = 'hello\u00A0world'
+      expect(normaliseSpaceCharacters(input)).toBe('hello world')
+    })
+
+    it('should replace thin space (U+2009) with regular space', () => {
+      const input = 'hello\u2009world'
+      expect(normaliseSpaceCharacters(input)).toBe('hello world')
     })
   })
 })

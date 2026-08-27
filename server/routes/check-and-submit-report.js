@@ -169,7 +169,9 @@ const handlers = {
       throw new Error(errorMessage)
     }
 
-    await sendMessage(request.logger, payload)
+    // FIXME: Uncomment this line to send the message to the service bus queue when ready
+    console.log('Payload to send to service bus queue:', JSON.stringify(payload, null, 2))
+    // await sendMessage(request.logger, payload)
 
     // set flag to submitted
     request.yar.set(constants.redisKeys.REPORT_SUBMITTED, true)
