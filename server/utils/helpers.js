@@ -493,20 +493,25 @@ const validateGridReference = gridRef => {
 }
 
 const formatGridReference = gridRef => {
+  const normalizedGridRef = normaliseSpaceCharacters(gridRef)
   const formatRegex = /^([THJONSthjons][VWXYZQRSTULMNOPFGHJKABCDEvwxyzqrstulmnopfghjkabcde])(\d{5})(\d{5})$/
-  if (formatRegex.test(gridRef)) {
-    return gridRef.replace(formatRegex, '$1 $2 $3')
+  if (formatRegex.test(normalizedGridRef)) {
+    return normalizedGridRef.replace(formatRegex, '$1 $2 $3')
   }
-  return gridRef
+  return normalizedGridRef
 }
 
 const formatTextarea = (payload) => {
   for (const [key, value] of Object.entries(payload)) {
     if (key === 'descriptionDescription' || key === 'locationDescription') {
-      payload[key] = value.replace(/\r\n/g, '&#13;&#10;')
+      payload[key] = normaliseSpaceCharacters(value).replace(/\r\n/g, '&#13;&#10;')
     }
   }
   return payload
+}
+
+const normaliseSpaceCharacters = (string) => {
+  return string.replace(/\p{Zs}/gu, ' ')
 }
 
 export {
@@ -517,5 +522,6 @@ export {
   validateAddressSelectionPayload,
   validateGridReference,
   formatGridReference,
-  formatTextarea
+  formatTextarea,
+  normaliseSpaceCharacters
 }
