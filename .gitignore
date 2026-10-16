@@ -4,3 +4,4 @@
 coverage
 server/public
 .env
+/docker/secrets

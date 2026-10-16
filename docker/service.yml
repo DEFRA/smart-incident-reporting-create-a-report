@@ -1,7 +1,8 @@
-version: "3.9"
+name: create-a-report
 services:
   webapp:
     image: create-a-report:${TAG:-latest}
+    container_name: create-a-report-webapp
     build:
       context: ../
       dockerfile: dockerfile
